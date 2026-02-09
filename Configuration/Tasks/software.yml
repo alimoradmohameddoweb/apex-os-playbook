@@ -58,6 +58,16 @@ actions:
       option: browser-ugc
       weight: 80
 
+  # Ungoogled Chromium privacy/performance policies (applied only if Chromium installed)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Chromium', value: 'MetricsReportingEnabled', type: REG_DWORD, data: '0', option: browser-ugc}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Chromium', value: 'SpellCheckServiceEnabled', type: REG_DWORD, data: '0', option: browser-ugc}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Chromium', value: 'AlternateErrorPagesEnabled', type: REG_DWORD, data: '0', option: browser-ugc}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Chromium', value: 'SearchSuggestEnabled', type: REG_DWORD, data: '0', option: browser-ugc}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Chromium', value: 'SafeBrowsingProtectionLevel', type: REG_DWORD, data: '0', option: browser-ugc}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Chromium', value: 'UrlKeyedAnonymizedDataCollectionEnabled', type: REG_DWORD, data: '0', option: browser-ugc}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Chromium', value: 'NetworkPredictionOptions', type: REG_DWORD, data: '2', option: browser-ugc}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Chromium', value: 'BackgroundModeEnabled', type: REG_DWORD, data: '0', option: browser-ugc}
+
   # =======================================================================
   # ESSENTIAL SOFTWARE — ALWAYS INSTALLED
   # =======================================================================
