@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Playbook icon and browser icons in [Images/](Images/).
 - Wallpaper deployment script [Executables/WALLPAPER.ps1](Executables/WALLPAPER.ps1).
-- Windows 10 22H2 (build 19045) support.
+- Windows 10 21H2 (build 19044) and 22H2 (build 19045) support.
 
 ### Changed
 - 1,100+ total actions across 11 phases for privacy, performance, security, and interface tuning.

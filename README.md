@@ -131,7 +131,7 @@ Three user-selectable policies:
 ## Installation
 
 ### Requirements
-- Fresh Windows 10 22H2 or Windows 11 22H2/23H2/24H2/25H2 installation
+- Fresh Windows 10 21H2/22H2 or Windows 11 22H2/23H2/24H2/25H2 installation
 - Internet connection
 - No pending Windows Updates
 - Windows Defender disabled
@@ -152,6 +152,7 @@ Three user-selectable policies:
 ### Supported Windows Builds
 | Build | Version | OS |
 |-------|---------|-----|
+| 19044 | 21H2 | Windows 10 |
 | 19045 | 22H2 | Windows 10 |
 | 22621 | 22H2 | Windows 11 |
 | 22631 | 23H2 | Windows 11 |
@@ -257,7 +258,7 @@ A: Yes. Services like Bluetooth and Print Spooler are disabled but not deleted. 
 A: Yes, when installed on a fresh Windows. The playbook disables unnecessary components but preserves all core OS functionality, networking, and driver support.
 
 **Q: Does it work on Windows 10?**
-A: Yes. Apex OS supports Windows 10 22H2 (build 19045). Win11-only features (like classic context menu, snap layouts) are automatically skipped on Win10.
+A: Yes. Apex OS supports Windows 10 21H2 (build 19044) and 22H2 (build 19045). Win11-only features (like classic context menu, snap layouts) are automatically skipped on Win10.
 
 ---
 
