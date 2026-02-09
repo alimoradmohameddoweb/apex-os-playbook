@@ -176,12 +176,12 @@ actions:
   # Disable Watson generic reports
   - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\Network Protection', value: 'DisableGenericRePorts', type: REG_DWORD, data: '1'}
 
-  # Hide Windows Security systray icon
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\Systray', value: 'HideSystray', type: REG_DWORD, data: '1'}
-  # Disable Defender scheduled signature updates on battery (RapidOS)
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Signature Updates', value: 'DisableScheduledSignatureUpdateOnBattery', type: REG_DWORD, data: '1'}
-  # Remove Windows Security startup entry
-  - !cmd: {command: 'reg delete "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v SecurityHealth /f 2>nul', wait: true, weight: 3, errorAction: log}
+  # Hide Windows Security systray icon (only when Defender is disabled — user needs it if Defender is on)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\Systray', value: 'HideSystray', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  # Disable Defender scheduled signature updates on battery (only when Defender is disabled)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Signature Updates', value: 'DisableScheduledSignatureUpdateOnBattery', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  # Remove Windows Security startup entry (only when Defender is disabled)
+  - !cmd: {command: 'reg delete "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v SecurityHealth /f 2>nul', wait: true, weight: 3, option: 'disable-defender', errorAction: log}
 
   # =======================================================================
   # WINDOWS DEFENDER — COMPLETE DISABLE (gated by disable-defender)
