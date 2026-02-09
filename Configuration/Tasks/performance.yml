@@ -158,9 +158,19 @@ actions:
   # Spectre/Meltdown mitigations managed in security.yml
 
   # Disable Virtualization Based Security (VBS/HVCI) for lower latency
+  # VBS causes 5-25% performance loss in gaming and general workloads
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard', value: 'EnableVirtualizationBasedSecurity', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard', value: 'RequirePlatformSecurityFeatures', type: REG_DWORD, data: '0'}
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity', value: 'Enabled', type: REG_DWORD, data: '0'}
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\SystemGuard', value: 'Enabled', type: REG_DWORD, data: '0'}
+
+  # Disable Credential Guard (VBS scenario — leaks CPU cycles for credential isolation)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\CredentialGuard', value: 'Enabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard', value: 'EnableVirtualizationBasedSecurity', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard', value: 'LsaCfgFlags', type: REG_DWORD, data: '0'}
+
+  # Disable VBS via bcdedit (defense-in-depth — ensures VBS hypervisor doesn't load at boot)
+  # NOTE: Conditional disable is handled in FINALIZE.cmd to preserve WSL2/Docker if active
 
   # Disable Kernel DMA Protection
   - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\FVE', value: 'DisableExternalDMAUnderLock', type: REG_DWORD, data: '0'}
