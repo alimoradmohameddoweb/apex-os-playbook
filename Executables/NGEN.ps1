@@ -1,4 +1,4 @@
-# NGEN.ps1 — .NET Native Image Generator
+﻿# NGEN.ps1 - .NET Native Image Generator
 # Compiles all pending .NET assemblies into native images for faster startup.
 # This process can take several minutes but significantly improves .NET app
 # launch times and reduces JIT compilation overhead at runtime.
@@ -20,7 +20,7 @@ foreach ($dir in $frameworkDirs) {
     if (Test-Path $ngenPath) {
         Write-Host "Processing: $dir" -ForegroundColor Yellow
         
-        # Update queued items — compiles all assemblies waiting in the queue
+        # Update queued items - compiles all assemblies waiting in the queue
         & $ngenPath executeQueuedItems 2>$null
         
         # Update installed native images
@@ -50,7 +50,7 @@ if (Test-Path $dotnetRoot) {
 # Run ReadyBoost optimization pass
 $readyBoostService = Get-Service -Name "EMDMgmt" -ErrorAction SilentlyContinue
 if ($readyBoostService -and $readyBoostService.Status -eq 'Running') {
-    Write-Host "ReadyBoost service detected — no action needed." -ForegroundColor Gray
+    Write-Host "ReadyBoost service detected - no action needed." -ForegroundColor Gray
 }
 
 # Optimize .NET assemblies in the GAC

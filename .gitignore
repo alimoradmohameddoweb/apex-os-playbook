@@ -17,3 +17,7 @@ Desktop.ini
 
 # VS Code
 .vscode/
+
+Log.yml
+Output.txt
+*.apbx

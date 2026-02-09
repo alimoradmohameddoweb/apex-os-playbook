@@ -72,16 +72,11 @@ actions:
   # ESSENTIAL SOFTWARE — ALWAYS INSTALLED
   # =======================================================================
 
-  # 7-Zip — fast, open-source archiver
+  # 7-Zip - fast, open-source archiver
   - !software:
       name: 7zip
       source: chocolatey
-      weight: 40
-
-  # VLC — universal media player
-  - !software:
-      name: vlc
-      source: chocolatey
+      option: install-7zip
       weight: 40
 
   # =======================================================================

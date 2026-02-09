@@ -234,9 +234,6 @@ actions:
   # Disable Action Center experience — reduces notification flyout telemetry (Privacy+)
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell', value: 'UseActionCenterExperience', type: REG_DWORD, data: '0', option: clean-interface}
 
-  # Show all system tray icons (disable auto-hide) (AME-10-0.8)
-  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer', value: 'EnableAutoTray', type: REG_DWORD, data: '0', option: clean-interface}
-
   # Disable Windows Chat (Teams) at policy level
   - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Chat', value: 'ChatIcon', type: REG_DWORD, data: '3', option: clean-interface}
   # ConfigureChatAutoInstall handled in debloat.yml
@@ -322,8 +319,6 @@ actions:
   - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'EnableBalloonTips', type: REG_DWORD, data: '0', option: clean-interface}
   # Disable balloon feature advertisements
   - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'NoBalloonFeatureAdvertisements', type: REG_DWORD, data: '1', option: clean-interface}
-  # Disable notification area auto-cleanup
-  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'NoAutoTrayNotify', type: REG_DWORD, data: '1', option: clean-interface}
   # Disable cloud application notifications
   - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\CurrentVersion\PushNotifications', value: 'NoCloudApplicationNotification', type: REG_DWORD, data: '1', option: clean-interface}
   # Disable all Windows Update notifications including restart warnings

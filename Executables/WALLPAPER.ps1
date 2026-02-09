@@ -1,5 +1,5 @@
-# =====================================================================
-# APEX OS — Desktop Wallpaper Deployment
+﻿# =====================================================================
+# APEX OS - Desktop Wallpaper Deployment
 # Sets custom wallpaper for current user, all existing users, and
 # default profile. Uses SystemParametersInfo P/Invoke for immediate
 # application without logoff.

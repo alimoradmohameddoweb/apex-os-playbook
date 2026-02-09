@@ -11,8 +11,9 @@ actions:
 
   - !powerShell:
       command: |
+        $outFile = Join-Path $env:windir 'ApexPackagesOld.txt'
         (Get-AppxPackage -AllUsers -ErrorAction SilentlyContinue).PackageFamilyName |
-          Out-File "$env:windir\ApexPackagesOld.txt" -Force
+          Out-File $outFile -Force
       wait: true
       weight: 5
       errorAction: log
@@ -337,7 +338,7 @@ actions:
   - !powerShell:
       command: |
         $regBase = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Appx\AppxAllUserStore\Deprovisioned'
-        $oldFile = "$env:windir\ApexPackagesOld.txt"
+        $oldFile = Join-Path $env:windir 'ApexPackagesOld.txt'
         if (Test-Path $oldFile) {
           $old = Get-Content $oldFile
           $current = (Get-AppxPackage -AllUsers -ErrorAction SilentlyContinue).PackageFamilyName

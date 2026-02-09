@@ -1,10 +1,10 @@
-@echo off
-:: FINALIZE.cmd — Final system optimization commands
+﻿@echo off
+:: FINALIZE.cmd - Final system optimization commands
 :: Runs after all other tasks to ensure a pristine, optimized state
-title Apex OS 3.0.0 — Final Optimization
+title Apex OS 3.0.1 - Final Optimization
 
 echo =============================================
-echo  Apex OS 3.0.0 — Final System Optimization
+echo  Apex OS 3.0.1 - Final System Optimization
 echo =============================================
 echo.
 
@@ -66,10 +66,10 @@ bcdedit /set bootstatuspolicy IgnoreAllFailures >nul 2>&1
 :: Use standard boot menu policy
 bcdedit /set bootmenupolicy standard >nul 2>&1
 :: Disable Hyper-V launch only when no hypervisor features are active
-:: (A12: gate check — preserves WSL2/Docker/Sandbox/DevDrive functionality)
+:: (A12: gate check - preserves WSL2/Docker/Sandbox/DevDrive functionality)
 for /f "tokens=3" %%a in ('bcdedit /enum {current} ^| findstr /i "hypervisorlaunchtype"') do (
     if /i "%%a"=="Auto" (
-        echo   Hyper-V hypervisor detected active — skipping hypervisorlaunchtype change
+        echo   Hyper-V hypervisor detected active - skipping hypervisorlaunchtype change
     ) else (
         bcdedit /set hypervisorlaunchtype off >nul 2>&1
     )

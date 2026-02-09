@@ -1,4 +1,4 @@
-# CLEANUP.ps1 — Advanced System Cleanup
+﻿# CLEANUP.ps1 - Advanced System Cleanup
 # Removes temporary files, caches, logs, and leftover installation artifacts
 # that the YAML-based cleanup cannot handle (requires PowerShell logic).
 
@@ -138,7 +138,7 @@ if ($recycleBin.Items().Count -gt 0) {
 }
 
 # =========================================================================
-# DISK CLEANUP EQUIVALENT — CLEANMGR STATEFLAGS
+# DISK CLEANUP EQUIVALENT - CLEANMGR STATEFLAGS
 # =========================================================================
 
 Write-Host "Running Disk Cleanup automation..." -ForegroundColor Yellow
