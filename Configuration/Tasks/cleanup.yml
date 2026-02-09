@@ -81,14 +81,14 @@ actions:
   - !scheduledTask: {path: '\Microsoft\Windows\BioEnrollment\*', operation: delete, errorAction: log}
 
   # =======================================================================
-  # SCHEDULED TASKS — WINDOWS DEFENDER (already removed)
+  # SCHEDULED TASKS — WINDOWS DEFENDER (gated by Defender toggle)
   # =======================================================================
 
-  - !scheduledTask: {path: '\Microsoft\Windows\Windows Defender\Windows Defender Cache Maintenance', operation: delete, errorAction: log}
-  - !scheduledTask: {path: '\Microsoft\Windows\Windows Defender\Windows Defender Cleanup', operation: delete, errorAction: log}
-  - !scheduledTask: {path: '\Microsoft\Windows\Windows Defender\Windows Defender Scheduled Scan', operation: delete, errorAction: log}
-  - !scheduledTask: {path: '\Microsoft\Windows\Windows Defender\Windows Defender Verification', operation: delete, errorAction: log}
-  - !scheduledTask: {path: '\Microsoft\Windows\ExploitGuard\ExploitGuard MDM policy Refresh', operation: delete, errorAction: log}
+  - !scheduledTask: {path: '\Microsoft\Windows\Windows Defender\Windows Defender Cache Maintenance', operation: delete, option: 'disable-defender', errorAction: log}
+  - !scheduledTask: {path: '\Microsoft\Windows\Windows Defender\Windows Defender Cleanup', operation: delete, option: 'disable-defender', errorAction: log}
+  - !scheduledTask: {path: '\Microsoft\Windows\Windows Defender\Windows Defender Scheduled Scan', operation: delete, option: 'disable-defender', errorAction: log}
+  - !scheduledTask: {path: '\Microsoft\Windows\Windows Defender\Windows Defender Verification', operation: delete, option: 'disable-defender', errorAction: log}
+  - !scheduledTask: {path: '\Microsoft\Windows\ExploitGuard\ExploitGuard MDM policy Refresh', operation: delete, option: 'disable-defender', errorAction: log}
 
   # =======================================================================
   # SCHEDULED TASKS — EDGE & OFFICE
@@ -161,7 +161,7 @@ actions:
   - !cmd: {command: 'rd /s /q "%LOCALAPPDATA%\Microsoft\BingChat" 2>nul', wait: true, weight: 5, errorAction: log}
   - !cmd: {command: 'rd /s /q "%LOCALAPPDATA%\Microsoft\Edge Copilot" 2>nul', wait: true, weight: 5, errorAction: log}
 
-  # Remove leftover Windows Defender directories
-  - !cmd: {command: 'rd /s /q "%ProgramData%\Microsoft\Windows Defender" 2>nul', wait: true, weight: 5, errorAction: log}
-  - !cmd: {command: 'rd /s /q "%ProgramFiles%\Windows Defender" 2>nul', wait: true, weight: 5, errorAction: log}
-  - !cmd: {command: 'rd /s /q "%ProgramFiles(x86)%\Windows Defender" 2>nul', wait: true, weight: 5, errorAction: log}
+  # Remove leftover Windows Defender directories (gated by Defender toggle)
+  - !cmd: {command: 'rd /s /q "%ProgramData%\Microsoft\Windows Defender" 2>nul', wait: true, weight: 5, option: 'disable-defender', errorAction: log}
+  - !cmd: {command: 'rd /s /q "%ProgramFiles%\Windows Defender" 2>nul', wait: true, weight: 5, option: 'disable-defender', errorAction: log}
+  - !cmd: {command: 'rd /s /q "%ProgramFiles(x86)%\Windows Defender" 2>nul', wait: true, weight: 5, option: 'disable-defender', errorAction: log}

@@ -184,6 +184,67 @@ actions:
   - !cmd: {command: 'reg delete "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v SecurityHealth /f 2>nul', wait: true, weight: 3, errorAction: log}
 
   # =======================================================================
+  # WINDOWS DEFENDER — COMPLETE DISABLE (gated by disable-defender)
+  # When user selects "Disable Defender" in the setup wizard, this
+  # fully disables Windows Defender antimalware engine, real-time
+  # protection, cloud protection, drivers, and services for maximum
+  # performance. Removes 5-10% background CPU overhead.
+  # =======================================================================
+
+  # --- Group Policy: Disable Defender antimalware engine ---
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender', value: 'DisableAntiSpyware', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender', value: 'DisableAntiVirus', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender', value: 'ServiceKeepAlive', type: REG_DWORD, data: '0', option: 'disable-defender'}
+
+  # --- Group Policy: Disable Real-Time Protection ---
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection', value: 'DisableRealtimeMonitoring', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection', value: 'DisableBehaviorMonitoring', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection', value: 'DisableIOAVProtection', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection', value: 'DisableOnAccessProtection', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection', value: 'DisableRoutinelyTakingAction', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection', value: 'DisableScanOnRealtimeEnable', type: REG_DWORD, data: '1', option: 'disable-defender'}
+
+  # --- Disable Cloud-Based Protection & Sample Submission ---
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet', value: 'SpynetReporting', type: REG_DWORD, data: '0', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet', value: 'SubmitSamplesConsent', type: REG_DWORD, data: '2', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\MpEngine', value: 'MpCloudBlockLevel', type: REG_DWORD, data: '0', option: 'disable-defender'}
+
+  # --- Disable Tamper Protection ---
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows Defender\Features', value: 'TamperProtection', type: REG_DWORD, data: '0', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows Defender\Features', value: 'TamperProtectionSource', type: REG_DWORD, data: '2', option: 'disable-defender'}
+
+  # --- Disable Defender Notifications ---
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\Notifications', value: 'DisableNotifications', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\Notifications', value: 'DisableEnhancedNotifications', type: REG_DWORD, data: '1', option: 'disable-defender'}
+
+  # --- Lock down Windows Security UI pages (Atlas) ---
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\Virus and threat protection', value: 'UILockdown', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\App and Browser protection', value: 'UILockdown', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\Firewall and network protection', value: 'UILockdown', type: REG_DWORD, data: '1', option: 'disable-defender'}
+
+  # --- Disable Defender Drivers (prevent loading at boot) ---
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\WdFilter', value: 'Start', type: REG_DWORD, data: '4', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\WdNisDrv', value: 'Start', type: REG_DWORD, data: '4', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\WdBoot', value: 'Start', type: REG_DWORD, data: '4', option: 'disable-defender'}
+
+  # --- Disable Defender Services ---
+  - !service: {name: 'WinDefend', operation: change, startup: 4, option: 'disable-defender', errorAction: log}
+  - !service: {name: 'WdNisSvc', operation: change, startup: 4, option: 'disable-defender', errorAction: log}
+  - !service: {name: 'SecurityHealthService', operation: change, startup: 4, option: 'disable-defender', errorAction: log}
+  - !service: {name: 'wscsvc', operation: change, startup: 4, option: 'disable-defender', errorAction: log}
+  - !service: {name: 'Sense', operation: delete, option: 'disable-defender', errorAction: log}
+  - !service: {name: 'webthreatdefsvc', operation: change, startup: 4, option: 'disable-defender', errorAction: log}
+  - !service: {name: 'webthreatdefusersvc', operation: change, startup: 4, option: 'disable-defender', errorAction: log}
+
+  # --- Disable Security Center notifications via registry (defense-in-depth) ---
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows Defender', value: 'DisableAntiSpyware', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows Defender', value: 'DisableAntiVirus', type: REG_DWORD, data: '1', option: 'disable-defender'}
+
+  # --- Remove 'Open file - Security Warning' dialog (Atlas) ---
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Attachments', value: 'SaveZoneInformation', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Associations', value: 'ModRiskFileTypes', type: REG_SZ, data: '.bat;.exe;.reg;.vbs;.chm;.msi;.js;.cmd', option: 'disable-defender'}
+
+  # =======================================================================
   # WINDOWS SCRIPT HOST
   # =======================================================================
 

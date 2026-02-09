@@ -31,6 +31,7 @@ This is not a simple debloater. Apex OS is a **complete system re-engineering** 
 - Every network stack parameter is optimized
 - Every bloatware package is surgically removed
 - Every AI/Copilot/Recall component is eliminated
+- Windows Defender is toggleable — disable for max FPS or keep enabled for security
 
 > ⚠️ **WARNING**: This playbook makes deep, irreversible changes. Use only on a **fresh Windows installation**. Always create a system image backup before applying.
 
@@ -134,7 +135,7 @@ Three user-selectable policies:
 - Fresh Windows 10 21H2/22H2 or Windows 11 22H2/23H2/24H2/25H2 installation
 - Internet connection
 - No pending Windows Updates
-- Windows Defender disabled
+- Windows Defender disabled (AME Wizard will guide you to temporarily disable it)
 - No third-party antivirus
 - Plugged into power (laptops)
 - Password set on user account
@@ -163,6 +164,12 @@ Three user-selectable policies:
 ---
 
 ## Options
+
+### Windows Defender (RadioPage)
+| Option | Description |
+|--------|-------------|
+| **Disable Defender** (default) | Fully disables Windows Defender via Group Policy, services, drivers, and scheduled tasks for maximum performance |
+| **Keep Defender Enabled** | Leave Windows Defender active — recommended if you don't use a third-party antivirus |
 
 ### Browser Selection (RadioImagePage)
 | Option | Description |

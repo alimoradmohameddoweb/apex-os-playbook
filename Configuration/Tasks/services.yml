@@ -167,16 +167,11 @@ actions:
   # =======================================================================
 
   - !service: {name: 'cloudidsvc', operation: change, startup: 4, errorAction: log}
-  - !service: {name: 'webthreatdefsvc', operation: change, startup: 4, errorAction: log}
-  - !service: {name: 'webthreatdefusersvc', operation: change, startup: 4, errorAction: log}
-
   # =======================================================================
-  # ADDITIONAL SECURITY / DEFENDER SERVICES
+  # DEFENDER / SECURITY SERVICES — moved to security.yml (gated by disable-defender)
+  # SecurityHealthService, wscsvc, Sense, webthreatdefsvc, webthreatdefusersvc
+  # are now controlled by the Defender toggle in the setup wizard.
   # =======================================================================
-
-  - !service: {name: 'SecurityHealthService', operation: change, startup: 4, errorAction: log}
-  - !service: {name: 'wscsvc', operation: change, startup: 4, errorAction: log}
-  - !service: {name: 'Sense', operation: delete, errorAction: log}
 
   # =======================================================================
   # UE-V & INSTALL SERVICE
