@@ -39,7 +39,7 @@ actions:
   # PHASE 6: SECURITY HARDENING
   # ===================================================================
   - !status: {status: 'Hardening security configuration'}
-  - !task: {path: 'Tasks\security.yml', option: 'harden-security'}
+  - !task: {path: 'Tasks\security.yml'}
 
   # ===================================================================
   # PHASE 7: WINDOWS UPDATE MANAGEMENT
