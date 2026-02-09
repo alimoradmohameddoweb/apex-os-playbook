@@ -1,0 +1,98 @@
+---
+title: Finalization
+description: >
+  Performs final system optimization — .NET native image compilation,
+  system file verification, OS branding, and cleanup run.
+
+actions:
+  # =======================================================================
+  # .NET NATIVE IMAGE GENERATION (NGEN)
+  # =======================================================================
+
+  - !status: {status: 'Compiling .NET native images...'}
+  - !run: {exe: 'powershell.exe', args: '-NoProfile -ExecutionPolicy Bypass -File NGEN.ps1', weight: 120, wait: true, exeDir: true, errorAction: log}
+
+  # =======================================================================
+  # DISM COMPONENT CLEANUP — MUST RUN BEFORE SFC
+  # Updates the component store baseline so SFC doesn't restore removed files
+  # =======================================================================
+
+  - !status: {status: 'Cleaning component store...'}
+  - !cmd: {command: 'DISM /Online /Cleanup-Image /StartComponentCleanup', wait: true, weight: 100, errorAction: log}
+
+  # =======================================================================
+  # SYSTEM FILE CHECKER — REPAIR INTEGRITY
+  # =======================================================================
+
+  - !status: {status: 'Verifying system file integrity...'}
+  - !cmd: {command: 'sfc /scannow', wait: true, weight: 200, errorAction: log}
+
+  # =======================================================================
+  # ADVANCED CLEANUP (runs BEFORE compact to avoid compressing deleted files)
+  # =======================================================================
+
+  - !status: {status: 'Running advanced cleanup...'}
+  - !run: {exe: 'powershell.exe', args: '-NoProfile -ExecutionPolicy Bypass -File CLEANUP.ps1', weight: 60, wait: true, exeDir: true, errorAction: log}
+
+  # =======================================================================
+  # COMPACT OS — REDUCE DISK FOOTPRINT
+  # =======================================================================
+
+  - !status: {status: 'Compacting OS files...'}
+  - !cmd: {command: 'compact /compactos:always', wait: true, weight: 150, errorAction: log}
+
+  # =======================================================================
+  # FILE ASSOCIATIONS
+  # =======================================================================
+
+  - !status: {status: 'Setting file associations...'}
+  - !run: {exe: 'cmd.exe', args: '/c FILEASSOC.cmd', weight: 10, wait: true, exeDir: true, errorAction: log}
+
+  # =======================================================================
+  # APEX OS BRANDING
+  # =======================================================================
+
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation', value: 'Manufacturer', type: REG_SZ, data: 'Apex OS'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation', value: 'Model', type: REG_SZ, data: 'Apex OS 3.0.0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation', value: 'SupportURL', type: REG_SZ, data: 'https://github.com/apex-os'}
+
+  # =======================================================================
+  # APEX OS WALLPAPER — Deploy custom desktop wallpaper
+  # Copies wallpaper to %SystemRoot%\Web\Wallpaper\ApexOS\, sets it for
+  # all user hives, and applies immediately via SystemParametersInfo.
+  # =======================================================================
+
+  - !status: {status: 'Applying Apex OS wallpaper...'}
+
+  # Set wallpaper path for current user (registry baseline)
+  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'WallPaper', type: REG_SZ, data: '%SystemRoot%\Web\Wallpaper\ApexOS\Apex-background.jpg', option: 'configure-wallpaper'}
+  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'WallpaperStyle', type: REG_SZ, data: '10', option: 'configure-wallpaper'}
+  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'TileWallpaper', type: REG_SZ, data: '0', option: 'configure-wallpaper'}
+
+  # Set wallpaper history so Settings app shows the correct image
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Wallpapers', value: 'BackgroundHistoryPath0', type: REG_SZ, data: '%SystemRoot%\Web\Wallpaper\ApexOS\Apex-background.jpg', option: 'configure-wallpaper'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Wallpapers', value: 'BackgroundType', type: REG_DWORD, data: '0', option: 'configure-wallpaper'}
+
+  # Set wallpaper as default for ALL new users
+  - !registryValue: {path: 'HKU\AME_UserHive_Default\Control Panel\Desktop', value: 'WallPaper', type: REG_SZ, data: '%SystemRoot%\Web\Wallpaper\ApexOS\Apex-background.jpg', option: 'configure-wallpaper'}
+  - !registryValue: {path: 'HKU\AME_UserHive_Default\Control Panel\Desktop', value: 'WallpaperStyle', type: REG_SZ, data: '10', option: 'configure-wallpaper'}
+  - !registryValue: {path: 'HKU\AME_UserHive_Default\Control Panel\Desktop', value: 'TileWallpaper', type: REG_SZ, data: '0', option: 'configure-wallpaper'}
+
+  # Disable lockscreen overlays (RotatingLockScreenEnabled already set in privacy.yml)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\Personalization', value: 'LockScreenOverlaysDisabled', type: REG_DWORD, data: '1', option: 'configure-wallpaper'}
+
+  # Deploy wallpaper file and apply immediately via P/Invoke
+  - !run: {exe: 'powershell.exe', args: '-NoProfile -ExecutionPolicy Bypass -File WALLPAPER.ps1', weight: 15, wait: true, exeDir: true, runas: currentUserElevated, option: 'configure-wallpaper', errorAction: log}
+
+  # =======================================================================
+  # FINAL SYSTEM COMMANDS
+  # =======================================================================
+
+  - !status: {status: 'Running final optimizations...'}
+  - !run: {exe: 'cmd.exe', args: '/c FINALIZE.cmd', weight: 40, wait: true, exeDir: true, errorAction: log}
+
+  # =======================================================================
+  # EXPLORER RESTART — APPLY ALL SHELL CHANGES
+  # =======================================================================
+
+  - !cmd: {command: 'taskkill /f /im explorer.exe & start explorer.exe', wait: true, weight: 5, errorAction: log}

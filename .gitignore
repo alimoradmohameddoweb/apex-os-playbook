@@ -1,0 +1,19 @@
+# Build outputs
+*.apbx
+*.7z
+*.zip
+
+# AME Wizard temp
+*.log
+*.tmp
+
+# OS artifacts
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# PowerShell
+*.ps1xml
+
+# VS Code
+.vscode/

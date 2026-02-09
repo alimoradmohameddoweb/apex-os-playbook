@@ -1,0 +1,132 @@
+---
+title: Software Installation
+description: >
+  Installs user-selected browser and essential tools. Browser selection
+  is gated by feature options from playbook.conf.
+
+actions:
+  # =======================================================================
+  # BROWSER — FIREFOX (gated by browser-firefox)
+  # =======================================================================
+
+  - !software:
+      name: Firefox
+      source: chocolatey
+      option: browser-firefox
+      weight: 80
+
+  # Windows 11 hash-protects UserChoice keys;
+  # default browser must be set manually after install.
+
+  # Firefox privacy/performance policies (applied only if Firefox installed)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Mozilla\Firefox', value: 'DisableTelemetry', type: REG_DWORD, data: '1', option: browser-firefox}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Mozilla\Firefox', value: 'DisableDefaultBrowserAgent', type: REG_DWORD, data: '1', option: browser-firefox}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Mozilla\Firefox', value: 'DisablePocket', type: REG_DWORD, data: '1', option: browser-firefox}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Mozilla\Firefox', value: 'DisableFirefoxStudies', type: REG_DWORD, data: '1', option: browser-firefox}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Mozilla\Firefox', value: 'OverrideFirstRunPage', type: REG_SZ, data: '', option: browser-firefox}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Mozilla\Firefox', value: 'OverridePostUpdatePage', type: REG_SZ, data: '', option: browser-firefox}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Mozilla\Firefox', value: 'NetworkPrediction', type: REG_DWORD, data: '0', option: browser-firefox}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Mozilla\Firefox', value: 'CaptivePortal', type: REG_DWORD, data: '0', option: browser-firefox}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Mozilla\Firefox', value: 'DisableFormHistory', type: REG_DWORD, data: '1', option: browser-firefox}
+
+  # Brave privacy policies (applied only if Brave installed)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\BraveSoftware\Brave', value: 'MetricsReportingEnabled', type: REG_DWORD, data: '0', option: browser-brave}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\BraveSoftware\Brave', value: 'BraveRewardsDisabled', type: REG_DWORD, data: '1', option: browser-brave}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\BraveSoftware\Brave', value: 'BraveVPNDisabled', type: REG_DWORD, data: '1', option: browser-brave}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\BraveSoftware\Brave', value: 'BraveWalletDisabled', type: REG_DWORD, data: '1', option: browser-brave}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\BraveSoftware\Brave', value: 'IPFSEnabled', type: REG_DWORD, data: '0', option: browser-brave}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\BraveSoftware\Brave', value: 'TorDisabled', type: REG_DWORD, data: '1', option: browser-brave}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\BraveSoftware\Brave', value: 'BraveAIChatEnabled', type: REG_DWORD, data: '0', option: browser-brave}
+
+  # =======================================================================
+  # BROWSER — BRAVE (gated by browser-brave)
+  # =======================================================================
+
+  - !software:
+      name: Brave
+      source: chocolatey
+      option: browser-brave
+      weight: 80
+
+  # =======================================================================
+  # BROWSER — UNGOOGLED CHROMIUM (gated by browser-ugc)
+  # =======================================================================
+
+  - !software:
+      name: ungoogled-chromium
+      source: chocolatey
+      option: browser-ugc
+      weight: 80
+
+  # =======================================================================
+  # ESSENTIAL SOFTWARE — ALWAYS INSTALLED
+  # =======================================================================
+
+  # 7-Zip — fast, open-source archiver
+  - !software:
+      name: 7zip
+      source: chocolatey
+      weight: 40
+
+  # VLC — universal media player
+  - !software:
+      name: vlc
+      source: chocolatey
+      weight: 40
+
+  # =======================================================================
+  # UNPIN EDGE AND SET DEFAULTS
+  # =======================================================================
+
+  # Prevent Edge from being set as default handler
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'DefaultBrowserSettingEnabled', type: REG_DWORD, data: '0'}
+
+  # Block Edge first-run experience
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'HideFirstRunExperience', type: REG_DWORD, data: '1'}
+
+  # Disable Edge telemetry and tracking
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'PersonalizationReportingEnabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'MetricsReportingEnabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'SendSiteInfoToImproveServices', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'DiagnosticData', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'EdgeShoppingAssistantEnabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'CopilotCDPPageContext', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'HubsSidebarEnabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'EdgeCollectionsEnabled', type: REG_DWORD, data: '0'}
+
+  # Disable Edge AI / Copilot features
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'CopilotPageContext', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'EdgeEntraCopilotPageContext', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'Microsoft365CopilotChatIconEnabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'EdgeHistoryAISearchEnabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'ComposeInlineEnabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'GenAILocalFoundationalModelSettings', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'ShowRecommendationsEnabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'DiscoverPageContextEnabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'SearchSuggestEnabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'SpotlightExperiencesAndSuggestionsEnabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'MicrosoftEdgeInsiderPromotionEnabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'TyposquattingCheckerEnabled', type: REG_DWORD, data: '0'}
+  # Disable Edge user feedback prompts (winutil)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'UserFeedbackAllowed', type: REG_DWORD, data: '0'}
+  # Send Do Not Track header (winutil)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'ConfigureDoNotTrack', type: REG_DWORD, data: '1'}
+  # Disable Edge error page suggestions (winutil)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'AlternateErrorPagesEnabled', type: REG_DWORD, data: '0'}
+  # Hide Microsoft Rewards upsells (winutil)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'ShowMicrosoftRewards', type: REG_DWORD, data: '0'}
+  # Disable Edge web widget (winutil)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'WebWidgetAllowed', type: REG_DWORD, data: '0'}
+  # Disable Edge asset delivery service (winutil)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'EdgeAssetDeliveryServiceEnabled', type: REG_DWORD, data: '0'}
+  # Disable Edge wallet donation feature (winutil)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'WalletDonationEnabled', type: REG_DWORD, data: '0'}
+
+  # Prevent Edge auto-update
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\EdgeUpdate', value: 'UpdateDefault', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\EdgeUpdate', value: 'AutoUpdateCheckPeriodMinutes', type: REG_DWORD, data: '0'}
+  # Prevent Edge from creating desktop shortcuts (winutil)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\EdgeUpdate', value: 'CreateDesktopShortcutDefault', type: REG_DWORD, data: '0'}
+
+  # Remove Edge Desktop shortcut if present
+  - !cmd: {command: 'del /f /q "%PUBLIC%\Desktop\Microsoft Edge.lnk" 2>nul & del /f /q "%USERPROFILE%\Desktop\Microsoft Edge.lnk" 2>nul', wait: true, weight: 3, errorAction: log}

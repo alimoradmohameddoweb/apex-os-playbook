@@ -1,0 +1,72 @@
+---
+title: Apex OS
+description: >
+  Next-generation Windows 10 & 11 playbook engineered for maximum performance,
+  absolute privacy, total stability, and the highest FPS achievable.
+
+actions:
+  # ===================================================================
+  # PHASE 1: PRIVACY & TELEMETRY ELIMINATION
+  # ===================================================================
+  - !status: {status: 'Eliminating telemetry and data collection'}
+  - !task: {path: 'Tasks\privacy.yml', option: 'disable-telemetry'}
+
+  # ===================================================================
+  # PHASE 2: BLOATWARE REMOVAL
+  # ===================================================================
+  - !status: {status: 'Removing bloatware packages'}
+  - !task: {path: 'Tasks\debloat.yml', option: 'remove-appx'}
+
+  # ===================================================================
+  # PHASE 3: SERVICE OPTIMIZATION
+  # ===================================================================
+  - !status: {status: 'Optimizing system services'}
+  - !task: {path: 'Tasks\services.yml'}
+
+  # ===================================================================
+  # PHASE 4: PERFORMANCE OPTIMIZATION
+  # ===================================================================
+  - !status: {status: 'Applying maximum performance optimizations'}
+  - !task: {path: 'Tasks\performance.yml', option: 'max-performance'}
+
+  # ===================================================================
+  # PHASE 5: NETWORK OPTIMIZATION
+  # ===================================================================
+  - !status: {status: 'Optimizing network stack'}
+  - !task: {path: 'Tasks\network.yml', option: 'optimize-network'}
+
+  # ===================================================================
+  # PHASE 6: SECURITY HARDENING
+  # ===================================================================
+  - !status: {status: 'Hardening security configuration'}
+  - !task: {path: 'Tasks\security.yml', option: 'harden-security'}
+
+  # ===================================================================
+  # PHASE 7: WINDOWS UPDATE MANAGEMENT
+  # ===================================================================
+  - !status: {status: 'Configuring Windows Update policy'}
+  - !task: {path: 'Tasks\updates.yml'}
+
+  # ===================================================================
+  # PHASE 8: INTERFACE CLEANUP
+  # ===================================================================
+  - !status: {status: 'Cleaning user interface'}
+  - !task: {path: 'Tasks\interface.yml', option: 'clean-interface'}
+
+  # ===================================================================
+  # PHASE 9: SCHEDULED TASKS & CLEANUP
+  # ===================================================================
+  - !status: {status: 'Cleaning scheduled tasks and temporary files'}
+  - !task: {path: 'Tasks\cleanup.yml'}
+
+  # ===================================================================
+  # PHASE 10: SOFTWARE INSTALLATION
+  # ===================================================================
+  - !status: {status: 'Installing replacement software'}
+  - !task: {path: 'Tasks\software.yml'}
+
+  # ===================================================================
+  # PHASE 11: FINALIZATION
+  # ===================================================================
+  - !status: {status: 'Finalizing system optimization'}
+  - !task: {path: 'Tasks\finalize.yml'}
