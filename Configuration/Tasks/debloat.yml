@@ -138,7 +138,7 @@ actions:
   # Voice Recorder
   - !appx: {name: 'Microsoft.WindowsSoundRecorder', errorAction: log}
 
-  # Screen Sketch (keep Snipping Tool)
+  # Screen Sketch / Snipping Tool (UWP) — users can reinstall from Store
   - !appx: {name: 'Microsoft.ScreenSketch', errorAction: log}
 
   # Copilot

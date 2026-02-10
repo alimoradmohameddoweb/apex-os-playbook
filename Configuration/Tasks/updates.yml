@@ -34,14 +34,23 @@ actions:
       data: '1'
       option: updates-security
 
-  # Win11 — pin to 24H2
+  # Win11 22H2-24H2 — pin to 24H2
   - !registryValue:
       path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate'
       value: 'TargetReleaseVersionInfo'
       type: REG_SZ
       data: '24H2'
       option: updates-security
-      builds: ['>=22621']
+      builds: ['22621', '22631', '26100', '26120']
+
+  # Win11 25H2 — pin to 25H2
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate'
+      value: 'TargetReleaseVersionInfo'
+      type: REG_SZ
+      data: '25H2'
+      option: updates-security
+      builds: ['26200']
 
   # Win10 — pin to 22H2 (applies to both 21H2/19044 and 22H2/19045 builds)
   - !registryValue:
