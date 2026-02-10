@@ -137,21 +137,30 @@ actions:
   # Disable caching of domain logon credentials
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon', value: 'CachedLogonsCount', type: REG_SZ, data: '0'}
 
-  # Hide last logged-in username on login screen (AME-10-0.8)
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'DontDisplayLastUserName', type: REG_DWORD, data: '1'}
+  # Show last logged-in username on login screen (user-friendly default)
+  # DontDisplayLastUserName=0 ensures the logon screen shows the user's name
+  # instead of forcing manual username entry ("Other user") which confuses beginners.
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'DontDisplayLastUserName', type: REG_DWORD, data: '0'}
 
   # =======================================================================
-  # UAC HARDENING
+  # UAC — BALANCED (secure but not intrusive)
   # =======================================================================
 
-  # UAC — prompt on secure desktop
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'PromptOnSecureDesktop', type: REG_DWORD, data: '1'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'ConsentPromptBehaviorAdmin', type: REG_DWORD, data: '2'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'ConsentPromptBehaviorUser', type: REG_DWORD, data: '0'}
+  # Keep UAC enabled (required for Store apps and modern security)
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'EnableLUA', type: REG_DWORD, data: '1'}
+  # Admin prompt: notify only when apps try to make changes (Windows default)
+  # 5 = Prompt for consent (no secure desktop) — less intrusive, still secure
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'ConsentPromptBehaviorAdmin', type: REG_DWORD, data: '5'}
+  # Non-admin users: auto-deny elevation requests
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'ConsentPromptBehaviorUser', type: REG_DWORD, data: '0'}
+  # No secure desktop dimming (faster, less jarring)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'PromptOnSecureDesktop', type: REG_DWORD, data: '0'}
+  # Don't require code signing for elevated apps (allows unsigned software)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'ValidateAdminCodeSignatures', type: REG_DWORD, data: '0'}
+  # Don't filter built-in Administrator token (single-user desktop scenario)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'FilterAdministratorToken', type: REG_DWORD, data: '0'}
+  # Auto-detect installers and elevate (standard Windows behavior)
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'EnableInstallerDetection', type: REG_DWORD, data: '1'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'ValidateAdminCodeSignatures', type: REG_DWORD, data: '1'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'FilterAdministratorToken', type: REG_DWORD, data: '1'}
 
   # =======================================================================
   # SMART APP CONTROL & SMARTSCREEN
