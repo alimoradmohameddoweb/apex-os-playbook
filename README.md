@@ -228,11 +228,10 @@ apex-os/
 │       ├── interface.yml      # ~195 actions — shell/taskbar/explorer cleanup
 │       ├── cleanup.yml        # ~62 actions — scheduled tasks/file cleanup
 │       ├── software.yml       # ~41 actions — browser/tools installation
-│       └── finalize.yml       # ~27 actions — NGEN, SFC, branding, wallpaper
+│       └── finalize.yml       # ~25 actions — SFC, branding, wallpaper
 ├── Executables/
 │   ├── CLEANUP.ps1            # Advanced system cleanup (caches/logs/dumps)
 │   ├── FINALIZE.cmd           # Final optimizations (DNS/Winsock/fonts/GPU)
-│   ├── NGEN.ps1               # .NET native image compilation
 │   ├── WALLPAPER.ps1          # Desktop wallpaper deployment (P/Invoke)
 │   └── Apex-background.jpg    # Apex OS desktop wallpaper
 └── Images/
@@ -253,7 +252,7 @@ apex-os/
 8. **Interface** → Shell, taskbar, explorer, dark mode cleanup
 9. **Cleanup** → Delete 70+ scheduled tasks and caches
 10. **Software** → Install browser + 7-Zip
-11. **Finalize** → NGEN, DISM cleanup, SFC, Compact OS, wallpaper, branding
+11. **Finalize** → DISM cleanup, SFC, Compact OS, wallpaper, branding
 
 ---
 
@@ -305,7 +304,7 @@ Every entry was validated against the [official AME Wizard documentation](https:
 git clone https://github.com/alimoradmohameddoweb/apex-os-playbook.git
 cd apex-os-playbook
 powershell -NoProfile -ExecutionPolicy Bypass -File build.ps1
-# Output: Apex-OS-v3.0.4.apbx (password: malte)
+# Output: Apex-OS-v3.0.5.apbx (password: malte)
 ```
 
 ---
@@ -317,5 +316,5 @@ This project is licensed under the [GNU General Public License v3.0](LICENSE).
 ---
 
 <p align="center">
-  <strong>Apex OS 3.0.4</strong> — Zero telemetry. Maximum FPS. Total control.
+  <strong>Apex OS 3.0.5</strong> — Zero telemetry. Maximum FPS. Total control.
 </p>
