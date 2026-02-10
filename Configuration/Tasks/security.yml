@@ -318,11 +318,12 @@ actions:
   # Disable LM hash storage (forces NTLM hash only)
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Lsa', value: 'NoLMHash', type: REG_DWORD, data: '1'}
 
-  # Restrict NTLM: audit incoming, deny outgoing to remote servers
-  # RestrictReceivingNTLMTraffic=1 (audit only) avoids breaking local app auth;
-  # RestrictSendingNTLMTraffic=2 (deny) blocks outbound NTLM relay attacks.
+  # Restrict NTLM: audit both directions (prevents breaking UAC elevation)
+  # Using audit-only (1) instead of deny (2) for outbound because deny can
+  # block credential validation chains during UAC / ShellExecuteEx runas,
+  # causing "A referral was returned from the server" on app elevation.
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0', value: 'RestrictReceivingNTLMTraffic', type: REG_DWORD, data: '1'}
-  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0', value: 'RestrictSendingNTLMTraffic', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0', value: 'RestrictSendingNTLMTraffic', type: REG_DWORD, data: '1'}
 
   # =======================================================================
   # ANONYMOUS ACCESS RESTRICTIONS

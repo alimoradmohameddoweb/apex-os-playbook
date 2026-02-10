@@ -305,7 +305,9 @@ actions:
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\ctfmon.exe\PerfOptions', value: 'CpuPriorityClass', type: REG_DWORD, data: '5'}
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\fontdrvhost.exe\PerfOptions', value: 'CpuPriorityClass', type: REG_DWORD, data: '1'}
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\fontdrvhost.exe\PerfOptions', value: 'IoPriority', type: REG_DWORD, data: '0'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\lsass.exe\PerfOptions', value: 'CpuPriorityClass', type: REG_DWORD, data: '1'}
+  # LSASS is the security authority — keep at HIGH so credential validation
+  # (UAC, login, RunAs) is never starved by CPU contention.
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\lsass.exe\PerfOptions', value: 'CpuPriorityClass', type: REG_DWORD, data: '3'}
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sihost.exe\PerfOptions', value: 'CpuPriorityClass', type: REG_DWORD, data: '1'}
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sihost.exe\PerfOptions', value: 'IoPriority', type: REG_DWORD, data: '0'}
 

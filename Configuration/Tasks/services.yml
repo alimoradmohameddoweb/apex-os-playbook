@@ -96,7 +96,8 @@ actions:
   - !service: {name: 'PimIndexMaintenanceSvc', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'DusmSvc', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'MessagingService', operation: change, startup: 4, errorAction: log}
-  - !service: {name: 'seclogon', operation: change, startup: 4, errorAction: log}
+  # seclogon left at manual — required for RunAs elevation and AME Wizard InterLink
+  - !service: {name: 'seclogon', operation: change, startup: 3, errorAction: log}
 
   # =======================================================================
   # NETWORKING SERVICES
@@ -111,8 +112,9 @@ actions:
   - !service: {name: 'p2pimsvc', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'p2psvc', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'PNRPAutoReg', operation: change, startup: 4, errorAction: log}
-  # Disable NetBIOS over TCP/IP transport driver (RapidOS)
-  - !service: {name: 'NetBT', operation: change, startup: 4, errorAction: log}
+  # NetBT (NetBIOS transport) left at default — per-interface disable in
+  # network.yml (NetbiosOptions=2) is sufficient; disabling the driver
+  # service breaks local name-resolution used during UAC elevation.
 
   # =======================================================================
   # INDEXING & SEARCH
