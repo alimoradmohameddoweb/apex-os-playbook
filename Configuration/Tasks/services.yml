@@ -12,10 +12,11 @@ actions:
   - !service: {name: 'WerSvc', operation: delete, errorAction: log}
 
   # =======================================================================
-  # XBOX & GAMING SERVICES (not needed — games work without them)
+  # XBOX & GAMING SERVICES — disabled (not deleted) so Game Pass can be
+  # re-enabled if needed. Most games work fine without these services.
   # =======================================================================
 
-  - !service: {name: 'XblAuthManager', operation: delete, errorAction: log}
+  - !service: {name: 'XblAuthManager', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'XblGameSave', operation: delete, errorAction: log}
   - !service: {name: 'XboxNetApiSvc', operation: delete, errorAction: log}
   - !service: {name: 'XboxGipSvc', operation: change, startup: 4, errorAction: log}
@@ -109,7 +110,8 @@ actions:
   - !service: {name: 'WFDSConMgrSvc', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'SSDPSRV', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'upnphost', operation: change, startup: 4, errorAction: log}
-  - !service: {name: 'SharedAccess', operation: change, startup: 4, errorAction: log}
+  # SharedAccess — ICS / Mobile Hotspot. Manual so hotspot works on demand.
+  - !service: {name: 'SharedAccess', operation: change, startup: 3, errorAction: log}
   - !service: {name: 'PNRPsvc', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'p2pimsvc', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'p2psvc', operation: change, startup: 4, errorAction: log}
@@ -130,16 +132,19 @@ actions:
 
   - !service: {name: 'WdiServiceHost', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'WdiSystemHost', operation: change, startup: 4, errorAction: log}
-  - !service: {name: 'DPS', operation: change, startup: 4, errorAction: log}
+  # DPS — Diagnostic Policy Service. Manual so network troubleshooter works on demand.
+  - !service: {name: 'DPS', operation: change, startup: 3, errorAction: log}
   - !service: {name: 'Wecsvc', operation: change, startup: 4, errorAction: log}
 
   # =======================================================================
   # MISCELLANEOUS LOW-VALUE SERVICES
   # =======================================================================
 
-  - !service: {name: 'PcaSvc', operation: change, startup: 4, errorAction: log}
+  # PcaSvc — Program Compatibility Assistant. Manual so legacy app compat shims trigger on demand.
+  - !service: {name: 'PcaSvc', operation: change, startup: 3, errorAction: log}
   - !service: {name: 'TrkWks', operation: change, startup: 4, errorAction: log}
-  - !service: {name: 'iphlpsvc', operation: change, startup: 4, errorAction: log}
+  # iphlpsvc — IP Helper. Manual so Teredo/6to4 tunneling works for P2P games on demand.
+  - !service: {name: 'iphlpsvc', operation: change, startup: 3, errorAction: log}
   - !service: {name: 'CscService', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'RasAuto', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'SysMain', operation: change, startup: 4, errorAction: log}

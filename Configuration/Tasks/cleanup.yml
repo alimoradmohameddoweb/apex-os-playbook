@@ -50,7 +50,9 @@ actions:
   - !scheduledTask: {path: '\Microsoft\Windows\MemoryDiagnostic\ProcessMemoryDiagnosticEvents', operation: delete, errorAction: log}
   - !scheduledTask: {path: '\Microsoft\Windows\MemoryDiagnostic\RunFullMemoryDiagnostic', operation: delete, errorAction: log}
   - !scheduledTask: {path: '\Microsoft\Windows\MUI\LPRemove', operation: delete, errorAction: log}
-  - !scheduledTask: {path: '\Microsoft\Windows\Registry\RegIdleBackup', operation: delete, errorAction: log}
+  # RegIdleBackup intentionally kept — periodic registry hive backups to
+  # %SystemRoot%\System32\config\RegBack provide a recovery path if
+  # registry corruption occurs. Runs rarely with negligible overhead.
 
   # =======================================================================
   # SCHEDULED TASKS — SPEECH & HANDWRITING
@@ -110,11 +112,10 @@ actions:
   - !scheduledTask: {path: '\Microsoft\Windows\Workplace Join\*', operation: delete, errorAction: log}
 
   # =======================================================================
-  # SCHEDULED TASKS — DEVICE INFORMATION & MANAGEMENT
+  # SCHEDULED TASKS — DEVICE MANAGEMENT (Device Information already
+  # deleted in privacy.yml — only unique management tasks here)
   # =======================================================================
 
-  - !scheduledTask: {path: '\Microsoft\Windows\Device Information\Device', operation: delete, errorAction: log}
-  - !scheduledTask: {path: '\Microsoft\Windows\Device Information\Device User', operation: delete, errorAction: log}
   - !scheduledTask: {path: '\Microsoft\Windows\Management\Provisioning\Cellular', operation: delete, errorAction: log}
   - !scheduledTask: {path: '\Microsoft\Windows\Flighting\*', operation: delete, errorAction: log}
   - !scheduledTask: {path: '\Microsoft\Windows\PushToInstall\*', operation: delete, errorAction: log}

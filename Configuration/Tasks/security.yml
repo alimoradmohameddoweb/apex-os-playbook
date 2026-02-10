@@ -252,7 +252,9 @@ actions:
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows Defender', value: 'DisableAntiVirus', type: REG_DWORD, data: '1', option: 'disable-defender'}
 
   # --- Remove 'Open file - Security Warning' dialog (Atlas) ---
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Attachments', value: 'SaveZoneInformation', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  # NOTE: SaveZoneInformation intentionally NOT set here — the global
+  # Zone Information Preservation section (below) sets it to 2 for all users.
+  # Only ModRiskFileTypes is defender-gated to suppress warnings for common dev files.
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Associations', value: 'ModRiskFileTypes', type: REG_SZ, data: '.bat;.exe;.reg;.vbs;.chm;.msi;.js;.cmd', option: 'disable-defender'}
 
   # =======================================================================

@@ -227,13 +227,8 @@ actions:
   - !registryValue: {path: 'HKCU\SOFTWARE\Policies\Microsoft\Assistance\Client\1.0', value: 'NoExplicitFeedback', type: REG_DWORD, data: '1'}
   - !registryValue: {path: 'HKCU\SOFTWARE\Policies\Microsoft\Assistance\Client\1.0', value: 'NoImplicitFeedback', type: REG_DWORD, data: '1'}
 
-  # Disable Windows Movie Maker web access (HKCU + HKLM)
-  - !registryValue: {path: 'HKCU\SOFTWARE\Policies\Microsoft\WindowsMovieMaker', value: 'WebHelp', type: REG_DWORD, data: '1'}
-  - !registryValue: {path: 'HKCU\SOFTWARE\Policies\Microsoft\WindowsMovieMaker', value: 'CodecDownload', type: REG_DWORD, data: '1'}
-  - !registryValue: {path: 'HKCU\SOFTWARE\Policies\Microsoft\WindowsMovieMaker', value: 'WebPublish', type: REG_DWORD, data: '1'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\WindowsMovieMaker', value: 'WebHelp', type: REG_DWORD, data: '1'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\WindowsMovieMaker', value: 'CodecDownload', type: REG_DWORD, data: '1'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\WindowsMovieMaker', value: 'WebPublish', type: REG_DWORD, data: '1'}
+  # NOTE: Windows Movie Maker entries removed — Movie Maker hasn't shipped
+  # since Windows 7; these policies have no effect on Win10/11.
 
   # =======================================================================
   # APP PRIVACY PERMISSIONS (Deny by default)

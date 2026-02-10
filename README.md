@@ -259,10 +259,10 @@ apex-os/
 ## FAQ
 
 **Q: Can I undo this?**
-A: Not easily. This playbook makes deep system changes. Always install on a fresh Windows and create a system image backup before applying.
+A: System Restore is kept enabled with a minimal 3% disk allocation, so restore points are created when drivers or apps are installed. For full rollback, always create a system image backup before applying.
 
 **Q: Will my games still work?**
-A: Yes. Game Mode is enabled, Xbox gaming services are removed (games don't need them), and GPU/CPU/timer optimizations specifically target gaming performance.
+A: Yes. Game Mode is enabled, Xbox gaming services are disabled but not deleted (re-enable for Game Pass if needed), and GPU/CPU/timer optimizations specifically target gaming performance.
 
 **Q: Will Windows Update still work?**
 A: Depends on your selection. "Security Only" keeps critical patches flowing. "Disable All" completely stops updates. "Keep Default" leaves it unchanged.
@@ -304,7 +304,7 @@ Every entry was validated against the [official AME Wizard documentation](https:
 git clone https://github.com/alimoradmohameddoweb/apex-os-playbook.git
 cd apex-os-playbook
 powershell -NoProfile -ExecutionPolicy Bypass -File build.ps1
-# Output: Apex-OS-v3.1.1.apbx (password: malte)
+# Output: Apex-OS-v3.1.2.apbx (password: malte)
 ```
 
 ---
@@ -316,5 +316,5 @@ This project is licensed under the [GNU General Public License v3.0](LICENSE).
 ---
 
 <p align="center">
-  <strong>Apex OS 3.1.1</strong> — Zero telemetry. Maximum FPS. Total control.
+  <strong>Apex OS 3.1.2</strong> — Zero telemetry. Maximum FPS. Total control.
 </p>

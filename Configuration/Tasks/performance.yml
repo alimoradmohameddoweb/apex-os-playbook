@@ -195,8 +195,8 @@ actions:
   # Reduce boot menu timeout
   - !cmd: {command: 'bcdedit /timeout 3', wait: true, weight: 5, errorAction: log}
 
-  # Use legacy boot menu policy for faster boot (EudynOS)
-  - !cmd: {command: 'bcdedit /set bootmenupolicy Legacy', wait: true, weight: 5, errorAction: log}
+  # NOTE: bootmenupolicy Legacy is set in FINALIZE.cmd alongside other bcdedit commands.
+  # Removed duplicate here to keep all bcdedit in one place.
 
   # Disable first logon animation
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'EnableFirstLogonAnimation', type: REG_DWORD, data: '0'}
@@ -363,10 +363,12 @@ actions:
   # Prevent BitLocker auto-encryption (OOBE device encryption)
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\BitLocker', value: 'PreventDeviceEncryption', type: REG_DWORD, data: '1'}
 
-  # Disable System Restore disk usage
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore', value: 'DisableSR', type: REG_DWORD, data: '1'}
+  # System Restore — keep enabled with minimal disk allocation (3%) as a
+  # safety net for driver/app failures. Removes only the scheduled interval
+  # so restore points are only created on-demand (driver installs, updates).
+  # Users who want to fully disable can set DisableSR=1 in regedit.
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore', value: 'RPSessionInterval', type: REG_DWORD, data: '0'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore\cfg', value: 'DiskPercent', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore\cfg', value: 'DiskPercent', type: REG_DWORD, data: '3'}
 
   # =======================================================================
   # CRASH & DUMP OPTIMIZATION
