@@ -258,7 +258,9 @@ actions:
   # =======================================================================
 
   # Disable Windows Script Host (blocks .vbs/.js malware)
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows Script Host\Settings', value: 'Enabled', type: REG_DWORD, data: '0'}
+  # Only when Defender is disabled — without AV, WSH is a major attack vector.
+  # When Defender is enabled, it already scans/blocks malicious scripts.
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows Script Host\Settings', value: 'Enabled', type: REG_DWORD, data: '0', option: 'disable-defender'}
 
   # =======================================================================
   # AUTORUN/AUTOPLAY

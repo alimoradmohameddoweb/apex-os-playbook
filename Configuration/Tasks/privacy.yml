@@ -265,8 +265,9 @@ actions:
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\userDataTasks', value: 'Value', type: REG_SZ, data: 'Deny'}
   # Messaging
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\chat', value: 'Value', type: REG_SZ, data: 'Deny'}
-  # Radios (Bluetooth, WiFi control)
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\radios', value: 'Value', type: REG_SZ, data: 'Deny'}
+  # Radios (Bluetooth, WiFi control) — left at Allow so airplane mode toggles
+  # and Bluetooth hardware control work correctly in UWP apps and Settings.
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\radios', value: 'Value', type: REG_SZ, data: 'Allow'}
   # App diagnostics
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appDiagnostics', value: 'Value', type: REG_SZ, data: 'Deny'}
   # App diagnostics (per-user defense-in-depth — RapidOS)
@@ -275,14 +276,14 @@ actions:
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\activity', value: 'Value', type: REG_SZ, data: 'Deny'}
   # Bluetooth cross-device sync
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\bluetoothSync', value: 'Value', type: REG_SZ, data: 'Deny'}
-  # Documents
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\documentsLibrary', value: 'Value', type: REG_SZ, data: 'Deny'}
+  # Documents — Allow so Photos, modern editors, and UWP apps can access libraries
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\documentsLibrary', value: 'Value', type: REG_SZ, data: 'Allow'}
   # Pictures
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\picturesLibrary', value: 'Value', type: REG_SZ, data: 'Deny'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\picturesLibrary', value: 'Value', type: REG_SZ, data: 'Allow'}
   # Videos
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\videosLibrary', value: 'Value', type: REG_SZ, data: 'Deny'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\videosLibrary', value: 'Value', type: REG_SZ, data: 'Allow'}
   # Broad file system access
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\broadFileSystemAccess', value: 'Value', type: REG_SZ, data: 'Deny'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\broadFileSystemAccess', value: 'Value', type: REG_SZ, data: 'Allow'}
   # Background spatial perception
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\gazeInput', value: 'Value', type: REG_SZ, data: 'Deny'}
   # Screen capture — left at Allow so OBS, Discord screen share, and
@@ -339,7 +340,9 @@ actions:
   - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\AppCompat', value: 'DisableUAR', type: REG_DWORD, data: '1'}
   # Disable AppCompat telemetry collection policy
   - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\AppCompat', value: 'AllowTelemetry', type: REG_DWORD, data: '0'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\AppCompat', value: 'DisableEngine', type: REG_DWORD, data: '1'}
+  # NOTE: DisableEngine intentionally NOT set — it disables the entire
+  # App Compatibility Framework, breaking compatibility shims for older
+  # games and apps. The other values above already block telemetry.
   # Disable SwitchBack compatibility engine
   - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\AppCompat', value: 'SbEnable', type: REG_DWORD, data: '0'}
 
@@ -556,9 +559,9 @@ actions:
   # Disable PCHealth headlines and KB search
   - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\PCHealth\HelpSvc', value: 'Headlines', type: REG_DWORD, data: '0'}
   - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\PCHealth\HelpSvc', value: 'MicrosoftKBSearch', type: REG_DWORD, data: '0'}
-  # Restrict internet communication master switch (ArkanoidOS)
-  - !registryValue: {path: 'HKLM\Software\Policies\Microsoft\InternetManagement', value: 'RestrictCommunication', type: REG_DWORD, data: '1'}
-  - !registryValue: {path: 'HKCU\Software\Policies\Microsoft\InternetManagement', value: 'RestrictCommunication', type: REG_DWORD, data: '1'}
+  # NOTE: RestrictCommunication master switch intentionally NOT set —
+  # it is redundant (all individual restrictions are applied below) and
+  # can break Help/Support, web-integrated features, and Store connectivity.
   # HKCU mirrors of internet communication restrictions (ArkanoidOS)
   - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'NoPublishingWizard', type: REG_DWORD, data: '1'}
   - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'NoWebServices', type: REG_DWORD, data: '1'}

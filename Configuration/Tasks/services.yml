@@ -32,10 +32,10 @@ actions:
   - !service: {name: 'DoSvc', operation: change, startup: 3, errorAction: log}
 
   # =======================================================================
-  # PRINT SPOOLER (disable — user can re-enable if needed)
+  # PRINT SPOOLER (manual — starts on demand when user prints)
   # =======================================================================
 
-  - !service: {name: 'Spooler', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'Spooler', operation: change, startup: 3, errorAction: log}
 
   # =======================================================================
   # OBSOLETE / NEVER-USED SERVICES — DELETE
@@ -79,17 +79,19 @@ actions:
   - !service: {name: 'SCPolicySvc', operation: change, startup: 4, errorAction: log}
 
   # =======================================================================
-  # BLUETOOTH (disable — user can re-enable if needed)
+  # BLUETOOTH (manual — starts on demand when BT hardware is used)
   # =======================================================================
 
-  - !service: {name: 'BTAGService', operation: change, startup: 4, errorAction: log}
-  - !service: {name: 'bthserv', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'BTAGService', operation: change, startup: 3, errorAction: log}
+  - !service: {name: 'bthserv', operation: change, startup: 3, errorAction: log}
 
   # =======================================================================
   # ACCOUNT & SYNC SERVICES
   # =======================================================================
 
-  - !service: {name: 'wlidsvc', operation: change, startup: 4, errorAction: log}
+  # wlidsvc — Microsoft Account sign-in. Manual so Store sign-in and license
+  # sync work on demand without running persistently in the background.
+  - !service: {name: 'wlidsvc', operation: change, startup: 3, errorAction: log}
   - !service: {name: 'CDPSvc', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'CDPUserSvc', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'cbdhsvc', operation: change, startup: 4, errorAction: log}
@@ -142,7 +144,7 @@ actions:
   - !service: {name: 'RasAuto', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'SysMain', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'WbioSrvc', operation: change, startup: 4, errorAction: log}
-  - !service: {name: 'stisvc', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'stisvc', operation: change, startup: 3, errorAction: log}
   - !service: {name: 'WpcMonSvc', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'WebClient', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'WpnService', operation: change, startup: 3, errorAction: log}
@@ -153,8 +155,8 @@ actions:
   - !service: {name: 'AppMgmt', operation: change, startup: 4, errorAction: log}
   # Disable Distributed Transaction Coordinator (RapidOS)
   - !service: {name: 'MSDTC', operation: change, startup: 4, errorAction: log}
-  # Disable Shell Hardware Detection / AutoPlay (RapidOS)
-  - !service: {name: 'ShellHWDetection', operation: change, startup: 4, errorAction: log}
+  # Shell Hardware Detection — manual so USB/device insert notifications work
+  - !service: {name: 'ShellHWDetection', operation: change, startup: 3, errorAction: log}
 
   # =======================================================================
   # MICROSOFT EDGE UPDATE SERVICES — DELETE

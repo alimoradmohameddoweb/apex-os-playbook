@@ -94,7 +94,7 @@ This is not a simple debloater. Apex OS is a **complete system re-engineering** 
 - **VBS/HVCI**: Disabled (5-25% performance gain)
 - **Vulnerable Driver Blocklist**: Enabled
 - **Autorun/AutoPlay**: Disabled on all drives (USB malware prevention)
-- **Windows Script Host**: Disabled (blocks .vbs/.js malware)
+- **Windows Script Host**: Disabled when Defender is off (blocks .vbs/.js malware; left enabled when Defender is on since it scans scripts)
 - **LLMNR/WPAD**: Disabled (prevents name-resolution poisoning)
 - **Remote**: Remote Assistance off, WinRM off
 - **Office**: VBA macros, DDE, ActiveX, OLE packages blocked across Office 2007-365
@@ -117,7 +117,7 @@ This is not a simple debloater. Apex OS is a **complete system re-engineering** 
 - Dark mode enabled (apps + system + Explorer)
 - Taskbar: left-aligned, no search/widgets/chat/copilot/cortana buttons
 - Explorer: This PC default, file extensions shown, hidden files visible, compact mode
-- All notification centers, toast notifications, and balloon tips disabled
+- Toast notifications and balloon tips disabled (notification center preserved for usability)
 - Sticky keys, toggle keys, filter keys popups disabled
 - Mouse acceleration disabled for gaming accuracy
 - Shortcut arrow overlay removed, "- Shortcut" suffix removed
@@ -173,8 +173,8 @@ Three user-selectable policies:
 ### Windows Defender (RadioPage)
 | Option | Description |
 |--------|-------------|
-| **Disable Defender** (default) | Fully disables Windows Defender via Group Policy, services, drivers, and scheduled tasks for maximum performance |
-| **Keep Defender Enabled** | Leave Windows Defender active — recommended if you don't use a third-party antivirus |
+| **Disable Defender** | Fully disables Windows Defender via Group Policy, services, drivers, and scheduled tasks for maximum performance |
+| **Keep Defender Enabled** (default) | Leave Windows Defender active — recommended if you don't use a third-party antivirus |
 
 ### Browser Selection (RadioImagePage)
 | Option | Description |
@@ -252,7 +252,7 @@ apex-os/
 8. **Interface** → Shell, taskbar, explorer, dark mode cleanup
 9. **Cleanup** → Delete 70+ scheduled tasks and caches
 10. **Software** → Install browser + 7-Zip
-11. **Finalize** → Compact OS, wallpaper, branding, cleanup
+11. **Finalize** → Wallpaper, branding, GPU cache clear, cleanup
 
 ---
 
@@ -268,7 +268,7 @@ A: Yes. Game Mode is enabled, Xbox gaming services are removed (games don't need
 A: Depends on your selection. "Security Only" keeps critical patches flowing. "Disable All" completely stops updates. "Keep Default" leaves it unchanged.
 
 **Q: Can I re-enable Bluetooth/printing/etc.?**
-A: Yes. Services like Bluetooth and Print Spooler are disabled but not deleted. Re-enable them in Services (services.msc) whenever needed.
+A: Bluetooth, Print Spooler, and scanner services are set to Manual (start on demand) so they work automatically when you use them. No manual re-enabling needed.
 
 **Q: Is this safe for daily use?**
 A: Yes, when installed on a fresh Windows. The playbook disables unnecessary components but preserves all core OS functionality, networking, and driver support.
@@ -304,7 +304,7 @@ Every entry was validated against the [official AME Wizard documentation](https:
 git clone https://github.com/alimoradmohameddoweb/apex-os-playbook.git
 cd apex-os-playbook
 powershell -NoProfile -ExecutionPolicy Bypass -File build.ps1
-# Output: Apex-OS-v3.0.8.apbx (password: malte)
+# Output: Apex-OS-v3.1.0.apbx (password: malte)
 ```
 
 ---
@@ -316,5 +316,5 @@ This project is licensed under the [GNU General Public License v3.0](LICENSE).
 ---
 
 <p align="center">
-  <strong>Apex OS 3.0.8</strong> — Zero telemetry. Maximum FPS. Total control.
+  <strong>Apex OS 3.1.0</strong> — Zero telemetry. Maximum FPS. Total control.
 </p>
