@@ -117,12 +117,14 @@ actions:
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters', value: 'SMB1', type: REG_DWORD, data: '0'}
 
   # Enable SMB signing (prevents MITM)
+  # Server: require signing for inbound connections (hardened)
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters', value: 'RequireSecuritySignature', type: REG_DWORD, data: '1'}
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters', value: 'EnableSecuritySignature', type: REG_DWORD, data: '1'}
-  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters', value: 'RequireSecuritySignature', type: REG_DWORD, data: '1'}
+  # Workstation: enable but don't require — preserves access to older NAS/Samba shares
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters', value: 'RequireSecuritySignature', type: REG_DWORD, data: '0'}
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters', value: 'EnableSecuritySignature', type: REG_DWORD, data: '1'}
 
-  # Enable SMB encryption
+  # Enable SMB encryption (server-side; clients negotiate automatically)
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters', value: 'EncryptData', type: REG_DWORD, data: '1'}
   # Block guest account access to SMB shares (RapidOS)
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters', value: 'EnableGuestAccount', type: REG_DWORD, data: '0'}
@@ -507,8 +509,10 @@ actions:
   # =======================================================================
 
   # Preserve zone information (Mark of the Web) on downloaded files
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Attachments', value: 'SaveZoneInformation', type: REG_DWORD, data: '1'}
-  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Attachments', value: 'SaveZoneInformation', type: REG_DWORD, data: '1'}
+  # Value 2 = preserve MOTW; SmartScreen, Office Protected View, and browser
+  # download warnings all rely on MOTW to identify internet-sourced files.
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Attachments', value: 'SaveZoneInformation', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Attachments', value: 'SaveZoneInformation', type: REG_DWORD, data: '2'}
 
   # =======================================================================
   # CERTIFICATE PADDING CHECK

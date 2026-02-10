@@ -1,10 +1,10 @@
 @echo off
 :: FINALIZE.cmd - Final system optimization commands
 :: Runs after all other tasks to ensure a pristine, optimized state
-title Apex OS 3.1.0 - Final Optimization
+title Apex OS 3.1.1 - Final Optimization
 
 echo =============================================
-echo  Apex OS 3.1.0 - Final System Optimization
+echo  Apex OS 3.1.1 - Final System Optimization
 echo =============================================
 echo.
 
@@ -61,8 +61,8 @@ arp -d * >nul 2>&1
 echo [7/8] Applying boot configuration optimizations...
 :: Disable boot log (reduces boot time)
 bcdedit /set bootlog no >nul 2>&1
-:: Disable boot animation (faster boot)
-bcdedit /set bootstatuspolicy IgnoreAllFailures >nul 2>&1
+:: Show boot failures so users can access WinRE if something goes wrong
+bcdedit /set bootstatuspolicy DisplayAllFailures >nul 2>&1
 :: Use legacy boot menu policy for faster boot (matches performance.yml)
 bcdedit /set bootmenupolicy Legacy >nul 2>&1
 :: Disable Hyper-V launch only when no hypervisor features are active
@@ -90,6 +90,6 @@ rd /s /q "%LOCALAPPDATA%\AMD\GLCache" 2>nul
 
 echo.
 echo =============================================
-echo  Apex OS 3.1.0: All optimizations applied.
+echo  Apex OS 3.1.1: All optimizations applied.
 echo  A reboot is required for full effect.
 echo =============================================

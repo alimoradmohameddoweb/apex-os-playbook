@@ -8,31 +8,17 @@ description: >
 actions:
   # =======================================================================
   # SCHEDULED TASKS — APPLICATION EXPERIENCE (non-telemetry)
+  # NOTE: StartupAppTask, PcaPatchDbTask, UCPD velocity already deleted
+  # in privacy.yml — only unique tasks here.
   # =======================================================================
 
-  - !scheduledTask: {path: '\Microsoft\Windows\Application Experience\StartupAppTask', operation: delete, errorAction: log}
-  - !scheduledTask: {path: '\Microsoft\Windows\Application Experience\PcaPatchDbTask', operation: delete, errorAction: log}
   - !scheduledTask: {path: '\Microsoft\Windows\Application Experience\SdbinstMergeDbTask', operation: delete, errorAction: log}
-  # UCPD velocity (User Connected Platform Devices telemetry)
-  - !scheduledTask: {path: '\Microsoft\Windows\AppxDeploymentClient\UCPD velocity', operation: delete, errorAction: log}
-  # =======================================================================
-  # SCHEDULED TASKS — CUSTOMER EXPERIENCE (non-telemetry)
-  # =======================================================================
-
-  - !scheduledTask: {path: '\Microsoft\Windows\Customer Experience Improvement Program\KernelCeipTask', operation: delete, errorAction: log}
 
   # =======================================================================
   # SCHEDULED TASKS — DIAGNOSTICS
   # =======================================================================
 
   - !scheduledTask: {path: '\Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticResolver', operation: delete, errorAction: log}
-
-  # =======================================================================
-  # SCHEDULED TASKS — MAPS & LOCATION
-  # =======================================================================
-
-  - !scheduledTask: {path: '\Microsoft\Windows\Maps\MapsToastTask', operation: delete, errorAction: log}
-  - !scheduledTask: {path: '\Microsoft\Windows\Maps\MapsUpdateTask', operation: delete, errorAction: log}
 
   # =======================================================================
   # SCHEDULED TASKS — CLOUD & SYNC

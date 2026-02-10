@@ -264,8 +264,9 @@ actions:
   # Disable update restart notifications and reminders
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings', value: 'RestartNotificationsAllowed2', type: REG_DWORD, data: '0'}
 
-  # Remove Update Compliance data collection
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate', value: 'DisableWUfBSafeguards', type: REG_DWORD, data: '1'}
+  # NOTE: DisableWUfBSafeguards intentionally NOT set — safeguard holds
+  # protect against known-bad updates (driver conflicts, data loss bugs).
+  # Users on updates-security should receive only safe patches.
 
   # =======================================================================
   # INSIDER / PREVIEW BUILDS LOCKDOWN

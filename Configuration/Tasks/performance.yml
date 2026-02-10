@@ -10,7 +10,7 @@ actions:
   # CPU SCHEDULING & PRIORITY
   # =======================================================================
 
-  # Set Win32PrioritySeparation to short, fixed, high foreground boost (38 decimal = 0x26 hex)
+  # Set Win32PrioritySeparation to short, variable, high foreground boost (38 decimal = 0x26 hex)
   # This gives foreground apps maximum CPU quantum — critical for gaming FPS
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\PriorityControl', value: 'Win32PrioritySeparation', type: REG_DWORD, data: '38'}
 
@@ -26,6 +26,8 @@ actions:
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers', value: 'HwSchMode', type: REG_DWORD, data: '2'}
 
   # Disable GPU preemption for lower latency (DX compute preemption)
+  # NOTE: On rare hardware (older AMD GPUs, heavy compute shaders) this can
+  # cause display driver TDR crashes. Revert with: EnablePreemption=1
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers\Scheduler', value: 'EnablePreemption', type: REG_DWORD, data: '0'}
 
   # Disable DWM frame limiting for smoother rendering

@@ -409,7 +409,9 @@ actions:
   - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\SearchSettings', value: 'SafeSearchMode', type: REG_DWORD, data: '0', option: clean-interface}
 
   # Hide stripped Settings pages (cortana, privacy-feedback, insider, home, + EudynOS additions)
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'SettingsPageVisibility', type: REG_SZ, data: 'hide:cortana;privacy-feedback;windowsinsider;home;recovery;autoplay;maps;findmydevice;sync;mobile-devices;backup;deviceusage', option: clean-interface}
+  # NOTE: recovery intentionally NOT hidden — users need Settings → Recovery
+  # for Reset this PC and Advanced Startup if something goes wrong.
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'SettingsPageVisibility', type: REG_SZ, data: 'hide:cortana;privacy-feedback;windowsinsider;home;autoplay;maps;findmydevice;sync;mobile-devices;backup;deviceusage', option: clean-interface}
 
   # Suppress unsupported hardware notification watermark on Win11 (AME-10-0.8)
   - !registryValue: {path: 'HKLM\SYSTEM\Setup\MoSetup\UnsupportedHardwareNotificationCache', value: 'SV1', type: REG_DWORD, data: '0', option: clean-interface}

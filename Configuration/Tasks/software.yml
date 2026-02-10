@@ -105,7 +105,8 @@ actions:
   - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'Microsoft365CopilotChatIconEnabled', type: REG_DWORD, data: '0'}
   - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'EdgeHistoryAISearchEnabled', type: REG_DWORD, data: '0'}
   - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'ComposeInlineEnabled', type: REG_DWORD, data: '0'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'GenAILocalFoundationalModelSettings', type: REG_DWORD, data: '1'}
+  # Value 2 = fully disallow all local AI model usage (1 only blocks downloads)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'GenAILocalFoundationalModelSettings', type: REG_DWORD, data: '2'}
   - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'ShowRecommendationsEnabled', type: REG_DWORD, data: '0'}
   - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'DiscoverPageContextEnabled', type: REG_DWORD, data: '0'}
   - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'SearchSuggestEnabled', type: REG_DWORD, data: '0'}

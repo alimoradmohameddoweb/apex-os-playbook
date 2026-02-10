@@ -143,7 +143,8 @@ actions:
   - !service: {name: 'CscService', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'RasAuto', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'SysMain', operation: change, startup: 4, errorAction: log}
-  - !service: {name: 'WbioSrvc', operation: change, startup: 4, errorAction: log}
+  # WbioSrvc — Windows Biometric Service. Manual so fingerprint readers work on demand.
+  - !service: {name: 'WbioSrvc', operation: change, startup: 3, errorAction: log}
   - !service: {name: 'stisvc', operation: change, startup: 3, errorAction: log}
   - !service: {name: 'WpcMonSvc', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'WebClient', operation: change, startup: 4, errorAction: log}

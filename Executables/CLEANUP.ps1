@@ -146,7 +146,7 @@ $extraPaths = @(
     "$env:SystemRoot\Downloaded Program Files",
     "$env:SystemRoot\ServiceProfiles\LocalService\AppData\Local\Temp",
     "$env:SystemRoot\ServiceProfiles\NetworkService\AppData\Local\Temp",
-    "$env:LOCALAPPDATA\D3DSCache",
+    # D3DSCache cleaned by FINALIZE.cmd (also handles NVIDIA/AMD GPU caches)
     "$env:LOCALAPPDATA\Microsoft\Windows\INetCache\IE"
 )
 foreach ($path in $extraPaths) {
