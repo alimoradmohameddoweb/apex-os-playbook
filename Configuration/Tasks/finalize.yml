@@ -1,25 +1,9 @@
 ---
 title: Finalization
 description: >
-  Performs final system optimization — system file verification,
-  OS branding, and cleanup run.
+  Performs final system optimization — OS branding, cleanup, and compaction.
 
 actions:
-  # =======================================================================
-  # DISM COMPONENT CLEANUP — MUST RUN BEFORE SFC
-  # Updates the component store baseline so SFC doesn't restore removed files
-  # =======================================================================
-
-  - !status: {status: 'Cleaning component store...'}
-  - !cmd: {command: 'DISM /Online /Cleanup-Image /StartComponentCleanup', wait: true, weight: 100, errorAction: log}
-
-  # =======================================================================
-  # SYSTEM FILE CHECKER — REPAIR INTEGRITY
-  # =======================================================================
-
-  - !status: {status: 'Verifying system file integrity...'}
-  - !cmd: {command: 'sfc /scannow', wait: true, weight: 200, errorAction: log}
-
   # =======================================================================
   # ADVANCED CLEANUP (runs BEFORE compact to avoid compressing deleted files)
   # =======================================================================
@@ -46,7 +30,7 @@ actions:
   # =======================================================================
 
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation', value: 'Manufacturer', type: REG_SZ, data: 'Apex OS'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation', value: 'Model', type: REG_SZ, data: 'Apex OS 3.0.5'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation', value: 'Model', type: REG_SZ, data: 'Apex OS 3.0.6'}
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation', value: 'SupportURL', type: REG_SZ, data: 'https://github.com/apex-os'}
 
   # =======================================================================
