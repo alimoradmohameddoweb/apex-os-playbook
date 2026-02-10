@@ -79,8 +79,9 @@ actions:
   # NETWORK PROTOCOL SECURITY
   # =======================================================================
 
-  # Disable IPv6 (reduces attack surface and overhead if not needed)
-  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters', value: 'DisabledComponents', type: REG_DWORD, data: '255'}
+  # Prefer IPv4 over IPv6 but keep IPv6 functional (dual-stack preserved)
+  # 0x20 = prefer IPv4 in prefix policies without breaking IPv6-only services
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters', value: 'DisabledComponents', type: REG_DWORD, data: '32'}
 
   # Disable SMB bandwidth throttling (improves file transfer speeds)
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters', value: 'DisableBandwidthThrottling', type: REG_DWORD, data: '1'}

@@ -544,11 +544,14 @@ actions:
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SafeBoot\Network\MSIServer', value: '', type: REG_SZ, data: 'Service'}
 
   # =======================================================================
-  # SPECULATIVE EXECUTION MITIGATIONS
+  # SPECULATIVE EXECUTION MITIGATIONS — DISABLED FOR PERFORMANCE
   # =======================================================================
 
-  # Enable Spectre/Meltdown mitigations
-  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management', value: 'FeatureSettingsOverride', type: REG_DWORD, data: '0'}
+  # Disable Spectre/Meltdown mitigations (5-30% CPU performance gain)
+  # FeatureSettingsOverride=3 disables Spectre V2 + Meltdown kernel patches
+  # FeatureSettingsOverrideMask=3 tells Windows to honor the override value
+  # Defender functions normally without these — they are separate subsystems
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management', value: 'FeatureSettingsOverride', type: REG_DWORD, data: '3'}
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management', value: 'FeatureSettingsOverrideMask', type: REG_DWORD, data: '3'}
 
   # =======================================================================

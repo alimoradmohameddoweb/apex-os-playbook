@@ -73,27 +73,34 @@ This is not a simple debloater. Apex OS is a **complete system re-engineering** 
 - TCP auto-tuning with Cubic congestion provider
 - Nagle's algorithm disabled globally (TcpNoDelay + TcpAckFrequency)
 - DNS over HTTPS (DoH) enabled with reduced cache TTL
-- IPv6 disabled, NetBIOS disabled, LMHOSTS disabled
+- IPv4 preferred over IPv6 (dual-stack preserved), NetBIOS disabled, LMHOSTS disabled
 - RSS enabled, DCA enabled, interrupt moderation disabled
 - QoS reserved bandwidth set to 0%
 - Network adapter power management disabled
 - Telemetry IP firewall blocking (defense-in-depth)
 
 ### 🛡️ Security Hardening
-- **TLS**: SSL 2.0/3.0 and TLS 1.0/1.1 disabled; TLS 1.2/1.3 enforced
+- **TLS**: SSL 2.0/3.0 and TLS 1.0/1.1 disabled; TLS 1.2/1.3 enforced; insecure renegotiation blocked
 - **Ciphers**: RC4, DES, 3DES, RC2, NULL disabled; 2048-bit minimum DH
-- **SMB**: v1 disabled, signing required, encryption enabled
-- **NTLM**: NTLMv2 enforced, LM hash storage disabled, outbound NTLM denied
+- **SMB**: v1 disabled, signing required, encryption enabled, guest access blocked
+- **NTLM**: NTLMv2 enforced, LM hash storage disabled, NTLM traffic audited
 - **.NET**: Strong cryptography enforced across v2.0 and v4.0 (32/64-bit)
-- **UAC**: Secure desktop, admin consent, installer detection, code signing validation
+- **UAC**: Enabled with consent prompt, installer detection on, no secure desktop, unsigned apps allowed
+- **Credentials**: WDigest plaintext caching off, domain logon caching off
 - **DEP**: Always on via bcdedit
 - **SEHOP**: Exception chain validation enabled
 - **DLL**: Safe search order + CWD illegal in DLL search
-- **Spectre/Meltdown**: Mitigations enabled
+- **Spectre/Meltdown**: Mitigations disabled (5-30% CPU performance gain; Defender unaffected)
+- **VBS/HVCI**: Disabled (5-25% performance gain)
 - **Vulnerable Driver Blocklist**: Enabled
-- **Office**: VBA macros, DDE, ActiveX blocked across Office 2007-365
+- **Autorun/AutoPlay**: Disabled on all drives (USB malware prevention)
+- **Windows Script Host**: Disabled (blocks .vbs/.js malware)
+- **LLMNR/WPAD**: Disabled (prevents name-resolution poisoning)
+- **Remote**: Remote Assistance off, WinRM off
+- **Office**: VBA macros, DDE, ActiveX, OLE packages blocked across Office 2007-365
 - **Adobe Reader**: JavaScript off, protected mode/view enforced (DC + XI)
 - **PowerShell**: Script block logging enabled, RemoteSigned execution policy
+- **Certificates**: Authenticode padding check enabled
 - **Windows 11 bypass**: TPM, Secure Boot, CPU, RAM, storage checks bypassed
 
 ### 🧹 Bloatware Removal
@@ -123,8 +130,7 @@ Three user-selectable policies:
 
 ### 📦 Software Installation
 - **Browser choice**: Firefox, Brave, or Ungoogled Chromium (with privacy policies pre-configured)
-- **7-Zip**: Universal file archiver
-- **VLC**: Universal media player
+- **7-Zip**: Universal file archiver (optional toggle)
 - File associations auto-configured for installed software
 
 ---
@@ -138,12 +144,11 @@ Three user-selectable policies:
 - Windows Defender disabled (AME Wizard will guide you to temporarily disable it)
 - No third-party antivirus
 - Plugged into power (laptops)
-- Password set on user account
 
 ### Steps
 
 1. **Download** [AME Wizard](https://ameliorated.io) (latest version)
-2. **Download** the latest `Apex-OS-v*.apbx` from [Releases](https://github.com/apex-os/apex-playbook/releases)
+2. **Download** the latest `Apex-OS-v*.apbx` from [Releases](https://github.com/alimoradmohameddoweb/apex-os-playbook/releases)
 3. **Open** AME Wizard and drag the `.apbx` file into it
 4. **Enter password**: `malte`
 5. **Select** your preferred options (browser, features, update policy)
@@ -179,16 +184,22 @@ Three user-selectable policies:
 | **Ungoogled Chromium** | De-Googled Chromium fork for maximum privacy |
 | **None** | Skip browser installation |
 
-### System Features (CheckboxPage)
+### Core System Features (CheckboxPage 1)
 | Option | Default | Description |
 |--------|---------|-------------|
-| Remove Bloatware | ✅ | Remove 40+ AppX packages + OneDrive + capabilities |
-| Disable Telemetry | ✅ | Eliminate all data collection, diagnostics, feedback |
-| Max Performance | ✅ | CPU/GPU/memory/timer/boot/visual optimizations |
-| Network Optimization | ✅ | TCP/IP stack, DNS, Nagle, adapter tuning |
-| Clean Interface | ✅ | Taskbar, Explorer, context menu, dark mode, notifications |
-| Security Hardening | ✅ | TLS/SSL, SMB, NTLM, ciphers, UAC, Office, Adobe |
-| Apply Wallpaper | ✅ | Set Apex OS branded desktop wallpaper |
+| Remove Bloatware AppX Packages | ✅ | Remove 40+ AppX packages + OneDrive + capabilities |
+| Disable All Telemetry & Data Collection | ✅ | Eliminate all data collection, diagnostics, feedback |
+| Maximum Performance Optimizations | ✅ | CPU/GPU/memory/timer/boot/visual optimizations |
+| Network Stack Optimization | ✅ | TCP/IP stack, DNS, Nagle, adapter tuning |
+
+### Additional Customization (CheckboxPage 2)
+| Option | Default | Description |
+|--------|---------|-------------|
+| Clean User Interface | ✅ | Taskbar, Explorer, context menu, dark mode, notifications |
+| Apply Apex OS Wallpaper | ✅ | Set Apex OS branded desktop wallpaper |
+| Install 7-Zip Archiver | ✅ | High-compression file archiver supporting all major formats |
+
+> **Note:** Privacy, security hardening, and service optimization are always applied — they are not optional toggles.
 
 ### Windows Update Policy (RadioPage)
 | Option | Description |
@@ -221,7 +232,6 @@ apex-os/
 ├── Executables/
 │   ├── CLEANUP.ps1            # Advanced system cleanup (caches/logs/dumps)
 │   ├── FINALIZE.cmd           # Final optimizations (DNS/Winsock/fonts/GPU)
-│   ├── FILEASSOC.cmd          # File association configuration
 │   ├── NGEN.ps1               # .NET native image compilation
 │   ├── WALLPAPER.ps1          # Desktop wallpaper deployment (P/Invoke)
 │   └── Apex-background.jpg    # Apex OS desktop wallpaper
@@ -242,7 +252,7 @@ apex-os/
 7. **Windows Update** → Apply user-selected update policy
 8. **Interface** → Shell, taskbar, explorer, dark mode cleanup
 9. **Cleanup** → Delete 70+ scheduled tasks and caches
-10. **Software** → Install browser + 7-Zip + VLC
+10. **Software** → Install browser + 7-Zip
 11. **Finalize** → NGEN, DISM cleanup, SFC, Compact OS, wallpaper, branding
 
 ---
@@ -292,10 +302,10 @@ Every entry was validated against the [official AME Wizard documentation](https:
 
 ```powershell
 # Requires 7-Zip installed
-git clone https://github.com/apex-os/apex-playbook.git
-cd apex-playbook
+git clone https://github.com/alimoradmohameddoweb/apex-os-playbook.git
+cd apex-os-playbook
 powershell -NoProfile -ExecutionPolicy Bypass -File build.ps1
-# Output: Apex-OS-v3.0.0.apbx (password: malte)
+# Output: Apex-OS-v3.0.4.apbx (password: malte)
 ```
 
 ---
@@ -307,5 +317,5 @@ This project is licensed under the [GNU General Public License v3.0](LICENSE).
 ---
 
 <p align="center">
-  <strong>Apex OS 3.0.0</strong> — Zero telemetry. Maximum FPS. Total control.
+  <strong>Apex OS 3.0.4</strong> — Zero telemetry. Maximum FPS. Total control.
 </p>
