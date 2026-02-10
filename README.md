@@ -62,7 +62,7 @@ This is not a simple debloater. Apex OS is a **complete system re-engineering** 
 - **CPU**: Win32PrioritySeparation=38, core parking disabled, CSRSS elevated priority
 - **GPU**: Hardware-accelerated scheduling, preemption disabled, DWM frame limiting off
 - **MMCSS**: SystemResponsiveness=0, Games profile at max priority, latency-sensitive
-- **Memory**: Paging executive disabled, page combining off, prefetch/superfetch off
+- **Memory**: Paging executive disabled, page combining off, Prefetcher=3 (boot+app), Superfetch disabled (SSD-optimized)
 - **Disk I/O**: Last access timestamp off, 8.3 names off, NTFS compression off
 - **Timer**: High-resolution timer enabled, dynamic tick disabled, TSC Enhanced sync
 - **Power**: Ultimate Performance plan, core parking off, power throttling disabled
@@ -223,7 +223,7 @@ apex-os/
 │       ├── services.yml       # ~81 actions — service optimization
 │       ├── performance.yml    # ~120 actions — CPU/GPU/memory/timer tuning
 │       ├── network.yml        # ~41 actions — TCP/IP/DNS optimization
-│       ├── security.yml       # ~149 actions — TLS/SMB/cipher hardening
+│       ├── security.yml       # ~152 actions — TLS/SMB/cipher hardening
 │       ├── updates.yml        # ~48 actions — Windows Update policy
 │       ├── interface.yml      # ~195 actions — shell/taskbar/explorer cleanup
 │       ├── cleanup.yml        # ~62 actions — scheduled tasks/file cleanup
@@ -304,7 +304,7 @@ Every entry was validated against the [official AME Wizard documentation](https:
 git clone https://github.com/alimoradmohameddoweb/apex-os-playbook.git
 cd apex-os-playbook
 powershell -NoProfile -ExecutionPolicy Bypass -File build.ps1
-# Output: Apex-OS-v3.1.3.apbx (password: malte)
+# Output: Apex-OS-v3.1.4.apbx (password: malte)
 ```
 
 ---
@@ -316,5 +316,5 @@ This project is licensed under the [GNU General Public License v3.0](LICENSE).
 ---
 
 <p align="center">
-  <strong>Apex OS 3.1.3</strong> — Zero telemetry. Maximum FPS. Total control.
+  <strong>Apex OS 3.1.4</strong> — Zero telemetry. Maximum FPS. Total control.
 </p>

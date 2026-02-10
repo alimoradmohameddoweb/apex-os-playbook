@@ -210,7 +210,7 @@ actions:
   # Disable automatic restart sign-on (prevents apps from re-launching after restart)
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'DisableAutomaticRestartSignOn', type: REG_DWORD, data: '1'}
 
-  # Disable boot log and boot animation for faster boot
+  # Don't zero pagefile at shutdown (faster shutdown, negligible security impact)
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management', value: 'ClearPageFileAtShutdown', type: REG_DWORD, data: '0'}
 
   # =======================================================================
@@ -295,8 +295,8 @@ actions:
   # =======================================================================
 
   # Set CSRSS (Client Server Runtime) to above-normal priority — reduces input latency
-  # IFEO PerfOptions: 1=Idle, 2=Normal, 3=High, 4=Above Normal (overridden class)
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\csrss.exe\PerfOptions', value: 'CpuPriorityClass', type: REG_DWORD, data: '4'}
+  # IFEO PerfOptions CpuPriorityClass: 1=Idle, 5=BelowNormal, 2=Normal, 6=AboveNormal, 3=High, 4=Realtime
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\csrss.exe\PerfOptions', value: 'CpuPriorityClass', type: REG_DWORD, data: '6'}
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\csrss.exe\PerfOptions', value: 'IoPriority', type: REG_DWORD, data: '3'}
 
   # Reduce priority of background system processes
