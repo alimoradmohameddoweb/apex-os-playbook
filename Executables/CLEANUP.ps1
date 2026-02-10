@@ -138,51 +138,22 @@ if ($recycleBin.Items().Count -gt 0) {
 }
 
 # =========================================================================
-# DISK CLEANUP EQUIVALENT - CLEANMGR STATEFLAGS
+# ADDITIONAL FILE CLEANUP (replaces cleanmgr which hangs in AME sessions)
 # =========================================================================
 
-Write-Host "Running Disk Cleanup automation..." -ForegroundColor Yellow
-$cleanupKeys = @(
-    "Active Setup Temp Folders",
-    "BranchCache",
-    "Content Indexer Cleaner",
-    "D3D Shader Cache",
-    "Delivery Optimization Files",
-    "Device Driver Packages",
-    "Diagnostic Data Viewer database files",
-    "Downloaded Program Files",
-    "Internet Cache Files",
-    "Language Pack",
-    "Old ChkDsk Files",
-    "Previous Installations",
-    "Recycle Bin",
-    "RetailDemo Offline Content",
-    "Service Pack Cleanup",
-    "Setup Log Files",
-    "System error memory dump files",
-    "System error minidump files",
-    "Temporary Files",
-    "Temporary Setup Files",
-    "Thumbnail Cache",
-    "Update Cleanup",
-    "Upgrade Discarded Files",
-    "User file versions",
-    "Windows Defender",
-    "Windows Error Reporting Files",
-    "Windows ESD installation files",
-    "Windows Upgrade Log Files"
+Write-Host "Cleaning additional system caches..." -ForegroundColor Yellow
+$extraPaths = @(
+    "$env:SystemRoot\Downloaded Program Files",
+    "$env:SystemRoot\ServiceProfiles\LocalService\AppData\Local\Temp",
+    "$env:SystemRoot\ServiceProfiles\NetworkService\AppData\Local\Temp",
+    "$env:LOCALAPPDATA\D3DSCache",
+    "$env:LOCALAPPDATA\Microsoft\Windows\INetCache\IE"
 )
-
-$regBase = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches"
-foreach ($key in $cleanupKeys) {
-    $regPath = Join-Path $regBase $key
-    if (Test-Path $regPath) {
-        Set-ItemProperty -Path $regPath -Name "StateFlags0100" -Value 2 -Type DWord -ErrorAction SilentlyContinue
+foreach ($path in $extraPaths) {
+    if (Test-Path $path) {
+        Remove-Item -Path "$path\*" -Recurse -Force 2>$null
     }
 }
-
-# Run cleanmgr with our custom flags
-Start-Process -FilePath "cleanmgr.exe" -ArgumentList "/sagerun:100" -Wait -NoNewWindow -ErrorAction SilentlyContinue
 
 # =========================================================================
 # FINAL STATS
