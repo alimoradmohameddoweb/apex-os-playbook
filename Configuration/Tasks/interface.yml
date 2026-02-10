@@ -231,8 +231,6 @@ actions:
   - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'HideSCAMeetNow', type: REG_DWORD, data: '1', option: clean-interface}
   # Suppress Windows Backup notifications (Privacy+)
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'NoWinBackupNotifications', type: REG_DWORD, data: '1', option: clean-interface}
-  # Disable Action Center experience — reduces notification flyout telemetry (Privacy+)
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell', value: 'UseActionCenterExperience', type: REG_DWORD, data: '0', option: clean-interface}
 
   # Disable Windows Chat (Teams) at policy level
   - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Chat', value: 'ChatIcon', type: REG_DWORD, data: '3', option: clean-interface}
@@ -307,8 +305,8 @@ actions:
   # NOTIFICATION AREA
   # =======================================================================
 
-  # Disable notification center
-  - !registryValue: {path: 'HKCU\Software\Policies\Microsoft\Windows\Explorer', value: 'DisableNotificationCenter', type: REG_DWORD, data: '1', option: clean-interface}
+  # NOTE: Notification center is kept enabled — important app/system alerts
+  # still reach the user. Only spam-type notifications are suppressed below.
 
   # Disable toast notifications on lock screen
   - !registryValue: {path: 'HKCU\Software\Policies\Microsoft\Windows\CurrentVersion\PushNotifications', value: 'NoToastApplicationNotificationOnLockScreen', type: REG_DWORD, data: '1', option: clean-interface}

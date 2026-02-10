@@ -18,7 +18,7 @@ actions:
   - !service: {name: 'XblAuthManager', operation: delete, errorAction: log}
   - !service: {name: 'XblGameSave', operation: delete, errorAction: log}
   - !service: {name: 'XboxNetApiSvc', operation: delete, errorAction: log}
-  - !service: {name: 'XboxGipSvc', operation: delete, errorAction: log}
+  - !service: {name: 'XboxGipSvc', operation: change, startup: 4, errorAction: log}
 
   # =======================================================================
   # WINDOWS UPDATE RELATED (controlled via updates.yml policy)
@@ -120,7 +120,7 @@ actions:
   # INDEXING & SEARCH
   # =======================================================================
 
-  - !service: {name: 'WSearch', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'WSearch', operation: change, startup: 3, errorAction: log}
 
   # =======================================================================
   # DIAGNOSTIC INFRASTRUCTURE
@@ -145,8 +145,8 @@ actions:
   - !service: {name: 'stisvc', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'WpcMonSvc', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'WebClient', operation: change, startup: 4, errorAction: log}
-  - !service: {name: 'WpnService', operation: change, startup: 4, errorAction: log}
-  - !service: {name: 'WpnUserService', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'WpnService', operation: change, startup: 3, errorAction: log}
+  - !service: {name: 'WpnUserService', operation: change, startup: 3, errorAction: log}
   - !service: {name: 'TabletInputService', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'NcbService', operation: change, startup: 4, errorAction: log}
   # Disable Application Management — Group Policy software install (RapidOS)

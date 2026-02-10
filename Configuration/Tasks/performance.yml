@@ -394,9 +394,6 @@ actions:
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\USB\Parameters', value: 'DisableSelectiveSuspend', type: REG_DWORD, data: '1'}
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\USB\Parameters', value: 'EnhancedPowerManagementEnabled', type: REG_DWORD, data: '0'}
 
-  # Increase mouse data queue size for higher polling rate mice (EudynOS)
-  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\mouclass\Parameters', value: 'MouseDataQueueSize', type: REG_DWORD, data: '30'}
-
   # Enable MSI mode for better interrupt handling (reduces DPC latency)
   - !powerShell:
     command: >-

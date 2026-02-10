@@ -224,12 +224,14 @@ actions:
   # Block Outlook OOBE auto-install during updates
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\WindowsUpdate\Orchestrator\UScheduler\BlockedOobeUpdaters', value: 'BlockedOobeUpdaters', type: REG_SZ, data: '["MS_Outlook"]'}
 
-  # Prevent driver search via Windows Update
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\DriverSearching', value: 'DontSearchWindowsUpdate', type: REG_DWORD, data: '1'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\DriverSearching', value: 'DriverUpdateWizardWuSearchEnabled', type: REG_DWORD, data: '0'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\DriverSearching', value: 'SearchOrderConfig', type: REG_DWORD, data: '0'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching', value: 'DontPromptForWindowsUpdate', type: REG_DWORD, data: '1'}
-  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching', value: 'DontPromptForWindowsUpdate', type: REG_DWORD, data: '1'}
+  # Prevent driver search via Windows Update (security-only mode)
+  # Not applied in 'Keep Default' mode — users expect normal driver delivery.
+  # In 'Disable' mode, WU services are fully stopped so this is unnecessary.
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\DriverSearching', value: 'DontSearchWindowsUpdate', type: REG_DWORD, data: '1', option: updates-security}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\DriverSearching', value: 'DriverUpdateWizardWuSearchEnabled', type: REG_DWORD, data: '0', option: updates-security}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\DriverSearching', value: 'SearchOrderConfig', type: REG_DWORD, data: '0', option: updates-security}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching', value: 'DontPromptForWindowsUpdate', type: REG_DWORD, data: '1', option: updates-security}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching', value: 'DontPromptForWindowsUpdate', type: REG_DWORD, data: '1', option: updates-security}
 
   # Disable OS upgrade via Microsoft Store
   - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\WindowsStore', value: 'DisableOSUpgrade', type: REG_DWORD, data: '1'}
@@ -254,9 +256,10 @@ actions:
   - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU', value: 'EnableFeaturedSoftware', type: REG_DWORD, data: '0'}
 
   # Disable BITS transfers to prevent background update downloads
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\BITS', value: 'EnableBITSMaxBandwidth', type: REG_DWORD, data: '1'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\BITS', value: 'MaxTransferRateOnSchedule', type: REG_DWORD, data: '1'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\BITS', value: 'MaxTransferRateOffSchedule', type: REG_DWORD, data: '1'}
+  # Only applied when updates are fully disabled — security-only users need BITS for patches.
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\BITS', value: 'EnableBITSMaxBandwidth', type: REG_DWORD, data: '1', option: updates-disable}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\BITS', value: 'MaxTransferRateOnSchedule', type: REG_DWORD, data: '1', option: updates-disable}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\BITS', value: 'MaxTransferRateOffSchedule', type: REG_DWORD, data: '1', option: updates-disable}
 
   # Disable update restart notifications and reminders
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings', value: 'RestartNotificationsAllowed2', type: REG_DWORD, data: '0'}

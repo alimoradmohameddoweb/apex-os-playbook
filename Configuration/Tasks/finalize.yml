@@ -12,26 +12,12 @@ actions:
   - !run: {exe: 'powershell.exe', args: '-NoProfile -ExecutionPolicy Bypass -File CLEANUP.ps1', weight: 60, wait: true, exeDir: true, errorAction: log}
 
   # =======================================================================
-  # COMPACT OS — REDUCE DISK FOOTPRINT
-  # =======================================================================
-
-  - !status: {status: 'Compacting OS files...'}
-  - !cmd: {command: 'compact /compactos:always', wait: true, weight: 150, errorAction: log}
-
-  # =======================================================================
-  # FILE ASSOCIATIONS
-  # =======================================================================
-
-  - !status: {status: 'Setting file associations...'}
-  - !run: {exe: 'cmd.exe', args: '/c FILEASSOC.cmd', weight: 10, wait: true, exeDir: true, errorAction: log}
-
-  # =======================================================================
   # APEX OS BRANDING
   # =======================================================================
 
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation', value: 'Manufacturer', type: REG_SZ, data: 'Apex OS'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation', value: 'Model', type: REG_SZ, data: 'Apex OS 3.0.8'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation', value: 'SupportURL', type: REG_SZ, data: 'https://github.com/apex-os'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation', value: 'Model', type: REG_SZ, data: 'Apex OS 3.0.9'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation', value: 'SupportURL', type: REG_SZ, data: 'https://github.com/alimoradmohameddoweb/apex-os-playbook'}
 
   # =======================================================================
   # APEX OS WALLPAPER — Deploy custom desktop wallpaper

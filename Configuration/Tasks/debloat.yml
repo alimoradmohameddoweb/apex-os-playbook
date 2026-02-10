@@ -135,9 +135,6 @@ actions:
   # Outlook (new)
   - !appx: {name: 'Microsoft.OutlookForWindows', errorAction: log}
 
-  # Paint 3D
-  - !appx: {name: 'Microsoft.MSPaint', errorAction: log}
-
   # Voice Recorder
   - !appx: {name: 'Microsoft.WindowsSoundRecorder', errorAction: log}
 
@@ -300,8 +297,8 @@ actions:
 
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsStore\WindowsUpdate', value: 'AutoDownload', type: REG_DWORD, data: '2'}
 
-  # Prevent Windows from re-provisioning removed packages
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\Appx', value: 'AllowAllTrustedApps', type: REG_DWORD, data: '0'}
+  # NOTE: AllowAllTrustedApps left at default (1) to allow sideloading.
+  # Dynamic deprovisioning above prevents removed packages from returning.
 
   # =======================================================================
   # APPX CACHE CLEARING (after removals)

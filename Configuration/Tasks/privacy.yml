@@ -239,10 +239,12 @@ actions:
   # APP PRIVACY PERMISSIONS (Deny by default)
   # =======================================================================
 
-  # Camera
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam', value: 'Value', type: REG_SZ, data: 'Deny'}
-  # Microphone
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\microphone', value: 'Value', type: REG_SZ, data: 'Deny'}
+  # Camera — left at Allow so webcam/video calls work out of the box.
+  # Users can restrict per-app access in Settings > Privacy > Camera.
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam', value: 'Value', type: REG_SZ, data: 'Allow'}
+  # Microphone — left at Allow so voice/video calls work out of the box.
+  # Users can restrict per-app access in Settings > Privacy > Microphone.
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\microphone', value: 'Value', type: REG_SZ, data: 'Allow'}
   # Notifications access
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\userNotificationListener', value: 'Value', type: REG_SZ, data: 'Deny'}
   # Account info
@@ -283,9 +285,10 @@ actions:
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\broadFileSystemAccess', value: 'Value', type: REG_SZ, data: 'Deny'}
   # Background spatial perception
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\gazeInput', value: 'Value', type: REG_SZ, data: 'Deny'}
-  # Screenshot border
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\graphicsCaptureProgrammatic', value: 'Value', type: REG_SZ, data: 'Deny'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\graphicsCaptureWithoutBorder', value: 'Value', type: REG_SZ, data: 'Deny'}
+  # Screen capture — left at Allow so OBS, Discord screen share, and
+  # game recording work out of the box. Denying breaks all capture apps.
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\graphicsCaptureProgrammatic', value: 'Value', type: REG_SZ, data: 'Allow'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\graphicsCaptureWithoutBorder', value: 'Value', type: REG_SZ, data: 'Allow'}
 
   # =======================================================================
   # WINDOWS ERROR REPORTING
@@ -353,8 +356,9 @@ actions:
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\DeviceCensus.exe', value: 'Debugger', type: REG_SZ, data: '%windir%\System32\taskkill.exe'}
 
   # Block Update Session Orchestrator notification (MusNotification.exe)
-  - !registryKey: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\MusNotification.exe', operation: add}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\MusNotification.exe', value: 'Debugger', type: REG_SZ, data: '%windir%\System32\taskkill.exe'}
+  # Only when updates are fully disabled — security-only users need update notifications.
+  - !registryKey: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\MusNotification.exe', operation: add, option: updates-disable}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\MusNotification.exe', value: 'Debugger', type: REG_SZ, data: '%windir%\System32\taskkill.exe', option: updates-disable}
 
   # Block AggregatorHost.exe
   - !registryKey: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\AggregatorHost.exe', operation: add}
