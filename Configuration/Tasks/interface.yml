@@ -110,8 +110,9 @@ actions:
   # Disable cloud files in Quick Access
   - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer', value: 'ShowCloudFilesInQuickAccess', type: REG_DWORD, data: '0', option: clean-interface}
 
-  # Disable storage sense suggestions in Explorer
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\StorageSense', value: 'AllowStorageSenseGlobal', type: REG_DWORD, data: '0', option: clean-interface}
+  # Keep Storage Sense enabled for automatic temporary file cleanup
+  # Prevents disk from filling with stale caches over time
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\StorageSense', value: 'AllowStorageSenseGlobal', type: REG_DWORD, data: '1', option: clean-interface}
 
   # Disable automatic "Group by Date" in Downloads folder
   - !registryValue:

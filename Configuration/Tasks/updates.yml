@@ -43,14 +43,14 @@ actions:
       option: updates-security
       builds: ['>=22621']
 
-  # Win10 — pin to 22H2
+  # Win10 — pin to 22H2 (applies to both 21H2/19044 and 22H2/19045 builds)
   - !registryValue:
       path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate'
       value: 'TargetReleaseVersionInfo'
       type: REG_SZ
       data: '22H2'
       option: updates-security
-      builds: ['19045']
+      builds: ['19044', '19045']
 
   # Disable automatic restarts while users are logged in
   - !registryValue:

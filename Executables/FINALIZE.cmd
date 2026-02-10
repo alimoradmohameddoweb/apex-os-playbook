@@ -1,10 +1,10 @@
 @echo off
 :: FINALIZE.cmd - Final system optimization commands
 :: Runs after all other tasks to ensure a pristine, optimized state
-title Apex OS 3.1.2 - Final Optimization
+title Apex OS 3.1.3 - Final Optimization
 
 echo =============================================
-echo  Apex OS 3.1.2 - Final System Optimization
+echo  Apex OS 3.1.3 - Final System Optimization
 echo =============================================
 echo.
 
@@ -90,6 +90,6 @@ rd /s /q "%LOCALAPPDATA%\AMD\GLCache" 2>nul
 
 echo.
 echo =============================================
-echo  Apex OS 3.1.2: All optimizations applied.
+echo  Apex OS 3.1.3: All optimizations applied.
 echo  A reboot is required for full effect.
 echo =============================================

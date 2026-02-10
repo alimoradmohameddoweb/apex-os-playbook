@@ -125,6 +125,9 @@ actions:
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters', value: 'EnableSecuritySignature', type: REG_DWORD, data: '1'}
 
   # Enable SMB encryption (server-side; clients negotiate automatically)
+  # NOTE: Only affects inbound file-sharing connections. Most single-user desktops
+  # never host SMB shares, so this has no practical impact. Older SMB2-only clients
+  # that cannot negotiate encryption will be rejected — acceptable trade-off.
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters', value: 'EncryptData', type: REG_DWORD, data: '1'}
   # Block guest account access to SMB shares (RapidOS)
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters', value: 'EnableGuestAccount', type: REG_DWORD, data: '0'}
@@ -156,6 +159,9 @@ actions:
   # Non-admin users: auto-deny elevation requests
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'ConsentPromptBehaviorUser', type: REG_DWORD, data: '0'}
   # No secure desktop dimming (faster, less jarring)
+  # Trade-off: disabling the secure desktop overlay means a malicious app could
+  # theoretically spoof the UAC dialog. Acceptable for single-user desktops
+  # where the admin prompt itself is the primary gate.
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'PromptOnSecureDesktop', type: REG_DWORD, data: '0'}
   # Don't require code signing for elevated apps (allows unsigned software)
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'ValidateAdminCodeSignatures', type: REG_DWORD, data: '0'}
@@ -552,8 +558,9 @@ actions:
   # FeatureSettingsOverride=3 disables Spectre V2 + Meltdown kernel patches
   # FeatureSettingsOverrideMask=3 tells Windows to honor the override value
   # Defender functions normally without these — they are separate subsystems
-  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management', value: 'FeatureSettingsOverride', type: REG_DWORD, data: '3'}
-  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management', value: 'FeatureSettingsOverrideMask', type: REG_DWORD, data: '3'}
+  # Gated behind 'disable-mitigations' option — users can keep mitigations by unchecking
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management', value: 'FeatureSettingsOverride', type: REG_DWORD, data: '3', option: disable-mitigations}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management', value: 'FeatureSettingsOverrideMask', type: REG_DWORD, data: '3', option: disable-mitigations}
 
   # =======================================================================
   # DLL SEARCH ORDER HARDENING
@@ -562,6 +569,16 @@ actions:
   # Enable safe DLL search order
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager', value: 'SafeDllSearchMode', type: REG_DWORD, data: '1'}
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager', value: 'CWDIllegalInDllSearch', type: REG_DWORD, data: '2'}
+
+  # Force ASLR for all images (ForceRelocateImages) — defense-in-depth
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management', value: 'MoveImages', type: REG_DWORD, data: '1'}
+
+  # =======================================================================
+  # PRINTER HARDENING (PrintNightmare defense-in-depth)
+  # =======================================================================
+
+  # Only administrators can install printer drivers
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\PointAndPrint', value: 'RestrictDriverInstallationToAdministrators', type: REG_DWORD, data: '1'}
 
   # =======================================================================
   # WINDOWS 11 REQUIREMENTS BYPASS (ArkanoidOS)

@@ -304,7 +304,7 @@ Every entry was validated against the [official AME Wizard documentation](https:
 git clone https://github.com/alimoradmohameddoweb/apex-os-playbook.git
 cd apex-os-playbook
 powershell -NoProfile -ExecutionPolicy Bypass -File build.ps1
-# Output: Apex-OS-v3.1.2.apbx (password: malte)
+# Output: Apex-OS-v3.1.3.apbx (password: malte)
 ```
 
 ---
@@ -316,5 +316,5 @@ This project is licensed under the [GNU General Public License v3.0](LICENSE).
 ---
 
 <p align="center">
-  <strong>Apex OS 3.1.2</strong> — Zero telemetry. Maximum FPS. Total control.
+  <strong>Apex OS 3.1.3</strong> — Zero telemetry. Maximum FPS. Total control.
 </p>

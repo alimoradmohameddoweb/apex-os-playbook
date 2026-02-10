@@ -87,8 +87,10 @@ actions:
   # Large system cache — 0 for desktop/gaming (1 is for file servers)
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management', value: 'LargeSystemCache', type: REG_DWORD, data: '0'}
 
-  # Disable Superfetch/SysMain and prefetch (SSD optimization)
-  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters', value: 'EnablePrefetcher', type: REG_DWORD, data: '0'}
+  # SSD-optimized memory caching. Prefetcher=3 enables boot+app prefetch (low overhead
+  # even on SSDs and significantly faster app launches on HDDs). Superfetch disabled to
+  # avoid unnecessary SSD writes. HDD users: set EnableSuperfetch=3 for best performance.
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters', value: 'EnablePrefetcher', type: REG_DWORD, data: '3'}
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters', value: 'EnableSuperfetch', type: REG_DWORD, data: '0'}
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters', value: 'EnableBoottrace', type: REG_DWORD, data: '0'}
 
@@ -161,15 +163,16 @@ actions:
 
   # Disable Virtualization Based Security (VBS/HVCI) for lower latency
   # VBS causes 5-25% performance loss in gaming and general workloads
-  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard', value: 'EnableVirtualizationBasedSecurity', type: REG_DWORD, data: '0'}
-  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard', value: 'RequirePlatformSecurityFeatures', type: REG_DWORD, data: '0'}
-  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity', value: 'Enabled', type: REG_DWORD, data: '0'}
-  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\SystemGuard', value: 'Enabled', type: REG_DWORD, data: '0'}
+  # Gated behind 'disable-vbs' option — users can keep VBS enabled by unchecking
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard', value: 'EnableVirtualizationBasedSecurity', type: REG_DWORD, data: '0', option: disable-vbs}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard', value: 'RequirePlatformSecurityFeatures', type: REG_DWORD, data: '0', option: disable-vbs}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity', value: 'Enabled', type: REG_DWORD, data: '0', option: disable-vbs}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\SystemGuard', value: 'Enabled', type: REG_DWORD, data: '0', option: disable-vbs}
 
   # Disable Credential Guard (VBS scenario — leaks CPU cycles for credential isolation)
-  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\CredentialGuard', value: 'Enabled', type: REG_DWORD, data: '0'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard', value: 'EnableVirtualizationBasedSecurity', type: REG_DWORD, data: '0'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard', value: 'LsaCfgFlags', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\CredentialGuard', value: 'Enabled', type: REG_DWORD, data: '0', option: disable-vbs}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard', value: 'EnableVirtualizationBasedSecurity', type: REG_DWORD, data: '0', option: disable-vbs}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard', value: 'LsaCfgFlags', type: REG_DWORD, data: '0', option: disable-vbs}
 
   # Disable VBS via bcdedit (defense-in-depth — ensures VBS hypervisor doesn't load at boot)
   # NOTE: Conditional disable is handled in FINALIZE.cmd to preserve WSL2/Docker if active
@@ -278,11 +281,11 @@ actions:
   # Disable mouse hover time (instant tooltips)
   - !registryValue: {path: 'HKCU\Control Panel\Mouse', value: 'MouseHoverTime', type: REG_SZ, data: '0'}
 
-  # Reduce shutdown timeout for hung applications
-  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'WaitToKillAppTimeout', type: REG_SZ, data: '2000'}
-  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control', value: 'WaitToKillServiceTimeout', type: REG_SZ, data: '2000'}
-  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'HungAppTimeout', type: REG_SZ, data: '1000'}
-  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'LowLevelHooksTimeout', type: REG_SZ, data: '1000'}
+  # Reduce shutdown timeout for hung applications (safe minimums — avoids data loss)
+  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'WaitToKillAppTimeout', type: REG_SZ, data: '3000'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control', value: 'WaitToKillServiceTimeout', type: REG_SZ, data: '3000'}
+  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'HungAppTimeout', type: REG_SZ, data: '2000'}
+  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'LowLevelHooksTimeout', type: REG_SZ, data: '2000'}
 
   # Disable auto-arrange and snap assist animations
   - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'DragFullWindows', type: REG_SZ, data: '1'}
@@ -392,6 +395,8 @@ actions:
 
   # Disable device power management for gaming peripherals
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Power', value: 'EnergyEstimationEnabled', type: REG_DWORD, data: '0'}
+  # CsEnabled=0 disables Modern Standby (Connected Standby). Desktop-optimized.
+  # Laptop users who need instant-wake/Always-On may re-enable: CsEnabled=1
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Power', value: 'CsEnabled', type: REG_DWORD, data: '0'}
 
   # Disable USB selective suspend for gaming peripherals

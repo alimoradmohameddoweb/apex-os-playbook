@@ -156,6 +156,18 @@ foreach ($path in $extraPaths) {
 }
 
 # =========================================================================
+# WINSXS COMPONENT STORE CLEANUP
+# =========================================================================
+
+Write-Host "Cleaning WinSxS component store..." -ForegroundColor Yellow
+& DISM /Online /Cleanup-Image /StartComponentCleanup 2>&1 | Out-Null
+if ($LASTEXITCODE -eq 0) {
+    Write-Host "  WinSxS cleanup complete." -ForegroundColor Green
+} else {
+    Write-Host "  WinSxS cleanup skipped (exit code: $LASTEXITCODE)." -ForegroundColor DarkYellow
+}
+
+# =========================================================================
 # FINAL STATS
 # =========================================================================
 

@@ -147,7 +147,9 @@ actions:
   - !service: {name: 'iphlpsvc', operation: change, startup: 3, errorAction: log}
   - !service: {name: 'CscService', operation: change, startup: 4, errorAction: log}
   - !service: {name: 'RasAuto', operation: change, startup: 4, errorAction: log}
-  - !service: {name: 'SysMain', operation: change, startup: 4, errorAction: log}
+  # SysMain — Manual (not disabled). On SSDs this service is neutral; on HDDs it
+  # significantly improves app launch times via Prefetch/Superfetch caching.
+  - !service: {name: 'SysMain', operation: change, startup: 3, errorAction: log}
   # WbioSrvc — Windows Biometric Service. Manual so fingerprint readers work on demand.
   - !service: {name: 'WbioSrvc', operation: change, startup: 3, errorAction: log}
   - !service: {name: 'stisvc', operation: change, startup: 3, errorAction: log}
