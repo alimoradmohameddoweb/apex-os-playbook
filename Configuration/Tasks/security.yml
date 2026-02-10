@@ -517,13 +517,6 @@ actions:
   - !registryValue: {path: 'HKLM\SOFTWARE\Wow6432Node\Microsoft\Cryptography\Wintrust\Config', value: 'EnableCertPaddingCheck', type: REG_SZ, data: '1'}
 
   # =======================================================================
-  # LINKED CONNECTIONS (ADMIN + USER SHARE MAPPING)
-  # =======================================================================
-
-  # Enable linked connections so elevated processes see user drive mappings
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'EnableLinkedConnections', type: REG_DWORD, data: '1'}
-
-  # =======================================================================
   # SUDO SUPPORT (24H2+)
   # =======================================================================
 
