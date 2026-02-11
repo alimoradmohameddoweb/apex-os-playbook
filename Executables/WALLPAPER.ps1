@@ -1,12 +1,13 @@
 ﻿# =====================================================================
-# APEX OS - Desktop Wallpaper Deployment
-# Sets custom wallpaper for current user, all existing users, and
-# default profile. Uses SystemParametersInfo P/Invoke for immediate
-# application without logoff.
+# APEX OS - Desktop Wallpaper & Lock Screen Deployment
+# Sets custom wallpaper and lock screen for current user, all existing
+# users, and default profile. Uses SystemParametersInfo P/Invoke for
+# immediate wallpaper application without logoff.
 # =====================================================================
 
 param(
-    [string]$ImagePath = "$env:SystemRoot\Web\Wallpaper\ApexOS\Apex-background.jpg"
+    [string]$ImagePath = "$env:SystemRoot\Web\Wallpaper\ApexOS\Apex-background.jpg",
+    [string]$LockScreenPath = "$env:SystemRoot\Web\Wallpaper\ApexOS\Apex-OS-lockscreen.jpg"
 )
 
 $ErrorActionPreference = 'SilentlyContinue'
@@ -23,6 +24,15 @@ if (Test-Path $srcFile) {
     Write-Host "[Apex OS] Wallpaper deployed to $destDir"
 } else {
     Write-Warning "[Apex OS] Source wallpaper not found: $srcFile"
+}
+
+# --- Deploy lock screen image ---
+$srcLockScreen = Join-Path $scriptDir 'Apex-OS-lockscreen.jpg'
+if (Test-Path $srcLockScreen) {
+    Copy-Item -Path $srcLockScreen -Destination $destDir -Force
+    Write-Host "[Apex OS] Lock screen image deployed to $destDir"
+} else {
+    Write-Warning "[Apex OS] Source lock screen image not found: $srcLockScreen"
 }
 
 # --- Set wallpaper for ALL user hives in HKU ---
@@ -76,3 +86,40 @@ if (-not ([System.Management.Automation.PSTypeName]'ApexWallpaper').Type) {
 
 [ApexWallpaper]::SetWallpaper($ImagePath)
 Write-Host "[Apex OS] Wallpaper applied: $ImagePath"
+
+# --- Set lock screen image for all user hives ---
+# PersonalizationCSP LockScreenImagePath sets the lock screen for the current machine
+try {
+    $lockKey = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP'
+    if (-not (Test-Path $lockKey)) {
+        New-Item -Path $lockKey -Force | Out-Null
+    }
+    Set-ItemProperty -Path $lockKey -Name 'LockScreenImagePath' -Value $LockScreenPath -Type String -Force
+    Set-ItemProperty -Path $lockKey -Name 'LockScreenImageUrl'  -Value $LockScreenPath -Type String -Force
+    Set-ItemProperty -Path $lockKey -Name 'LockScreenImageStatus' -Value 1 -Type DWord -Force
+    Write-Host "[Apex OS] Lock screen applied: $LockScreenPath"
+} catch {
+    Write-Warning "[Apex OS] Failed to set lock screen: $_"
+}
+
+# --- Set lock screen via Group Policy path (defense-in-depth) ---
+try {
+    $gpKey = 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization'
+    if (-not (Test-Path $gpKey)) {
+        New-Item -Path $gpKey -Force | Out-Null
+    }
+    Set-ItemProperty -Path $gpKey -Name 'LockScreenImage' -Value $LockScreenPath -Type String -Force
+    Write-Host "[Apex OS] Lock screen policy applied: $LockScreenPath"
+} catch {
+    Write-Warning "[Apex OS] Failed to set lock screen policy: $_"
+}
+
+# --- Set lock screen for default user profile (new accounts) ---
+Get-ChildItem -Path 'Registry::HKU' -ErrorAction SilentlyContinue | ForEach-Object {
+    $userKey = $_.Name
+    try {
+        $cdmKey = "$userKey\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
+        [Microsoft.Win32.Registry]::SetValue($cdmKey, 'RotatingLockScreenEnabled', 0, [Microsoft.Win32.RegistryValueKind]::DWord)
+        [Microsoft.Win32.Registry]::SetValue($cdmKey, 'RotatingLockScreenOverlayEnabled', 0, [Microsoft.Win32.RegistryValueKind]::DWord)
+    } catch { }
+}

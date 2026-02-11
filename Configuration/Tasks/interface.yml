@@ -570,8 +570,8 @@ actions:
   # ADDITIONAL INTERFACE CLEANUP (EudynOS)
   # =======================================================================
 
-  # Disable taskbar notification badges (EudynOS)
-  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'TaskbarBadges', type: REG_DWORD, data: '0', option: clean-interface}
+  # Keep taskbar notification badges enabled — shows unread counts on app icons
+  # TaskbarBadges intentionally NOT disabled — users need notification visibility
 
   # Disable lock screen overlays (EudynOS)
   - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'LockScreenOverlaysDisabled', type: REG_DWORD, data: '1', option: clean-interface}

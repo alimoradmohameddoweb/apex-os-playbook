@@ -16,7 +16,7 @@ actions:
   # =======================================================================
 
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation', value: 'Manufacturer', type: REG_SZ, data: 'Apex OS'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation', value: 'Model', type: REG_SZ, data: 'Apex OS 3.1.5'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation', value: 'Model', type: REG_SZ, data: 'Apex OS 3.2.0'}
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation', value: 'SupportURL', type: REG_SZ, data: 'https://github.com/alimoradmohameddoweb/apex-os-playbook'}
 
   # =======================================================================
@@ -43,6 +43,17 @@ actions:
 
   # Disable lockscreen overlays (RotatingLockScreenEnabled already set in privacy.yml)
   - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\Personalization', value: 'LockScreenOverlaysDisabled', type: REG_DWORD, data: '1', option: 'configure-wallpaper'}
+
+  # Set Apex OS lock screen image via PersonalizationCSP (machine-wide)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP', value: 'LockScreenImagePath', type: REG_SZ, data: '%SystemRoot%\Web\Wallpaper\ApexOS\Apex-OS-lockscreen.jpg', option: 'configure-wallpaper'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP', value: 'LockScreenImageUrl', type: REG_SZ, data: '%SystemRoot%\Web\Wallpaper\ApexOS\Apex-OS-lockscreen.jpg', option: 'configure-wallpaper'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP', value: 'LockScreenImageStatus', type: REG_DWORD, data: '1', option: 'configure-wallpaper'}
+
+  # Set lock screen via Group Policy (defense-in-depth)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\Personalization', value: 'LockScreenImage', type: REG_SZ, data: '%SystemRoot%\Web\Wallpaper\ApexOS\Apex-OS-lockscreen.jpg', option: 'configure-wallpaper'}
+
+  # Set lock screen for new user profiles
+  - !registryValue: {path: 'HKU\AME_UserHive_Default\SOFTWARE\Microsoft\Windows\CurrentVersion\Lock Screen', value: 'LockScreenImagePath', type: REG_SZ, data: '%SystemRoot%\Web\Wallpaper\ApexOS\Apex-OS-lockscreen.jpg', option: 'configure-wallpaper', errorAction: log}
 
   # Deploy wallpaper file and apply immediately via P/Invoke
   - !run: {exe: 'powershell.exe', args: '-NoProfile -ExecutionPolicy Bypass -File WALLPAPER.ps1', weight: 15, wait: true, exeDir: true, runas: currentUserElevated, option: 'configure-wallpaper', errorAction: log}
