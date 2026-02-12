@@ -147,17 +147,13 @@ actions:
   # Enable high-resolution timer globally
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\kernel', value: 'GlobalTimerResolutionRequests', type: REG_DWORD, data: '1'}
 
-  # Disable dynamic tick — use fixed platform clock for consistent timing
-  - !cmd: {command: 'bcdedit /set disabledynamictick yes', wait: true, weight: 10, errorAction: log}
-
-  # Use TSC as primary timer source with Enhanced sync (lowest latency)
-  # Note: useplatformclock and useplatformtick are intentionally NOT set —
-  # they conflict and cause inconsistent timer behavior. Only disabledynamictick
-  # and tscsyncpolicy are needed for optimal latency.
+  # NOTE: bcdedit /set disabledynamictick and tscsyncpolicy moved to FINALIZE.cmd
+  # to centralize boot configuration and avoid redundant commands.
 
   # =======================================================================
   # KERNEL OPTIMIZATIONS
   # =======================================================================
+
 
   # Spectre/Meltdown mitigations managed in security.yml
 
@@ -195,11 +191,8 @@ actions:
   # BOOT OPTIMIZATION
   # =======================================================================
 
-  # Reduce boot menu timeout
-  - !cmd: {command: 'bcdedit /timeout 3', wait: true, weight: 5, errorAction: log}
+  # NOTE: bcdedit /timeout and bootmenupolicy are set in FINALIZE.cmd.
 
-  # NOTE: bootmenupolicy Legacy is set in FINALIZE.cmd alongside other bcdedit commands.
-  # Removed duplicate here to keep all bcdedit in one place.
 
   # Disable first logon animation
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'EnableFirstLogonAnimation', type: REG_DWORD, data: '0'}
@@ -403,19 +396,13 @@ actions:
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\USB\Parameters', value: 'DisableSelectiveSuspend', type: REG_DWORD, data: '1'}
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\USB\Parameters', value: 'EnhancedPowerManagementEnabled', type: REG_DWORD, data: '0'}
 
-  # Enable MSI mode for better interrupt handling (reduces DPC latency)
-  - !powerShell:
-    command: >-
-      Get-ChildItem 'HKLM:\SYSTEM\CurrentControlSet\Enum' -Recurse -ErrorAction SilentlyContinue |
-      Where-Object { $_.GetValueNames() -contains 'MSISupported' } |
-      ForEach-Object { Set-ItemProperty -Path $_.PSPath -Name 'MSISupported' -Value 1 -ErrorAction SilentlyContinue }
-    wait: true
-    weight: 15
-    errorAction: log
+  # NOTE: MSI mode recursive script removed — more targeted and stable
+  # implementation is now centralized in FINALIZE.cmd.
 
   # =======================================================================
   # GPU — NVIDIA SPECIFIC LATENCY OPTIMIZATIONS
   # =======================================================================
+
 
   # Disable NVIDIA telemetry
   - !registryValue: {path: 'HKLM\SOFTWARE\NVIDIA Corporation\NvControlPanel2\Client', value: 'OptInOrOutPreference', type: REG_DWORD, data: '0'}
@@ -474,8 +461,34 @@ actions:
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\TimeZoneInformation', value: 'RealTimeIsUniversal', type: REG_DWORD, data: '1'}
 
   # =======================================================================
+  # AUDIO DEVICE OPTIMIZATION (Low Latency)
+  # =======================================================================
+
+  # Disable audio enhancements and exclusive mode across all render/capture devices
+  # (Consolidated from EudynOS optimization patterns)
+  - !powerShell:
+      command: |
+        $paths = @("HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\MMDevices\Audio\Capture", "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\MMDevices\Audio\Render")
+        foreach ($path in $paths) {
+          if (Test-Path $path) {
+            Get-ChildItem $path | ForEach-Object {
+              $id = $_.PSChildName
+              # Disable Exclusive Mode
+              Set-ItemProperty -Path "$path\$id\Properties" -Name "{b3f8fa53-0004-438e-9003-51a46e139bfc},3" -Value 0 -Type DWord -ErrorAction SilentlyContinue
+              Set-ItemProperty -Path "$path\$id\Properties" -Name "{b3f8fa53-0004-438e-9003-51a46e139bfc},4" -Value 0 -Type DWord -ErrorAction SilentlyContinue
+              # Disable Enhancements
+              Set-ItemProperty -Path "$path\$id\FxProperties" -Name "{1da5d803-d492-4edd-8c23-e0c0ffee7f0e},5" -Value 1 -Type DWord -ErrorAction SilentlyContinue
+            }
+          }
+        }
+      wait: true
+      weight: 20
+      errorAction: log
+
+  # =======================================================================
   # AUTOMATIC MAINTENANCE & SLEEP STUDY
   # =======================================================================
+
 
   # Prevent Automatic Maintenance from waking the PC from sleep
   - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\Task Scheduler\Maintenance', value: 'WakeUp', type: REG_DWORD, data: '0'}

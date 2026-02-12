@@ -126,20 +126,11 @@ actions:
   # Only items NOT covered by CLEANUP.ps1 are included here.
   # =======================================================================
 
-  # Clear icon cache (not in CLEANUP.ps1)
-  - !cmd: {command: 'del /f /q "%LOCALAPPDATA%\IconCache.db" 2>nul', wait: true, weight: 5, errorAction: log}
-  - !cmd: {command: 'del /f /q "%LOCALAPPDATA%\Microsoft\Windows\Explorer\iconcache_*.db" 2>nul', wait: true, weight: 5, errorAction: log}
-
-  # Clear thumbnail cache (not in CLEANUP.ps1)
-  - !cmd: {command: 'del /f /q "%LOCALAPPDATA%\Microsoft\Windows\Explorer\thumbcache_*.db" 2>nul', wait: true, weight: 5, errorAction: log}
-
   # Clean RetailDemo offline content (not in CLEANUP.ps1)
   - !cmd: {command: 'rd /s /q "%SYSTEMROOT%\RetailDemo" 2>nul', wait: true, weight: 5, errorAction: log}
 
-  # Clear Prefetch (not in CLEANUP.ps1)
-  - !cmd: {command: 'del /s /f /q "%SYSTEMROOT%\Prefetch\*" 2>nul', wait: true, weight: 5, errorAction: log}
-
   # Remove WindowsAI / Recall data folder
+
   - !cmd: {command: 'rd /s /q "%LOCALAPPDATA%\Packages\MicrosoftWindows.Client.AIX_cw5n1h2txyewy" 2>nul', wait: true, weight: 5, errorAction: log}
   - !cmd: {command: 'rd /s /q "%ProgramData%\Microsoft\Windows\AppRepository\Packages\MicrosoftWindows.Client.AIX*" 2>nul', wait: true, weight: 5, errorAction: log}
   - !cmd: {command: 'rd /s /q "%ProgramFiles%\WindowsApps\MicrosoftWindows.Client.AIX*" 2>nul', wait: true, weight: 5, errorAction: log}

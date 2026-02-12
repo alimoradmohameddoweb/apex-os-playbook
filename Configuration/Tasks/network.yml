@@ -87,12 +87,38 @@ actions:
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters', value: 'DisableBandwidthThrottling', type: REG_DWORD, data: '1'}
 
   # Disable network adapter power saving at NDIS driver level (EudynOS)
-  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\NDIS\Parameters', value: 'DefaultPnPCapabilities', type: REG_DWORD, data: '24'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\0000', value: 'PnPCapabilities', type: REG_DWORD, data: '24'}
 
   # Packet Scheduler timer resolution — minimize scheduling jitter (EudynOS)
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\Psched', value: 'TimerResolution', type: REG_DWORD, data: '1'}
 
+  # =======================================================================
+  # NETWORK ADAPTER DEEP TUNING (Disabling performance-draining features)
+  # =======================================================================
+
+  # The following registry values are applied to the primary network adapter
+  # to disable power-saving, offloading, and other latency-increasing features.
+  # (Consolidated from EudynOS optimization patterns)
+
+  - !powerShell:
+      command: |
+        $adapters = Get-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e972-e325-11ce-bfc1-08002be10318}\*' | Where-Object { $_.DriverDesc }
+        $features = @("AdvancedEEE", "ARPOffloadEnable", "AutoDisableGigabit", "AutoPowerSaveModeEnabled", "DeviceSleepOnDisconnect", "DMACoalescing", "EEE", "EEELinkAdvertisement", "EeePhyEnable", "EnableConnectedPowerGating", "EnableDynamicPowerGating", "EnableGreenEthernet", "EnableModernStandby", "EnablePME", "EnablePowerManagement", "EnableSavePowerNow", "EnableWakeOnLan", "GigaLite", "ModernStandbyWoLMagicPacket", "NSOffloadEnable", "PacketCoalescing", "PowerSaveMode", "PowerSavingMode", "ReduceSpeedOnPowerDown", "S5WakeOnLan", "SelectiveSuspend", "WakeOnDisconnect", "WakeOnLink", "WakeOnMagicPacket", "WakeOnPattern", "WakeUpModeCap")
+        foreach ($adapter in $adapters) {
+          foreach ($f in $features) {
+            $path = $adapter.PSPath
+            if (Test-Path $path) {
+              Set-ItemProperty -Path $path -Name $f -Value "0" -ErrorAction SilentlyContinue
+              Set-ItemProperty -Path $path -Name "*$f" -Value "0" -ErrorAction SilentlyContinue
+            }
+          }
+        }
+      wait: true
+      weight: 30
+      errorAction: log
+
   # TCP/IP stack tuning — increase buffers and ports for high-throughput scenarios (EudynOS)
+
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters', value: 'IRPStackSize', type: REG_DWORD, data: '30'}
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters', value: 'TCP1323Opts', type: REG_DWORD, data: '1'}
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters', value: 'MaxFreeTcbs', type: REG_DWORD, data: '65536'}

@@ -2,7 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.2.2] - 2026-02-12
+
+### Added
+- Advanced Audio Latency optimization (disables enhancements/exclusive mode globally).
+- Advanced Network driver tuning (disables power-saving/interrupt moderation).
+
+### Changed
+- **Comprehensive Codebase Audit & Consolidation.**
+- Centralized all `bcdedit` boot configurations in `FINALIZE.cmd`.
+- Centralized MSI Mode interrupt handling in `FINALIZE.cmd`.
+- Eliminated redundant manual file/log deletions across multiple YAML files.
+- Optimized task execution order for faster application.
+
 ## [3.2.1] - 2026-02-12
+
 
 ### Added
 - Automated Visual C++ Runtimes (2005-2022) installation option.

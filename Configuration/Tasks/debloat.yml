@@ -311,11 +311,8 @@ actions:
   - !appx: {name: '*ShellExperienceHost*', operation: clearCache, errorAction: log}
 
   # =======================================================================
-  # CBS & LOG CLEARING (after removals)
+  # START MENU REBUILD
   # =======================================================================
-
-  # Clear CBS logs to prevent bloat from AppX removal noise
-  - !cmd: {command: 'del /f /q "%SystemRoot%\Logs\CBS\CBS.log" 2>nul', wait: true, weight: 3, errorAction: log}
 
   # Rebuild StartMenu cache after AppX changes
   - !cmd:
@@ -324,6 +321,7 @@ actions:
     wait: true
     weight: 3
     errorAction: log
+
 
   # =======================================================================
   # DYNAMIC DEPROVISIONING — PREVENT RETURN AFTER UPDATES
