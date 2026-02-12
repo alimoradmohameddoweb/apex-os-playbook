@@ -7,14 +7,17 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Automated Visual C++ Runtimes (2005-2022) installation option.
 - Legacy DirectX (June 2010) runtime installation option.
+- **Legacy Game Support (DirectPlay) optional feature.**
 - New User Profile cleanup for `AME_UserHive_Default` (Start pins, notifications).
 - VSS shadow copy cleanup.
 
 ### Changed
+- **Enhanced UI option names in AME Wizard for better clarity.**
 - Refactored `CLEANUP.ps1` to use `cleanmgr /sagerun:64` for safer and more thorough cleaning.
 - Improved log clearing speed by switching to `wevtutil`.
-- Hardened `FINALIZE.cmd` with better Font Cache service handling and expanded GPU shader cache clearing.
+- Hardened `FINALIZE.cmd` with advanced MSI Mode, Network Tuning, and Audio optimizations from EudynOS.
 - Software downloads now use `curl.exe` with retries for higher reliability.
+
 
 ### Fixed
 - Potential hangs in `CLEANUP.ps1` caused by slow event log queries.

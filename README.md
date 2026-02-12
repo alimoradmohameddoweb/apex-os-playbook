@@ -133,7 +133,9 @@ Three user-selectable policies:
 - **7-Zip**: Universal file archiver (optional toggle)
 - **VCREDISTs**: Full Visual C++ Runtime stack 2005-2022 (optional toggle)
 - **DirectX**: Legacy DirectX June 2010 runtimes (optional toggle)
+- **DirectPlay**: Legacy game support for older titles (optional toggle)
 - File associations auto-configured for installed software
+
 
 ---
 
@@ -189,19 +191,21 @@ Three user-selectable policies:
 ### Core System Features (CheckboxPage 1)
 | Option | Default | Description |
 |--------|---------|-------------|
-| Remove Bloatware AppX Packages | ✅ | Remove 40+ AppX packages + OneDrive + capabilities |
-| Disable All Telemetry & Data Collection | ✅ | Eliminate all data collection, diagnostics, feedback |
-| Maximum Performance Optimizations | ✅ | CPU/GPU/memory/timer/boot/visual optimizations |
-| Network Stack Optimization | ✅ | TCP/IP stack, DNS, Nagle, adapter tuning |
+| Surgical Bloatware Removal | ✅ | Remove 40+ AppX packages + OneDrive + capabilities |
+| Absolute Privacy | ✅ | Eliminate all data collection, diagnostics, feedback |
+| Ultimate Performance Tuning | ✅ | CPU/GPU/memory/timer/boot/visual optimizations |
+| Advanced Network Stack Optimization | ✅ | TCP/IP stack, DNS, Nagle, adapter tuning |
 
 ### Additional Customization (CheckboxPage 2)
 | Option | Default | Description |
 |--------|---------|-------------|
-| Clean User Interface | ✅ | Taskbar, Explorer, context menu, dark mode, notifications |
-| Apply Apex OS Wallpaper | ✅ | Set Apex OS branded desktop wallpaper |
+| Streamlined User Interface | ✅ | Taskbar, Explorer, context menu, dark mode, notifications |
+| Apply Apex OS UI | ✅ | Set Apex OS branded desktop wallpaper & lock screen |
+| Enable Legacy Game Support | ✅ | Enable DirectPlay for older games compatibility |
 | Install 7-Zip Archiver | ✅ | High-compression file archiver supporting all major formats |
 | Install Visual C++ Runtimes | ✅ | Full VC++ stack 2005-2022 for app/game compatibility |
 | Install Legacy DirectX | ✅ | DirectX June 2010 runtimes for older game support |
+
 
 > **Note:** Privacy, security hardening, and service optimization are always applied — they are not optional toggles.
 
@@ -235,10 +239,11 @@ apex-os/
 │       └── finalize.yml       # ~21 actions — cleanup, branding, wallpaper
 ├── Executables/
 │   ├── CLEANUP.ps1            # Advanced cleanup engine (cleanmgr / wevtutil / vss)
-│   ├── FINALIZE.cmd           # Final optimizations (DNS/Winsock/fonts/GPU)
-│   ├── SOFTWARE.ps1           # Automated VCREDIST and DirectX installation
+│   ├── FINALIZE.cmd           # Final optimizations (MSI/Network/Audio/Fonts/GPU)
+│   ├── SOFTWARE.ps1           # Automated Apps, VCREDIST, DirectX & DirectPlay
 │   ├── WALLPAPER.ps1          # Desktop wallpaper deployment (P/Invoke)
 │   └── Apex-background.jpg    # Apex OS desktop wallpaper
+
 └── Images/
     ├── playbook.png           # Playbook icon (512x512)
     ├── firefox.png            # Firefox browser icon

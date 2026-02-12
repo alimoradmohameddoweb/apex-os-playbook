@@ -1,6 +1,6 @@
 # SOFTWARE.ps1 - Automated Software & Dependency Installation
 # Optimized for Apex OS 3.2.1
-# Handles Browsers, VCREDISTs, and DirectX runtimes with resilient downloads.
+# Handles Browsers, VCREDISTs, DirectX, and Legacy Components with resilient downloads.
 # Replaces Chocolatey/Winget dependency for maximum portability.
 
 param (
@@ -9,14 +9,24 @@ param (
     [switch]$InstallUGC,
     [switch]$Install7Zip,
     [switch]$InstallVCRedist,
-    [switch]$InstallDirectX
+    [switch]$InstallDirectX,
+    [switch]$EnableDirectPlay
 )
 
 $ErrorActionPreference = 'SilentlyContinue'
 $timeouts = @("--connect-timeout", "15", "--retry", "5", "--retry-delay", "2", "--retry-all-errors")
 $arm = ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64')
 
-# Create a isolated temporary directory
+# =========================================================================
+# LEGACY GAME SUPPORT (DirectPlay) - No download needed
+# =========================================================================
+
+if ($EnableDirectPlay) {
+    Write-Host "Apex OS: Enabling Legacy Game Support (DirectPlay)..." -ForegroundColor Cyan
+    & DISM.exe /Online /Enable-Feature /FeatureName:"DirectPlay" /NoRestart /All 2>&1 | Out-Null
+}
+
+# Create a isolated temporary directory for downloads
 $tempDir = Join-Path -Path $env:TEMP -ChildPath ([guid]::NewGuid().ToString())
 New-Item -ItemType Directory -Path $tempDir -Force | Out-Null
 Push-Location $tempDir
@@ -50,33 +60,17 @@ if ($InstallBrave) {
     & curl.exe -LSs "$url" -o "$file" $timeouts
     if (Test-Path $file) {
         Start-Process -FilePath $file -ArgumentList "/silent /install" -WindowStyle Hidden
-        # Brave installer exits immediately, need to wait for the child process
         $timeout = 0
         do {
             Start-Sleep -Seconds 2
             $timeout++
             $proc = Get-Process -Name "BraveSetup" -ErrorAction SilentlyContinue
-        } while ($proc -and $timeout -lt 180) # Wait max 6 mins
+        } while ($proc -and $timeout -lt 180)
     }
 }
 
 if ($InstallUGC) {
     Write-Host "Apex OS: Installing Ungoogled Chromium..." -ForegroundColor Cyan
-    # Using a reliable static URL or GitHub API would be ideal, but for stability we'll use a known recent version or script approach
-    # Since UGC doesn't have a stable "latest" permalink like Firefox/Brave, we might need to rely on a specific version or a helper
-    # For now, let's use a popular binary release source or placeholder if complex.
-    # Actually, Chocolatey was good for this. Without it, we need a direct link.
-    # Marmaduke releases are popular. Let's try to find a stable permalink or skip if too risky.
-    # Alternative: Use a known helper script or skip UGC in "No-Choco" mode? 
-    # Atlas uses "Chrome" instead. Let's stick to the request: "replace choco".
-    # I'll use a direct GitHub release fetch for marmaduke-chromium if possible, or a static recent version.
-    # For safety/reliability in this script without complex API parsing, I will skip UGC or warn. 
-    # BUT, the user wants it. I will use the Chocolatey source URL logic if possible? No.
-    # Let's use the Woolyss fetch method if simple, otherwise rely on a fixed version (bad practice).
-    # DECISION: Skip UGC in this script for now and keep it manual or warn, OR use a very standard Chromium build. 
-    # Actually, let's use the 'Hibbiki' release which is common.
-    
-    # GitHub API fetch for latest Hibbiki/chromium-win64
     try {
         $latest = (Invoke-RestMethod -Uri "https://api.github.com/repos/Hibbiki/chromium-win64/releases/latest").assets | Where-Object { $_.name -like "chrome-win-*.zip" } | Select-Object -First 1
         if ($latest) {
@@ -84,7 +78,6 @@ if ($InstallUGC) {
             & curl.exe -LSs "$($latest.browser_download_url)" -o "$file" $timeouts
             if (Test-Path $file) {
                 Expand-Archive -Path $file -DestinationPath "$env:ProgramFiles" -Force
-                # Create Shortcut manually since it's a portable zip
                 $WshShell = New-Object -comObject WScript.Shell
                 $Shortcut = $WshShell.CreateShortcut("$env:Public\Desktop\Ungoogled Chromium.lnk")
                 $Shortcut.TargetPath = "$env:ProgramFiles\chrome-win\chrome.exe"
@@ -94,9 +87,7 @@ if ($InstallUGC) {
                 $Shortcut.Save()
             }
         }
-    } catch {
-        Write-Warning "Failed to install Ungoogled Chromium via GitHub API."
-    }
+    } catch { }
 }
 
 # =========================================================================
@@ -106,9 +97,6 @@ if ($InstallUGC) {
 if ($Install7Zip) {
     Write-Host "Apex OS: Installing 7-Zip..." -ForegroundColor Cyan
     $arch = if ($arm) { "arm64" } else { "x64" }
-    # Scrape 7-zip.org for latest version or use a fixed recent one. 
-    # Fixed is safer for a script without HTML parsing. 
-    # 24.08 is recent.
     $url = "https://www.7-zip.org/a/7z2408-$arch.exe" 
     $file = "$tempDir\7zip.exe"
     
@@ -182,4 +170,3 @@ if ($InstallDirectX) {
 
 Remove-Temp
 Write-Host "Apex OS: Software installation phase complete." -ForegroundColor Green
-

@@ -130,8 +130,12 @@ actions:
   # APEX OS CUSTOM SOFTWARE & DEPENDENCIES
   # =======================================================================
 
+  - !status: {status: 'Enabling Legacy Game Support (DirectPlay)...'}
+  - !run: {exe: 'powershell.exe', args: '-NoProfile -ExecutionPolicy Bypass -File SOFTWARE.ps1 -EnableDirectPlay', weight: 30, wait: true, exeDir: true, option: 'enable-directplay', errorAction: log}
+
   - !status: {status: 'Installing Visual C++ Runtimes...'}
   - !run: {exe: 'powershell.exe', args: '-NoProfile -ExecutionPolicy Bypass -File SOFTWARE.ps1 -InstallVCRedist', weight: 80, wait: true, exeDir: true, option: 'install-vcredist', errorAction: log}
+
 
   - !status: {status: 'Installing Legacy DirectX Runtimes...'}
   - !run: {exe: 'powershell.exe', args: '-NoProfile -ExecutionPolicy Bypass -File SOFTWARE.ps1 -InstallDirectX', weight: 40, wait: true, exeDir: true, option: 'install-directx', errorAction: log}
