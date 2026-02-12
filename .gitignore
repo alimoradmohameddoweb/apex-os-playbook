@@ -1,0 +1,31 @@
+# Build outputs
+*.apbx
+*.7z
+*.zip
+
+# AME Wizard temp
+*.log
+*.tmp
+
+# OS artifacts
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# PowerShell
+*.ps1xml
+
+# VS Code
+.vscode/
+
+# Agent/Environment State
+.agents/
+.session_state/
+.gemini/
+plans/
+
+# Reference Folders (Large/Long paths)
+Other Refrenace Lead super useful other os/
+
+Log.yml
+Output.txt

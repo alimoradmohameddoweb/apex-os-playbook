@@ -1,0 +1,510 @@
+---
+title: Maximum Performance Optimization
+description: >
+  Comprehensive performance tuning for maximum FPS and system responsiveness.
+  Covers CPU scheduling, GPU priority, memory management, disk I/O,
+  timer resolution, power plan, visual effects, game mode, and kernel tuning.
+
+actions:
+  # =======================================================================
+  # CPU SCHEDULING & PRIORITY
+  # =======================================================================
+
+  # Set Win32PrioritySeparation to short, variable, high foreground boost (38 decimal = 0x26 hex)
+  # This gives foreground apps maximum CPU quantum — critical for gaming FPS
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\PriorityControl', value: 'Win32PrioritySeparation', type: REG_DWORD, data: '38'}
+
+  # Disable core parking — keep all cores active for instant response
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerSettings\54533251-82be-4824-96c1-47b60b740d00\0cc5b647-c1df-4637-891a-dec35c318583', value: 'ValueMax', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerSettings\54533251-82be-4824-96c1-47b60b740d00\0cc5b647-c1df-4637-891a-dec35c318583', value: 'ValueMin', type: REG_DWORD, data: '0'}
+
+  # =======================================================================
+  # GPU & GRAPHICS PRIORITY
+  # =======================================================================
+
+  # Hardware-accelerated GPU scheduling
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers', value: 'HwSchMode', type: REG_DWORD, data: '2'}
+
+  # Disable GPU preemption for lower latency (DX compute preemption)
+  # NOTE: On rare hardware (older AMD GPUs, heavy compute shaders) this can
+  # cause display driver TDR crashes. Revert with: EnablePreemption=1
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers\Scheduler', value: 'EnablePreemption', type: REG_DWORD, data: '0'}
+
+  # Disable DWM frame limiting for smoother rendering
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\Dwm', value: 'OverlayTestMode', type: REG_DWORD, data: '5'}
+
+  # =======================================================================
+  # MULTIMEDIA/MMCSS TUNING (Multimedia Class Scheduler Service)
+  # =======================================================================
+
+  # SystemResponsiveness: % of CPU reserved for low-priority tasks (lower = more for games)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile', value: 'SystemResponsiveness', type: REG_DWORD, data: '0'}
+
+  # Network throttling — disable the 10-packet-per-ms limit for multimedia
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile', value: 'NetworkThrottlingIndex', type: REG_DWORD, data: '4294967295'}
+
+  # Disable throttling entirely (NoLazyMode=1 disables lazy mode completely)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile', value: 'NoLazyMode', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile', value: 'AlwaysOn', type: REG_DWORD, data: '1'}
+
+  # Games MMCSS profile — maximum priority
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games', value: 'Affinity', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games', value: 'Background Only', type: REG_SZ, data: 'False'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games', value: 'Clock Rate', type: REG_DWORD, data: '10000'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games', value: 'GPU Priority', type: REG_DWORD, data: '8'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games', value: 'Priority', type: REG_DWORD, data: '6'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games', value: 'Scheduling Category', type: REG_SZ, data: 'High'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games', value: 'SFIO Priority', type: REG_SZ, data: 'High'}
+  # Mark Games task as latency-sensitive for scheduler priority (EudynOS)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games', value: 'Latency Sensitive', type: REG_SZ, data: 'True'}
+
+  # MMCSS advanced tuning (LazyModeTimeout removed — NoLazyMode=1 disables lazy mode entirely)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile', value: 'SchedulingPeriod', type: REG_DWORD, data: '10000'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile', value: 'IdleDetectionCycles', type: REG_DWORD, data: '6'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile', value: 'MaxThreadsTotal', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile', value: 'MaxThreadsPerProcess', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile', value: 'SchedulerTimerResolution', type: REG_DWORD, data: '5000'}
+
+  # Pro Audio MMCSS profile
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Pro Audio', value: 'Affinity', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Pro Audio', value: 'Background Only', type: REG_SZ, data: 'False'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Pro Audio', value: 'Clock Rate', type: REG_DWORD, data: '10000'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Pro Audio', value: 'GPU Priority', type: REG_DWORD, data: '8'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Pro Audio', value: 'Priority', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Pro Audio', value: 'Scheduling Category', type: REG_SZ, data: 'High'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Pro Audio', value: 'SFIO Priority', type: REG_SZ, data: 'Normal'}
+
+  # =======================================================================
+  # MEMORY MANAGEMENT
+  # =======================================================================
+
+  # Disable paging executive — keep kernel and drivers in physical RAM
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management', value: 'DisablePagingExecutive', type: REG_DWORD, data: '1'}
+
+  # Disable page combining (reduces CPU overhead from deduplication scanning)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management', value: 'DisablePageCombining', type: REG_DWORD, data: '1'}
+
+  # Large system cache — 0 for desktop/gaming (1 is for file servers)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management', value: 'LargeSystemCache', type: REG_DWORD, data: '0'}
+
+  # SSD-optimized memory caching. Prefetcher=3 enables boot+app prefetch (low overhead
+  # even on SSDs and significantly faster app launches on HDDs). Superfetch disabled to
+  # avoid unnecessary SSD writes. HDD users: set EnableSuperfetch=3 for best performance.
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters', value: 'EnablePrefetcher', type: REG_DWORD, data: '3'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters', value: 'EnableSuperfetch', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters', value: 'EnableBoottrace', type: REG_DWORD, data: '0'}
+
+  # =======================================================================
+  # DISK I/O OPTIMIZATION
+  # =======================================================================
+
+  # Disable last access timestamp for NTFS (reduces write operations)
+  - !cmd: {command: 'fsutil behavior set disablelastaccess 1', wait: true, weight: 5, errorAction: log}
+
+  # Disable 8.3 short name creation (reduces NTFS overhead)
+  - !cmd: {command: 'fsutil behavior set disable8dot3 1', wait: true, weight: 5, errorAction: log}
+
+  # Disable NTFS compression to reduce CPU overhead (RapidOS)
+  - !cmd: {command: 'fsutil behavior set disablecompression 1', wait: true, weight: 5, errorAction: log}
+
+  # Increase NTFS memory usage for performance
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\FileSystem', value: 'NtfsMemoryUsage', type: REG_DWORD, data: '2'}
+
+  # Disable encryption on pagefile
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\FileSystem', value: 'NtfsEncryptPagingFile', type: REG_DWORD, data: '0'}
+
+  # =======================================================================
+  # POWER MANAGEMENT — ULTIMATE PERFORMANCE
+  # =======================================================================
+
+  # Import Ultimate Performance power plan
+  - !cmd: {command: 'powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61', wait: true, weight: 5, errorAction: log}
+
+  # Set Ultimate Performance as active
+  - !cmd: {command: 'for /f "tokens=4" %g in (''powercfg -list ^| findstr "Ultimate"'') do powercfg -setactive %g', wait: true, weight: 5, errorAction: log}
+
+  # Disable USB selective suspend
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\USB', value: 'DisableSelectiveSuspend', type: REG_DWORD, data: '1'}
+
+  # Disable power throttling
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling', value: 'PowerThrottlingOff', type: REG_DWORD, data: '1'}
+
+  # Disable hibernate (frees disk space, faster shutdown)
+  - !cmd: {command: 'powercfg -h off', wait: true, weight: 5, errorAction: log}
+
+  # Disable Fast Startup (known to cause issues, not truly faster)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Power', value: 'HiberbootEnabled', type: REG_DWORD, data: '0'}
+
+  # Set processor performance to 100% minimum
+  - !cmd: {command: 'powercfg /setacvalueindex scheme_current sub_processor PROCTHROTTLEMIN 100', wait: true, weight: 5, errorAction: log}
+  - !cmd: {command: 'powercfg /setacvalueindex scheme_current sub_processor PROCTHROTTLEMAX 100', wait: true, weight: 5, errorAction: log}
+  - !cmd: {command: 'powercfg /setactive scheme_current', wait: true, weight: 3, errorAction: log}
+
+  # =======================================================================
+  # TIMER RESOLUTION & INTERRUPT HANDLING
+  # =======================================================================
+
+  # Enable high-resolution timer globally
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\kernel', value: 'GlobalTimerResolutionRequests', type: REG_DWORD, data: '1'}
+
+  # Disable dynamic tick — use fixed platform clock for consistent timing
+  - !cmd: {command: 'bcdedit /set disabledynamictick yes', wait: true, weight: 10, errorAction: log}
+
+  # Use TSC as primary timer source with Enhanced sync (lowest latency)
+  # Note: useplatformclock and useplatformtick are intentionally NOT set —
+  # they conflict and cause inconsistent timer behavior. Only disabledynamictick
+  # and tscsyncpolicy are needed for optimal latency.
+
+  # =======================================================================
+  # KERNEL OPTIMIZATIONS
+  # =======================================================================
+
+  # Spectre/Meltdown mitigations managed in security.yml
+
+  # Disable Virtualization Based Security (VBS/HVCI) for lower latency
+  # VBS causes 5-25% performance loss in gaming and general workloads
+  # Gated behind 'disable-vbs' option — users can keep VBS enabled by unchecking
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard', value: 'EnableVirtualizationBasedSecurity', type: REG_DWORD, data: '0', option: disable-vbs}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard', value: 'RequirePlatformSecurityFeatures', type: REG_DWORD, data: '0', option: disable-vbs}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity', value: 'Enabled', type: REG_DWORD, data: '0', option: disable-vbs}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\SystemGuard', value: 'Enabled', type: REG_DWORD, data: '0', option: disable-vbs}
+
+  # Disable Credential Guard (VBS scenario — leaks CPU cycles for credential isolation)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\CredentialGuard', value: 'Enabled', type: REG_DWORD, data: '0', option: disable-vbs}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard', value: 'EnableVirtualizationBasedSecurity', type: REG_DWORD, data: '0', option: disable-vbs}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard', value: 'LsaCfgFlags', type: REG_DWORD, data: '0', option: disable-vbs}
+
+  # Disable VBS via bcdedit (defense-in-depth — ensures VBS hypervisor doesn't load at boot)
+  # NOTE: Conditional disable is handled in FINALIZE.cmd to preserve WSL2/Docker if active
+
+  # Disable Kernel DMA Protection
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\FVE', value: 'DisableExternalDMAUnderLock', type: REG_DWORD, data: '0'}
+
+  # Enable TSX (Intel Transactional Synchronization Extensions) — performance boost
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\kernel', value: 'DisableTsx', type: REG_DWORD, data: '0'}
+
+  # Disable Fault Tolerant Heap (FTH) — reduces overhead for crashing/restarting apps
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\FTH', value: 'Enabled', type: REG_DWORD, data: '0'}
+  # Create empty FTH State key to prevent re-creation (RapidOS)
+  - !registryKey: {path: 'HKLM\SOFTWARE\Microsoft\FTH\State', operation: add}
+
+  # Disable Data Integrity Scan — reduces background SSD I/O (RapidOS)
+  - !scheduledTask: {path: '\Microsoft\Windows\Data Integrity Scan\Data Integrity Scan', operation: disable, weight: 1}
+
+  # =======================================================================
+  # BOOT OPTIMIZATION
+  # =======================================================================
+
+  # Reduce boot menu timeout
+  - !cmd: {command: 'bcdedit /timeout 3', wait: true, weight: 5, errorAction: log}
+
+  # NOTE: bootmenupolicy Legacy is set in FINALIZE.cmd alongside other bcdedit commands.
+  # Removed duplicate here to keep all bcdedit in one place.
+
+  # Disable first logon animation
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'EnableFirstLogonAnimation', type: REG_DWORD, data: '0'}
+  # Show verbose startup/shutdown status messages (AtmosphereOS)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'verbosestatus', type: REG_DWORD, data: '1'}
+  # Disable startup sound
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI\BootAnimation', value: 'DisableStartupSound', type: REG_DWORD, data: '1'}
+  # Disable automatic restart sign-on (prevents apps from re-launching after restart)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'DisableAutomaticRestartSignOn', type: REG_DWORD, data: '1'}
+
+  # Don't zero pagefile at shutdown (faster shutdown, negligible security impact)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management', value: 'ClearPageFileAtShutdown', type: REG_DWORD, data: '0'}
+
+  # =======================================================================
+  # GAME MODE & GAMING OPTIMIZATIONS
+  # =======================================================================
+
+  # Enable Game Mode
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\GameBar', value: 'AllowAutoGameMode', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\GameBar', value: 'AutoGameModeEnabled', type: REG_DWORD, data: '1'}
+
+  # Disable Game Bar overlay (reduces input lag)
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\GameBar', value: 'UseNexusForGameBarEnabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKCU\System\GameConfigStore', value: 'GameDVR_Enabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\GameDVR', value: 'AllowGameDVR', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR', value: 'AppCaptureEnabled', type: REG_DWORD, data: '0'}
+
+  # Suppress Game Bar startup tips and panel (EudynOS)
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\GameBar', value: 'GamePanelStartupTipIndex', type: REG_DWORD, data: '3'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\GameBar', value: 'ShowStartupPanel', type: REG_DWORD, data: '0'}
+
+  # Disable Xbox PresenceWriter game activity tracking (AtmosphereOS)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\WindowsRuntime\ActivatableClassId\Windows.Gaming.GameBar.PresenceServer.PresenceWriter', value: 'ActivationType', type: REG_DWORD, data: '0'}
+  # Disable Game DVR via PolicyManager (AtmosphereOS — defense-in-depth)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\PolicyManager\default\ApplicationManagement\AllowGameDVR', value: 'value', type: REG_DWORD, data: '0'}
+
+  # Redirect ms-gamebar protocol to dummy executable (AME-10-0.8)
+  - !registryValue: {path: 'HKCR\ms-gamebar\Shell\Open\Command', value: '', type: REG_SZ, data: '"C:\Windows\system32\systray.exe"'}
+  # Redirect ms-gamebarservices protocol to dummy executable (AME-10-0.8)
+  - !registryValue: {path: 'HKCR\ms-gamebarservices\Shell\Open\Command', value: '', type: REG_SZ, data: '"C:\Windows\system32\systray.exe"'}
+
+  # Disable fullscreen optimizations globally (can cause input lag in some games)
+  - !registryValue: {path: 'HKCU\System\GameConfigStore', value: 'GameDVR_FSEBehavior', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\System\GameConfigStore', value: 'GameDVR_FSEBehaviorMode', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\System\GameConfigStore', value: 'GameDVR_HonorUserFSEBehaviorMode', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\System\GameConfigStore', value: 'GameDVR_DXGIHonorFSEWindowsCompatible', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\System\GameConfigStore', value: 'GameDVR_EFSEFeatureFlags', type: REG_DWORD, data: '0'}
+
+  # =======================================================================
+  # BACKGROUND APPS & STARTUP
+  # =======================================================================
+
+  # Disable background apps
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications', value: 'GlobalUserDisabled', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\AppPrivacy', value: 'LetAppsRunInBackground', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Search', value: 'BackgroundAppGlobalToggle', type: REG_DWORD, data: '0'}
+
+  # =======================================================================
+  # VISUAL EFFECTS — PERFORMANCE MODE
+  # =======================================================================
+
+  # Set visual effects to "Adjust for best performance" (custom selection)
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects', value: 'VisualFXSetting', type: REG_DWORD, data: '2'}
+
+  # Disable animations
+  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'UserPreferencesMask', type: REG_BINARY, data: '9012038010000000'}
+  - !registryValue: {path: 'HKCU\Control Panel\Desktop\WindowMetrics', value: 'MinAnimate', type: REG_SZ, data: '0'}
+
+  # Keep font smoothing (ClearType) enabled for readability
+  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'FontSmoothing', type: REG_SZ, data: '2'}
+  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'FontSmoothingType', type: REG_DWORD, data: '2'}
+
+  # Disable transparency effects (handled here for performance; interface.yml covers visual prefs)
+  # NOTE: Intentionally kept only in interface.yml to avoid duplicate — removed from here.
+
+  # Reduce menu show delay (instant menus)
+  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'MenuShowDelay', type: REG_SZ, data: '0'}
+
+  # Disable mouse hover time (instant tooltips)
+  - !registryValue: {path: 'HKCU\Control Panel\Mouse', value: 'MouseHoverTime', type: REG_SZ, data: '0'}
+
+  # Reduce shutdown timeout for hung applications (safe minimums — avoids data loss)
+  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'WaitToKillAppTimeout', type: REG_SZ, data: '3000'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control', value: 'WaitToKillServiceTimeout', type: REG_SZ, data: '3000'}
+  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'HungAppTimeout', type: REG_SZ, data: '2000'}
+  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'LowLevelHooksTimeout', type: REG_SZ, data: '2000'}
+
+  # Disable auto-arrange and snap assist animations
+  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'DragFullWindows', type: REG_SZ, data: '1'}
+
+  # =======================================================================
+  # PROCESS PRIORITY — SYSTEM RESPONSIVENESS
+  # =======================================================================
+
+  # Set CSRSS (Client Server Runtime) to above-normal priority — reduces input latency
+  # IFEO PerfOptions CpuPriorityClass: 1=Idle, 5=BelowNormal, 2=Normal, 6=AboveNormal, 3=High, 4=Realtime
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\csrss.exe\PerfOptions', value: 'CpuPriorityClass', type: REG_DWORD, data: '6'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\csrss.exe\PerfOptions', value: 'IoPriority', type: REG_DWORD, data: '3'}
+
+  # Reduce priority of background system processes
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\MoUsoCoreWorker.exe\PerfOptions', value: 'CpuPriorityClass', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\PhoneExperienceHost.exe\PerfOptions', value: 'CpuPriorityClass', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\SearchProtocolHost.exe\PerfOptions', value: 'CpuPriorityClass', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\SearchFilterHost.exe\PerfOptions', value: 'CpuPriorityClass', type: REG_DWORD, data: '1'}
+
+  # Lower priority of background indexer and input services
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\SearchIndexer.exe\PerfOptions', value: 'CpuPriorityClass', type: REG_DWORD, data: '5'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\ctfmon.exe\PerfOptions', value: 'CpuPriorityClass', type: REG_DWORD, data: '5'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\fontdrvhost.exe\PerfOptions', value: 'CpuPriorityClass', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\fontdrvhost.exe\PerfOptions', value: 'IoPriority', type: REG_DWORD, data: '0'}
+  # LSASS is the security authority — keep at HIGH so credential validation
+  # (UAC, login, RunAs) is never starved by CPU contention.
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\lsass.exe\PerfOptions', value: 'CpuPriorityClass', type: REG_DWORD, data: '3'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sihost.exe\PerfOptions', value: 'CpuPriorityClass', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sihost.exe\PerfOptions', value: 'IoPriority', type: REG_DWORD, data: '0'}
+
+  # =======================================================================
+  # NTFS & FILESYSTEM TWEAKS
+  # =======================================================================
+
+  # Increase filesystem performance
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\FileSystem', value: 'NtfsDisable8dot3NameCreation', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\FileSystem', value: 'NtfsAllowExtendedCharacterIn8dot3Name', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\FileSystem', value: 'LongPathsEnabled', type: REG_DWORD, data: '1'}
+
+  # =======================================================================
+  # EXPLORER & SHELL PERFORMANCE
+  # =======================================================================
+
+  # Increase icon cache
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer', value: 'Max Cached Icons', type: REG_SZ, data: '4096'}
+
+  # Remove startup delay for startup apps
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Serialize', value: 'StartupDelayInMSec', type: REG_DWORD, data: '0'}
+  # Disable idle state wait during boot for faster startup (RapidOS)
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Serialize', value: 'WaitforIdleState', type: REG_DWORD, data: '0'}
+
+  # Optimize folder type detection (prevent auto-detection lag)
+  - !registryValue: {path: 'HKCU\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\AllFolders\Shell', value: 'FolderType', type: REG_SZ, data: 'NotSpecified'}
+
+  # Reduce multi-invoke prompt threshold
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer', value: 'MultipleInvokePromptMinimum', type: REG_DWORD, data: '100'}
+
+  # Auto-end tasks on shutdown
+  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'AutoEndTasks', type: REG_SZ, data: '1'}
+
+  # Reduce active window tracking delay
+  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'ActiveWndTrkTimeout', type: REG_DWORD, data: '10'}
+
+  # =======================================================================
+  # AUDIO & SOUND OPTIMIZATION
+  # =======================================================================
+
+  # Disable communication audio ducking ("Do Nothing" when in call)
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Multimedia\Audio', value: 'UserDuckingPreference', type: REG_DWORD, data: '3'}
+
+  # Disable system beep
+  - !registryValue: {path: 'HKCU\Control Panel\Sound', value: 'Beep', type: REG_SZ, data: 'no'}
+
+  # =======================================================================
+  # ENCRYPTION & STORAGE PREVENTION
+  # =======================================================================
+
+  # Prevent BitLocker auto-encryption (OOBE device encryption)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\BitLocker', value: 'PreventDeviceEncryption', type: REG_DWORD, data: '1'}
+
+  # System Restore — keep enabled with minimal disk allocation (3%) as a
+  # safety net for driver/app failures. Removes only the scheduled interval
+  # so restore points are only created on-demand (driver installs, updates).
+  # Users who want to fully disable can set DisableSR=1 in regedit.
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore', value: 'RPSessionInterval', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore\cfg', value: 'DiskPercent', type: REG_DWORD, data: '3'}
+
+  # =======================================================================
+  # CRASH & DUMP OPTIMIZATION
+  # =======================================================================
+
+  # Set minimal crash dump (saves disk space and reduces crash handling time)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\CrashControl', value: 'CrashDumpEnabled', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\CrashControl', value: 'LogEvent', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\CrashControl', value: 'SendAlert', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\CrashControl', value: 'AutoReboot', type: REG_DWORD, data: '1'}
+  # Show BSOD parameters for debugging (AtmosphereOS)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\CrashControl', value: 'DisplayParameters', type: REG_DWORD, data: '1'}
+  # Hide sad-face emoticon on BSOD — show real info instead (winutil)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\CrashControl', value: 'DisableEmoticon', type: REG_DWORD, data: '1'}
+  # Disable device driver crash dumps (AtmosphereOS)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\CrashControl', value: 'DeviceDumpEnabled', type: REG_DWORD, data: '0'}
+
+  # =======================================================================
+  # DEVICES & I/O PERFORMANCE
+  # =======================================================================
+
+  # Disable device power management for gaming peripherals
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Power', value: 'EnergyEstimationEnabled', type: REG_DWORD, data: '0'}
+  # CsEnabled=0 disables Modern Standby (Connected Standby). Desktop-optimized.
+  # Laptop users who need instant-wake/Always-On may re-enable: CsEnabled=1
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Power', value: 'CsEnabled', type: REG_DWORD, data: '0'}
+
+  # Disable USB selective suspend for gaming peripherals
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\USB\Parameters', value: 'DisableSelectiveSuspend', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\USB\Parameters', value: 'EnhancedPowerManagementEnabled', type: REG_DWORD, data: '0'}
+
+  # Enable MSI mode for better interrupt handling (reduces DPC latency)
+  - !powerShell:
+    command: >-
+      Get-ChildItem 'HKLM:\SYSTEM\CurrentControlSet\Enum' -Recurse -ErrorAction SilentlyContinue |
+      Where-Object { $_.GetValueNames() -contains 'MSISupported' } |
+      ForEach-Object { Set-ItemProperty -Path $_.PSPath -Name 'MSISupported' -Value 1 -ErrorAction SilentlyContinue }
+    wait: true
+    weight: 15
+    errorAction: log
+
+  # =======================================================================
+  # GPU — NVIDIA SPECIFIC LATENCY OPTIMIZATIONS
+  # =======================================================================
+
+  # Disable NVIDIA telemetry
+  - !registryValue: {path: 'HKLM\SOFTWARE\NVIDIA Corporation\NvControlPanel2\Client', value: 'OptInOrOutPreference', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\NvTelemetryContainer', value: 'Start', type: REG_DWORD, data: '4', errorAction: log}
+
+  # Suppress NVIDIA Control Panel Store update notification nag (AME-10-0.8)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\nvlddmkm\Global\Startup', value: 'DisableStoreNvCplNotifications', type: REG_DWORD, data: '1', errorAction: log}
+
+  # Disable NVIDIA HD Audio sleep timer (reduces audio latency)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0000\PowerSettings', value: 'ConservationIdleTime', type: REG_BINARY, data: 'FFFFFFFF', errorAction: log}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e96c-e325-11ce-bfc1-08002be10318}\0000\PowerSettings', value: 'IdlePowerState', type: REG_BINARY, data: '00000000', errorAction: log}
+
+  # =======================================================================
+  # TSC SYNCHRONIZATION
+  # =======================================================================
+
+  - !cmd: {command: 'bcdedit /set tscsyncpolicy Enhanced', wait: true, weight: 5, errorAction: log}
+
+  # =======================================================================
+  # ADDITIONAL INTERRUPT / DPC OPTIMIZATION
+  # =======================================================================
+
+  # Disable interrupt moderation globally for lower latency
+  - !powerShell:
+    command: >-
+      Get-NetAdapter -Physical | ForEach-Object {
+        Set-NetAdapterAdvancedProperty -Name $_.Name -DisplayName 'Interrupt Moderation' -DisplayValue 'Disabled' -ErrorAction SilentlyContinue
+      }
+    wait: true
+    weight: 10
+    errorAction: log
+
+  # Disable energy-efficient ethernet on all adapters
+  - !powerShell:
+    command: >-
+      Get-NetAdapter -Physical | ForEach-Object {
+        Set-NetAdapterAdvancedProperty -Name $_.Name -DisplayName 'Energy-Efficient Ethernet' -DisplayValue 'Disabled' -ErrorAction SilentlyContinue;
+        Set-NetAdapterAdvancedProperty -Name $_.Name -DisplayName 'Green Ethernet' -DisplayValue 'Disabled' -ErrorAction SilentlyContinue
+      }
+    wait: true
+    weight: 10
+    errorAction: log
+
+  # Disable Downloads folder automatic "Group by" (removes Date grouping)
+  - !powerShell:
+    command: >-
+      $bagPath = 'HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags';
+      Get-ChildItem $bagPath -Recurse -ErrorAction SilentlyContinue |
+      Where-Object { (Get-ItemProperty $_.PSPath -Name 'GroupView' -ErrorAction SilentlyContinue) } |
+      ForEach-Object { Set-ItemProperty -Path $_.PSPath -Name 'GroupView' -Value 0 -ErrorAction SilentlyContinue }
+    wait: true
+    weight: 10
+    errorAction: log
+
+  # Set RealTimeIsUniversal for dual-boot UTC time compatibility
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\TimeZoneInformation', value: 'RealTimeIsUniversal', type: REG_DWORD, data: '1'}
+
+  # =======================================================================
+  # AUTOMATIC MAINTENANCE & SLEEP STUDY
+  # =======================================================================
+
+  # Prevent Automatic Maintenance from waking the PC from sleep
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\Task Scheduler\Maintenance', value: 'WakeUp', type: REG_DWORD, data: '0'}
+  # Fully disable Automatic Maintenance
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\Maintenance', value: 'MaintenanceDisabled', type: REG_DWORD, data: '1'}
+  # Disable scheduled diagnostics execution
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\ScheduledDiagnostics', value: 'EnabledExecution', type: REG_DWORD, data: '0'}
+
+  # Disable sleep study diagnostic event logs (reduces I/O, prevents usage tracking)
+  - !run: {exe: 'wevtutil', args: 'set-log "Microsoft-Windows-SleepStudy/Diagnostic" /e:false', wait: true, weight: 3, errorAction: log}
+  - !run: {exe: 'wevtutil', args: 'set-log "Microsoft-Windows-Kernel-Processor-Power/Diagnostic" /e:false', wait: true, weight: 3, errorAction: log}
+  - !run: {exe: 'wevtutil', args: 'set-log "Microsoft-Windows-UserModePowerService/Diagnostic" /e:false', wait: true, weight: 3, errorAction: log}
+
+  # Force Search Indexer to respect power modes (pause indexing on battery/low power)
+  - !registryValue: {path: 'HKLM\Software\Microsoft\Windows Search\Gather\Windows\SystemIndex', value: 'RespectPowerModes', type: REG_DWORD, data: '1'}
+
+  # =======================================================================
+  # SERVICE HOST SPLITTING (reduce memory overhead)
+  # =======================================================================
+
+  # Disable service host process splitting — run multiple services per svchost
+  # to reduce process count and memory overhead. Safe on 8GB+ RAM systems.
+  - !powerShell:
+    command: >-
+      Get-ChildItem 'HKLM:\SYSTEM\CurrentControlSet\Services' |
+      Where-Object { $_.PSChildName -notmatch '^(Xbl|Xbox)' } |
+      ForEach-Object {
+        Set-ItemProperty -Path $_.PSPath -Name 'SvcHostSplitDisable' -Value 1 -Type DWord -ErrorAction SilentlyContinue
+      }
+    wait: true
+    weight: 15
+    errorAction: log

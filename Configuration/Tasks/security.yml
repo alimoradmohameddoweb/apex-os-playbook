@@ -1,0 +1,593 @@
+---
+title: Security Hardening
+description: >
+  Hardens TLS/SSL configuration, disables weak ciphers, enforces strong
+  cryptographic defaults, hardens SMB, and configures exploit mitigations.
+
+actions:
+  # =======================================================================
+  # TLS/SSL — DISABLE WEAK PROTOCOLS
+  # =======================================================================
+
+  # Disable SSL 2.0
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Client', value: 'Enabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Client', value: 'DisabledByDefault', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Server', value: 'Enabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Server', value: 'DisabledByDefault', type: REG_DWORD, data: '1'}
+
+  # Disable SSL 3.0
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Client', value: 'Enabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Client', value: 'DisabledByDefault', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Server', value: 'Enabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Server', value: 'DisabledByDefault', type: REG_DWORD, data: '1'}
+
+  # Disable TLS 1.0
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Client', value: 'Enabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Client', value: 'DisabledByDefault', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Server', value: 'Enabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Server', value: 'DisabledByDefault', type: REG_DWORD, data: '1'}
+
+  # Disable TLS 1.1
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Client', value: 'Enabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Client', value: 'DisabledByDefault', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Server', value: 'Enabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Server', value: 'DisabledByDefault', type: REG_DWORD, data: '1'}
+
+  # Enable TLS 1.2
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Client', value: 'Enabled', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Client', value: 'DisabledByDefault', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Server', value: 'Enabled', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Server', value: 'DisabledByDefault', type: REG_DWORD, data: '0'}
+
+  # Enable TLS 1.3
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.3\Client', value: 'Enabled', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.3\Client', value: 'DisabledByDefault', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.3\Server', value: 'Enabled', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.3\Server', value: 'DisabledByDefault', type: REG_DWORD, data: '0'}
+
+  # =======================================================================
+  # DISABLE WEAK CIPHERS
+  # =======================================================================
+
+  # Disable RC4
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 40/128', value: 'Enabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 56/128', value: 'Enabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 64/128', value: 'Enabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 128/128', value: 'Enabled', type: REG_DWORD, data: '0'}
+
+  # Disable DES
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\DES 56/56', value: 'Enabled', type: REG_DWORD, data: '0'}
+
+  # Disable Triple DES (3DES)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\Triple DES 168', value: 'Enabled', type: REG_DWORD, data: '0'}
+  # Disable Triple DES 168/168 variant (RapidOS)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\Triple DES 168/168', value: 'Enabled', type: REG_DWORD, data: '0'}
+
+  # Disable RC2 ciphers
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC2 40/128', value: 'Enabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC2 56/128', value: 'Enabled', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC2 128/128', value: 'Enabled', type: REG_DWORD, data: '0'}
+
+  # Disable NULL cipher
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\NULL', value: 'Enabled', type: REG_DWORD, data: '0'}
+
+  # =======================================================================
+  # STRONG DIFFIE-HELLMAN PARAMETERS
+  # =======================================================================
+
+  # Enforce minimum DH key size of 2048 bits
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\KeyExchangeAlgorithms\Diffie-Hellman', value: 'ServerMinKeyBitLength', type: REG_DWORD, data: '2048'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\KeyExchangeAlgorithms\Diffie-Hellman', value: 'ClientMinKeyBitLength', type: REG_DWORD, data: '2048'}
+
+  # =======================================================================
+  # .NET STRONG CRYPTOGRAPHY
+  # =======================================================================
+
+  # Force .NET Framework to use TLS 1.2+ by default
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\.NETFramework\v4.0.30319', value: 'SchUseStrongCrypto', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\.NETFramework\v4.0.30319', value: 'SystemDefaultTlsVersions', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Wow6432Node\Microsoft\.NETFramework\v4.0.30319', value: 'SchUseStrongCrypto', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Wow6432Node\Microsoft\.NETFramework\v4.0.30319', value: 'SystemDefaultTlsVersions', type: REG_DWORD, data: '1'}
+
+  # Force .NET Framework v2.0 to use strong crypto (RapidOS)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\.NETFramework\v2.0.50727', value: 'SchUseStrongCrypto', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\.NETFramework\v2.0.50727', value: 'SystemDefaultTlsVersions', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Wow6432Node\Microsoft\.NETFramework\v2.0.50727', value: 'SchUseStrongCrypto', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Wow6432Node\Microsoft\.NETFramework\v2.0.50727', value: 'SystemDefaultTlsVersions', type: REG_DWORD, data: '1'}
+
+  # =======================================================================
+  # TLS RENEGOTIATION SECURITY
+  # =======================================================================
+
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL', value: 'AllowInsecureRenegoClients', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL', value: 'AllowInsecureRenegoServers', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL', value: 'DisableRenegoOnClient', type: REG_DWORD, data: '1'}
+  # Disable TLS renegotiation on server side (RapidOS)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL', value: 'DisableRenegoOnServer', type: REG_DWORD, data: '1'}
+  # Enable TLS Fallback SCSV to prevent protocol downgrade attacks (RapidOS)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL', value: 'UseScsvForTls', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL', value: 'UseHmacSha256', type: REG_DWORD, data: '1'}
+
+  # =======================================================================
+  # SMB HARDENING
+  # =======================================================================
+
+  # Disable SMBv1 (major security risk)
+  - !cmd: {command: 'DISM /Online /Disable-Feature /FeatureName:"SMB1Protocol" /NoRestart', wait: true, weight: 30, errorAction: log}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters', value: 'SMB1', type: REG_DWORD, data: '0'}
+
+  # Enable SMB signing (prevents MITM)
+  # Server: require signing for inbound connections (hardened)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters', value: 'RequireSecuritySignature', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters', value: 'EnableSecuritySignature', type: REG_DWORD, data: '1'}
+  # Workstation: enable but don't require — preserves access to older NAS/Samba shares
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters', value: 'RequireSecuritySignature', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters', value: 'EnableSecuritySignature', type: REG_DWORD, data: '1'}
+
+  # Enable SMB encryption (server-side; clients negotiate automatically)
+  # NOTE: Only affects inbound file-sharing connections. Most single-user desktops
+  # never host SMB shares, so this has no practical impact. Older SMB2-only clients
+  # that cannot negotiate encryption will be rejected — acceptable trade-off.
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters', value: 'EncryptData', type: REG_DWORD, data: '1'}
+  # Block guest account access to SMB shares (RapidOS)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters', value: 'EnableGuestAccount', type: REG_DWORD, data: '0'}
+
+  # =======================================================================
+  # CREDENTIAL PROTECTION
+  # =======================================================================
+
+  # Disable WDigest plaintext credential caching
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest', value: 'UseLogonCredential', type: REG_DWORD, data: '0'}
+
+  # Disable caching of domain logon credentials
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon', value: 'CachedLogonsCount', type: REG_SZ, data: '0'}
+
+  # Show last logged-in username on login screen (user-friendly default)
+  # DontDisplayLastUserName=0 ensures the logon screen shows the user's name
+  # instead of forcing manual username entry ("Other user") which confuses beginners.
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'DontDisplayLastUserName', type: REG_DWORD, data: '0'}
+
+  # =======================================================================
+  # UAC — BALANCED (secure but not intrusive)
+  # =======================================================================
+
+  # Keep UAC enabled (required for Store apps and modern security)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'EnableLUA', type: REG_DWORD, data: '1'}
+  # Admin prompt: notify only when apps try to make changes (Windows default)
+  # 5 = Prompt for consent (no secure desktop) — less intrusive, still secure
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'ConsentPromptBehaviorAdmin', type: REG_DWORD, data: '5'}
+  # Non-admin users: auto-deny elevation requests
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'ConsentPromptBehaviorUser', type: REG_DWORD, data: '0'}
+  # No secure desktop dimming (faster, less jarring)
+  # Trade-off: disabling the secure desktop overlay means a malicious app could
+  # theoretically spoof the UAC dialog. Acceptable for single-user desktops
+  # where the admin prompt itself is the primary gate.
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'PromptOnSecureDesktop', type: REG_DWORD, data: '0'}
+  # Don't require code signing for elevated apps (allows unsigned software)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'ValidateAdminCodeSignatures', type: REG_DWORD, data: '0'}
+  # Don't filter built-in Administrator token (single-user desktop scenario)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'FilterAdministratorToken', type: REG_DWORD, data: '0'}
+  # Auto-detect installers and elevate (standard Windows behavior)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'EnableInstallerDetection', type: REG_DWORD, data: '1'}
+
+  # =======================================================================
+  # SMART APP CONTROL & SMARTSCREEN
+  # =======================================================================
+
+  # Disable Smart App Control (can interfere with custom software)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\CI\Policy', value: 'VerifiedAndReputablePolicyState', type: REG_DWORD, data: '0'}
+
+  # SmartScreen — allow apps from anywhere (prevents install blocking)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\SmartScreen', value: 'ConfigureAppInstallControlEnabled', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\SmartScreen', value: 'ConfigureAppInstallControl', type: REG_SZ, data: 'Anywhere'}
+  # Disable SmartScreen web content evaluation
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\AppHost', value: 'EnableWebContentEvaluation', type: REG_DWORD, data: '0'}
+  # Disable SmartScreen content evaluation flag (Privacy+ — alternate value name)
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\AppHost', value: 'ContentEvaluation', type: REG_DWORD, data: '0'}
+  # Disable SmartScreen at Explorer level (Privacy+ — sets shell-wide flag to Off)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer', value: 'SmartScreenEnabled', type: REG_SZ, data: 'Off'}
+  # Disable Edge SmartScreen
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Edge\SmartScreenEnabled', value: '', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\MicrosoftEdge\PhishingFilter', value: 'EnabledV9', type: REG_DWORD, data: '0'}
+
+  # Disable Watson generic reports
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\Network Protection', value: 'DisableGenericRePorts', type: REG_DWORD, data: '1'}
+
+  # Hide Windows Security systray icon (only when Defender is disabled — user needs it if Defender is on)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\Systray', value: 'HideSystray', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  # Disable Defender scheduled signature updates on battery (only when Defender is disabled)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Signature Updates', value: 'DisableScheduledSignatureUpdateOnBattery', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  # Remove Windows Security startup entry (only when Defender is disabled)
+  - !cmd: {command: 'reg delete "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v SecurityHealth /f 2>nul', wait: true, weight: 3, option: 'disable-defender', errorAction: log}
+
+  # =======================================================================
+  # WINDOWS DEFENDER — COMPLETE DISABLE (gated by disable-defender)
+  # When user selects "Disable Defender" in the setup wizard, this
+  # fully disables Windows Defender antimalware engine, real-time
+  # protection, cloud protection, drivers, and services for maximum
+  # performance. Removes 5-10% background CPU overhead.
+  # =======================================================================
+
+  # --- Group Policy: Disable Defender antimalware engine ---
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender', value: 'DisableAntiSpyware', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender', value: 'DisableAntiVirus', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender', value: 'ServiceKeepAlive', type: REG_DWORD, data: '0', option: 'disable-defender'}
+
+  # --- Group Policy: Disable Real-Time Protection ---
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection', value: 'DisableRealtimeMonitoring', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection', value: 'DisableBehaviorMonitoring', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection', value: 'DisableIOAVProtection', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection', value: 'DisableOnAccessProtection', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection', value: 'DisableRoutinelyTakingAction', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection', value: 'DisableScanOnRealtimeEnable', type: REG_DWORD, data: '1', option: 'disable-defender'}
+
+  # --- Disable Cloud-Based Protection & Sample Submission ---
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet', value: 'SpynetReporting', type: REG_DWORD, data: '0', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet', value: 'SubmitSamplesConsent', type: REG_DWORD, data: '2', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\MpEngine', value: 'MpCloudBlockLevel', type: REG_DWORD, data: '0', option: 'disable-defender'}
+
+  # --- Disable Tamper Protection ---
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows Defender\Features', value: 'TamperProtection', type: REG_DWORD, data: '0', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows Defender\Features', value: 'TamperProtectionSource', type: REG_DWORD, data: '2', option: 'disable-defender'}
+
+  # --- Disable Defender Notifications ---
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\Notifications', value: 'DisableNotifications', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\Notifications', value: 'DisableEnhancedNotifications', type: REG_DWORD, data: '1', option: 'disable-defender'}
+
+  # --- Lock down Windows Security UI pages (Atlas) ---
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\Virus and threat protection', value: 'UILockdown', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\App and Browser protection', value: 'UILockdown', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\Firewall and network protection', value: 'UILockdown', type: REG_DWORD, data: '1', option: 'disable-defender'}
+
+  # --- Disable Defender Drivers (prevent loading at boot) ---
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\WdFilter', value: 'Start', type: REG_DWORD, data: '4', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\WdNisDrv', value: 'Start', type: REG_DWORD, data: '4', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\WdBoot', value: 'Start', type: REG_DWORD, data: '4', option: 'disable-defender'}
+
+  # --- Disable Defender Services ---
+  - !service: {name: 'WinDefend', operation: change, startup: 4, option: 'disable-defender', errorAction: log}
+  - !service: {name: 'WdNisSvc', operation: change, startup: 4, option: 'disable-defender', errorAction: log}
+  - !service: {name: 'SecurityHealthService', operation: change, startup: 4, option: 'disable-defender', errorAction: log}
+  - !service: {name: 'wscsvc', operation: change, startup: 4, option: 'disable-defender', errorAction: log}
+  - !service: {name: 'Sense', operation: delete, option: 'disable-defender', errorAction: log}
+  - !service: {name: 'webthreatdefsvc', operation: change, startup: 4, option: 'disable-defender', errorAction: log}
+  - !service: {name: 'webthreatdefusersvc', operation: change, startup: 4, option: 'disable-defender', errorAction: log}
+
+  # --- Disable Security Center notifications via registry (defense-in-depth) ---
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows Defender', value: 'DisableAntiSpyware', type: REG_DWORD, data: '1', option: 'disable-defender'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows Defender', value: 'DisableAntiVirus', type: REG_DWORD, data: '1', option: 'disable-defender'}
+
+  # --- Remove 'Open file - Security Warning' dialog (Atlas) ---
+  # NOTE: SaveZoneInformation intentionally NOT set here — the global
+  # Zone Information Preservation section (below) sets it to 2 for all users.
+  # Only ModRiskFileTypes is defender-gated to suppress warnings for common dev files.
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Associations', value: 'ModRiskFileTypes', type: REG_SZ, data: '.bat;.exe;.reg;.vbs;.chm;.msi;.js;.cmd', option: 'disable-defender'}
+
+  # =======================================================================
+  # WINDOWS SCRIPT HOST
+  # =======================================================================
+
+  # Disable Windows Script Host (blocks .vbs/.js malware)
+  # Only when Defender is disabled — without AV, WSH is a major attack vector.
+  # When Defender is enabled, it already scans/blocks malicious scripts.
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows Script Host\Settings', value: 'Enabled', type: REG_DWORD, data: '0', option: 'disable-defender'}
+
+  # =======================================================================
+  # AUTORUN/AUTOPLAY
+  # =======================================================================
+
+  # Disable autorun for all drives (prevent USB-based malware)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'NoDriveTypeAutoRun', type: REG_DWORD, data: '255'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'NoDriveTypeAutoRun', type: REG_DWORD, data: '255'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'NoAutorun', type: REG_DWORD, data: '1'}
+  # Disable AutoPlay entirely (EudynOS — complements NoDriveTypeAutoRun)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'DisableAutoplay', type: REG_DWORD, data: '1'}
+  # HKCU mirrors — enforce autorun/autoplay off per-user (Privacy+)
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'NoAutorun', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers', value: 'DisableAutoplay', type: REG_DWORD, data: '1'}
+  # Disable autoplay for non-volume devices (EudynOS)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\Explorer', value: 'NoAutoplayfornonVolume', type: REG_DWORD, data: '1'}
+
+  # =======================================================================
+  # REMOTE MANAGEMENT HARDENING
+  # =======================================================================
+
+  # Disable Remote Assistance
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Remote Assistance', value: 'fAllowToGetHelp', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Remote Assistance', value: 'fAllowFullControl', type: REG_DWORD, data: '0'}
+
+  # Disable WinRM (Windows Remote Management)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service', value: 'AllowAutoConfig', type: REG_DWORD, data: '0'}
+
+  # PowerShell: allow local scripts but block untrusted remote scripts
+  # EnableScripts=1 + ExecutionPolicy=RemoteSigned is safe and avoids
+  # breaking .ps1-based installers, maintenance scripts, and AME Wizard itself.
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\PowerShell', value: 'EnableScripts', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\PowerShell', value: 'ExecutionPolicy', type: REG_SZ, data: 'RemoteSigned'}
+
+  # =======================================================================
+  # LLMNR DISABLE (prevents name-resolution poisoning attacks)
+  # =======================================================================
+
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient', value: 'EnableMulticast', type: REG_DWORD, data: '0'}
+  # Disable multicast DNS via Dnscache service parameter (RapidOS defense-in-depth)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\Dnscache\Parameters', value: 'EnableMulticast', type: REG_DWORD, data: '0'}
+
+  # =======================================================================
+  # WPAD DISABLE (Web Proxy Auto-Discovery — attack vector)
+  # =======================================================================
+
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\Wpad', value: 'WpadOverride', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\WinHttpAutoProxySvc', value: 'Start', type: REG_DWORD, data: '4'}
+
+  # =======================================================================
+  # NTLM HARDENING
+  # =======================================================================
+
+  # Enforce NTLMv2 only (disable LM and NTLMv1)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Lsa', value: 'LmCompatibilityLevel', type: REG_DWORD, data: '5'}
+
+  # Disable LM hash storage (forces NTLM hash only)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Lsa', value: 'NoLMHash', type: REG_DWORD, data: '1'}
+
+  # Restrict NTLM: audit both directions (prevents breaking UAC elevation)
+  # Using audit-only (1) instead of deny (2) for outbound because deny can
+  # block credential validation chains during UAC / ShellExecuteEx runas,
+  # causing "A referral was returned from the server" on app elevation.
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0', value: 'RestrictReceivingNTLMTraffic', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0', value: 'RestrictSendingNTLMTraffic', type: REG_DWORD, data: '1'}
+
+  # =======================================================================
+  # ANONYMOUS ACCESS RESTRICTIONS
+  # =======================================================================
+
+  # Restrict anonymous enumeration of SAM accounts
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Lsa', value: 'RestrictAnonymousSAM', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Lsa', value: 'RestrictAnonymous', type: REG_DWORD, data: '1'}
+  # Enable LSA protection auditing (RapidOS)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Lsa', value: 'AuditLevel', type: REG_DWORD, data: '8'}
+
+  # Do not allow anonymous enumeration of shares
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters', value: 'RestrictNullSessAccess', type: REG_DWORD, data: '1'}
+
+  # =======================================================================
+  # ADDITIONAL HARDENING
+  # =======================================================================
+
+  # Enable DEP (Data Execution Prevention) for all programs
+  - !cmd: {command: 'bcdedit /set nx AlwaysOn', wait: true, weight: 5, errorAction: log}
+
+  # Enable SEHOP (Structured Exception Handler Overwrite Protection)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\kernel', value: 'DisableExceptionChainValidation', type: REG_DWORD, data: '0'}
+
+  # Removable storage: disable autorun (above) but allow access — blocking
+  # all removable media is too aggressive for most users. Autorun disable
+  # already prevents USB-based worm propagation.
+
+  # Audit process creation — log command line in event log
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit', value: 'ProcessCreationIncludeCmdLine_Enabled', type: REG_DWORD, data: '1'}
+
+  # Enable PowerShell script block logging for security auditing
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging', value: 'EnableScriptBlockLogging', type: REG_DWORD, data: '1'}
+
+  # Prevent password expiry — unlimited max password age (RapidOS)
+  - !cmd: {command: 'net accounts /maxpwage:unlimited', wait: true, weight: 5, errorAction: log}
+
+  # Disable kernel debug mode (RapidOS)
+  - !cmd: {command: 'bcdedit /set debug no', wait: true, weight: 5, errorAction: log}
+
+  # =======================================================================
+  # OFFICE OLE HARDENING (RapidOS)
+  # =======================================================================
+
+  # Disable OLE Package objects in Office (prevents embedded malware execution)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Office\16.0\Common\Security', value: 'ShowOLEPackageObj', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Office\15.0\Common\Security', value: 'ShowOLEPackageObj', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Office\16.0\Common\Security', value: 'ShowOLEPackageObj', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Office\15.0\Common\Security', value: 'ShowOLEPackageObj', type: REG_DWORD, data: '0'}
+
+  # =======================================================================
+  # OFFICE MACRO/DDE/ACTIVEX HARDENING (AtmosphereOS)
+  # Blocks VBA macros, DDE commands, and ActiveX in Excel/PowerPoint/Word
+  # across Office 2007 (12.0), 2010 (14.0), 2013 (15.0), 2016/2019/365 (16.0)
+  # =======================================================================
+
+  # --- Office 12.0 (2007) ---
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\12.0\Excel\Security', value: 'PackagerPrompt', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\12.0\Excel\Security', value: 'VBAWarnings', type: REG_DWORD, data: '4'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\12.0\Excel\Security', value: 'WorkbookLinkWarnings', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\12.0\Excel\Security', value: 'DontUpdateLinks', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\12.0\Excel\Security', value: 'AllowDDE', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\12.0\Excel\Security', value: 'DisableAllActiveX', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\12.0\PowerPoint\Security', value: 'PackagerPrompt', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\12.0\PowerPoint\Security', value: 'VBAWarnings', type: REG_DWORD, data: '4'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\12.0\PowerPoint\Security', value: 'WorkbookLinkWarnings', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\12.0\PowerPoint\Security', value: 'DontUpdateLinks', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\12.0\PowerPoint\Security', value: 'AllowDDE', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\12.0\PowerPoint\Security', value: 'DisableAllActiveX', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\12.0\Word\Security', value: 'PackagerPrompt', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\12.0\Word\Security', value: 'VBAWarnings', type: REG_DWORD, data: '4'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\12.0\Word\Security', value: 'WorkbookLinkWarnings', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\12.0\Word\Security', value: 'DontUpdateLinks', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\12.0\Word\Security', value: 'AllowDDE', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\12.0\Word\Security', value: 'DisableAllActiveX', type: REG_DWORD, data: '1'}
+
+  # --- Office 14.0 (2010) ---
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\14.0\Excel\Security', value: 'PackagerPrompt', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\14.0\Excel\Security', value: 'VBAWarnings', type: REG_DWORD, data: '4'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\14.0\Excel\Security', value: 'WorkbookLinkWarnings', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\14.0\Excel\Security', value: 'DontUpdateLinks', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\14.0\Excel\Security', value: 'AllowDDE', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\14.0\Excel\Security', value: 'DisableAllActiveX', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\14.0\PowerPoint\Security', value: 'PackagerPrompt', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\14.0\PowerPoint\Security', value: 'VBAWarnings', type: REG_DWORD, data: '4'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\14.0\PowerPoint\Security', value: 'WorkbookLinkWarnings', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\14.0\PowerPoint\Security', value: 'DontUpdateLinks', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\14.0\PowerPoint\Security', value: 'AllowDDE', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\14.0\PowerPoint\Security', value: 'DisableAllActiveX', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\14.0\Word\Security', value: 'PackagerPrompt', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\14.0\Word\Security', value: 'VBAWarnings', type: REG_DWORD, data: '4'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\14.0\Word\Security', value: 'WorkbookLinkWarnings', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\14.0\Word\Security', value: 'DontUpdateLinks', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\14.0\Word\Security', value: 'AllowDDE', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\14.0\Word\Security', value: 'DisableAllActiveX', type: REG_DWORD, data: '1'}
+
+  # --- Office 15.0 (2013) ---
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\15.0\Excel\Security', value: 'PackagerPrompt', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\15.0\Excel\Security', value: 'VBAWarnings', type: REG_DWORD, data: '4'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\15.0\Excel\Security', value: 'WorkbookLinkWarnings', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\15.0\Excel\Security', value: 'DontUpdateLinks', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\15.0\Excel\Security', value: 'AllowDDE', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\15.0\Excel\Security', value: 'DisableAllActiveX', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\15.0\PowerPoint\Security', value: 'PackagerPrompt', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\15.0\PowerPoint\Security', value: 'VBAWarnings', type: REG_DWORD, data: '4'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\15.0\PowerPoint\Security', value: 'WorkbookLinkWarnings', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\15.0\PowerPoint\Security', value: 'DontUpdateLinks', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\15.0\PowerPoint\Security', value: 'AllowDDE', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\15.0\PowerPoint\Security', value: 'DisableAllActiveX', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\15.0\Word\Security', value: 'PackagerPrompt', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\15.0\Word\Security', value: 'VBAWarnings', type: REG_DWORD, data: '4'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\15.0\Word\Security', value: 'WorkbookLinkWarnings', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\15.0\Word\Security', value: 'DontUpdateLinks', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\15.0\Word\Security', value: 'AllowDDE', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\15.0\Word\Security', value: 'DisableAllActiveX', type: REG_DWORD, data: '1'}
+
+  # --- Office 16.0 (2016/2019/365) ---
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\16.0\Excel\Security', value: 'PackagerPrompt', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\16.0\Excel\Security', value: 'VBAWarnings', type: REG_DWORD, data: '4'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\16.0\Excel\Security', value: 'WorkbookLinkWarnings', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\16.0\Excel\Security', value: 'DontUpdateLinks', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\16.0\Excel\Security', value: 'AllowDDE', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\16.0\Excel\Security', value: 'DisableAllActiveX', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\16.0\PowerPoint\Security', value: 'PackagerPrompt', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\16.0\PowerPoint\Security', value: 'VBAWarnings', type: REG_DWORD, data: '4'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\16.0\PowerPoint\Security', value: 'WorkbookLinkWarnings', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\16.0\PowerPoint\Security', value: 'DontUpdateLinks', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\16.0\PowerPoint\Security', value: 'AllowDDE', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\16.0\PowerPoint\Security', value: 'DisableAllActiveX', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\16.0\Word\Security', value: 'PackagerPrompt', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\16.0\Word\Security', value: 'VBAWarnings', type: REG_DWORD, data: '4'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\16.0\Word\Security', value: 'WorkbookLinkWarnings', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\16.0\Word\Security', value: 'DontUpdateLinks', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\16.0\Word\Security', value: 'AllowDDE', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Office\16.0\Word\Security', value: 'DisableAllActiveX', type: REG_DWORD, data: '1'}
+
+  # =======================================================================
+  # ADOBE READER SECURITY HARDENING (AtmosphereOS)
+  # Disables JavaScript, enforces protected mode and enhanced security
+  # for Adobe Reader DC and XI installations
+  # =======================================================================
+
+  # Adobe Reader DC
+  - !registryKey: {path: 'HKCU\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown', operation: add}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown', value: 'bEnableJS', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown', value: 'bAllowOpenFile', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown', value: 'bSecureOpenFile', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown', value: 'bProtectedMode', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown', value: 'iProtectedView', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown', value: 'bEnhancedSecurityInBrowser', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockDown', value: 'bEnhancedSecurityStandalone', type: REG_DWORD, data: '1'}
+
+  # Adobe Reader XI
+  - !registryKey: {path: 'HKCU\SOFTWARE\Policies\Adobe\Acrobat Reader\XI\FeatureLockDown', operation: add}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Policies\Adobe\Acrobat Reader\XI\FeatureLockDown', value: 'bEnableJS', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Policies\Adobe\Acrobat Reader\XI\FeatureLockDown', value: 'bAllowOpenFile', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Policies\Adobe\Acrobat Reader\XI\FeatureLockDown', value: 'bSecureOpenFile', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Policies\Adobe\Acrobat Reader\XI\FeatureLockDown', value: 'bProtectedMode', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Policies\Adobe\Acrobat Reader\XI\FeatureLockDown', value: 'iProtectedView', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Policies\Adobe\Acrobat Reader\XI\FeatureLockDown', value: 'bEnhancedSecurityInBrowser', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Policies\Adobe\Acrobat Reader\XI\FeatureLockDown', value: 'bEnhancedSecurityStandalone', type: REG_DWORD, data: '1'}
+
+  # =======================================================================
+  # VULNERABLE DRIVER BLOCKLIST
+  # =======================================================================
+
+  # Enable Microsoft Vulnerable Driver Blocklist
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\CI\Config', value: 'VulnerableDriverBlocklistEnable', type: REG_DWORD, data: '1'}
+
+  # =======================================================================
+  # ENHANCED STORAGE DEVICE SECURITY (AME-10-0.8)
+  # =======================================================================
+
+  # Disable TCG security activation for enhanced storage devices
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\EnhancedStorageDevices', value: 'TCGSecurityActivationDisabled', type: REG_DWORD, data: '1'}
+
+  # =======================================================================
+  # ZONE INFORMATION PRESERVATION
+  # =======================================================================
+
+  # Preserve zone information (Mark of the Web) on downloaded files
+  # Value 2 = preserve MOTW; SmartScreen, Office Protected View, and browser
+  # download warnings all rely on MOTW to identify internet-sourced files.
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Attachments', value: 'SaveZoneInformation', type: REG_DWORD, data: '2'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Attachments', value: 'SaveZoneInformation', type: REG_DWORD, data: '2'}
+
+  # =======================================================================
+  # CERTIFICATE PADDING CHECK
+  # =======================================================================
+
+  # Enable certificate padding check (prevents Authenticode signature bypass)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Cryptography\Wintrust\Config', value: 'EnableCertPaddingCheck', type: REG_SZ, data: '1'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Wow6432Node\Microsoft\Cryptography\Wintrust\Config', value: 'EnableCertPaddingCheck', type: REG_SZ, data: '1'}
+
+  # =======================================================================
+  # SUDO SUPPORT (24H2+)
+  # =======================================================================
+
+  # Enable Sudo for Windows (inline mode)
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Sudo'
+      value: 'Enabled'
+      type: REG_DWORD
+      data: '3'
+      builds: ['>=26100']
+
+  # =======================================================================
+  # MSI INSTALLER IN SAFE MODE
+  # =======================================================================
+
+  # Allow Windows Installer to run in Safe Mode
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SafeBoot\Minimal\MSIServer', value: '', type: REG_SZ, data: 'Service'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\SafeBoot\Network\MSIServer', value: '', type: REG_SZ, data: 'Service'}
+
+  # =======================================================================
+  # SPECULATIVE EXECUTION MITIGATIONS — DISABLED FOR PERFORMANCE
+  # =======================================================================
+
+  # Disable Spectre/Meltdown mitigations (5-30% CPU performance gain)
+  # FeatureSettingsOverride=3 disables Spectre V2 + Meltdown kernel patches
+  # FeatureSettingsOverrideMask=3 tells Windows to honor the override value
+  # Defender functions normally without these — they are separate subsystems
+  # Gated behind 'disable-mitigations' option — users can keep mitigations by unchecking
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management', value: 'FeatureSettingsOverride', type: REG_DWORD, data: '3', option: disable-mitigations}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management', value: 'FeatureSettingsOverrideMask', type: REG_DWORD, data: '3', option: disable-mitigations}
+
+  # =======================================================================
+  # DLL SEARCH ORDER HARDENING
+  # =======================================================================
+
+  # Enable safe DLL search order
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager', value: 'SafeDllSearchMode', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager', value: 'CWDIllegalInDllSearch', type: REG_DWORD, data: '2'}
+
+  # Force ASLR for all images (ForceRelocateImages) — defense-in-depth
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management', value: 'MoveImages', type: REG_DWORD, data: '1'}
+
+  # =======================================================================
+  # PRINTER HARDENING (PrintNightmare defense-in-depth)
+  # =======================================================================
+
+  # Only administrators can install printer drivers
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\PointAndPrint', value: 'RestrictDriverInstallationToAdministrators', type: REG_DWORD, data: '1'}
+
+  # =======================================================================
+  # WINDOWS 11 REQUIREMENTS BYPASS (ArkanoidOS)
+  # Allows installation/upgrade on unsupported hardware
+  # =======================================================================
+
+  - !registryValue: {path: 'HKLM\SYSTEM\Setup\LabConfig', value: 'BypassSecureBootCheck', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SYSTEM\Setup\LabConfig', value: 'BypassTPMCheck', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SYSTEM\Setup\LabConfig', value: 'BypassCPUCheck', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SYSTEM\Setup\LabConfig', value: 'BypassRAMCheck', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SYSTEM\Setup\LabConfig', value: 'BypassStorageCheck', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SYSTEM\Setup\MoSetup', value: 'AllowUpgradesWithUnsupportedTPMOrCPU', type: REG_DWORD, data: '1'}

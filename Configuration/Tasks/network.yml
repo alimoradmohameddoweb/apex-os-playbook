@@ -1,0 +1,210 @@
+---
+title: Network Stack Optimization
+description: >
+  Optimizes TCP/IP stack, DNS resolution, network adapter settings,
+  Nagle algorithm, and firewall for maximum throughput and minimum latency.
+
+actions:
+  # =======================================================================
+  # TCP/IP STACK OPTIMIZATION
+  # =======================================================================
+
+  # Enable TCP window auto-tuning (best throughput)
+  - !cmd: {command: 'netsh int tcp set global autotuninglevel=normal', wait: true, weight: 5, errorAction: log}
+
+  # Enable Direct Cache Access (DCA) — reduces CPU overhead for network I/O
+  - !cmd: {command: 'netsh int tcp set global dca=enabled', wait: true, weight: 5, errorAction: log}
+
+  # Enable Receive Side Scaling (RSS) — distribute network processing across CPUs
+  - !cmd: {command: 'netsh int tcp set global rss=enabled', wait: true, weight: 5, errorAction: log}
+
+  # Disable ECN (many ISPs/routers drop ECN-marked packets)
+  - !cmd: {command: 'netsh int tcp set global ecncapability=disabled', wait: true, weight: 5, errorAction: log}
+
+  # Disable TCP timestamps (reduces packet overhead slightly)
+  - !cmd: {command: 'netsh int tcp set global timestamps=disabled', wait: true, weight: 5, errorAction: log}
+
+  # Set congestion provider to Cubic (modern default, better than legacy CTCP)
+  - !cmd: {command: 'netsh int tcp set supplemental internet congestionprovider=cubic', wait: true, weight: 5, errorAction: log}
+
+  # Enable task offload — lets NIC hardware handle TCP/IP processing (reduces CPU load)
+  - !cmd: {command: 'netsh int ip set global taskoffload=enabled', wait: true, weight: 5, errorAction: log}
+
+  # =======================================================================
+  # NAGLE ALGORITHM DISABLE (reduces latency for gaming)
+  # =======================================================================
+
+  # Disable Nagle's algorithm globally — reduces small packet buffering latency
+  - !powerShell:
+    command: >-
+      Get-ChildItem 'HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces' |
+      ForEach-Object {
+        Set-ItemProperty -Path $_.PSPath -Name 'TcpAckFrequency' -Value 1 -Type DWord -ErrorAction SilentlyContinue;
+        Set-ItemProperty -Path $_.PSPath -Name 'TCPNoDelay' -Value 1 -Type DWord -ErrorAction SilentlyContinue;
+        Set-ItemProperty -Path $_.PSPath -Name 'TcpDelAckTicks' -Value 0 -Type DWord -ErrorAction SilentlyContinue
+      }
+    wait: true
+    weight: 15
+    errorAction: log
+
+  # =======================================================================
+  # DNS OPTIMIZATION
+  # =======================================================================
+
+  # Reduce DNS cache max TTL for fresher lookups
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\Dnscache\Parameters', value: 'MaxCacheTtl', type: REG_DWORD, data: '86400'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\Dnscache\Parameters', value: 'MaxNegativeCacheTtl', type: REG_DWORD, data: '5'}
+
+  # Enable DNS over HTTPS (DoH) for privacy
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\Dnscache\Parameters', value: 'EnableAutoDoh', type: REG_DWORD, data: '2'}
+
+  # =======================================================================
+  # NETWORK ADAPTER POWER MANAGEMENT
+  # =======================================================================
+
+  # Disable Power Management for all network adapters
+  - !powerShell:
+    command: >-
+      Get-NetAdapter -Physical | ForEach-Object {
+        $ifAlias = $_.InterfaceAlias;
+        Set-NetAdapterPowerManagement -Name $ifAlias -WakeOnPattern Disabled -ErrorAction SilentlyContinue;
+        Set-NetAdapterPowerManagement -Name $ifAlias -WakeOnMagicPacket Disabled -ErrorAction SilentlyContinue;
+        Disable-NetAdapterPowerManagement -Name $ifAlias -ErrorAction SilentlyContinue
+      }
+    wait: true
+    weight: 15
+    errorAction: log
+
+  # =======================================================================
+  # NETWORK PROTOCOL SECURITY
+  # =======================================================================
+
+  # Prefer IPv4 over IPv6 but keep IPv6 functional (dual-stack preserved)
+  # 0x20 = prefer IPv4 in prefix policies without breaking IPv6-only services
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters', value: 'DisabledComponents', type: REG_DWORD, data: '32'}
+
+  # Disable SMB bandwidth throttling (improves file transfer speeds)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters', value: 'DisableBandwidthThrottling', type: REG_DWORD, data: '1'}
+
+  # Disable network adapter power saving at NDIS driver level (EudynOS)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\NDIS\Parameters', value: 'DefaultPnPCapabilities', type: REG_DWORD, data: '24'}
+
+  # Packet Scheduler timer resolution — minimize scheduling jitter (EudynOS)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\Psched', value: 'TimerResolution', type: REG_DWORD, data: '1'}
+
+  # TCP/IP stack tuning — increase buffers and ports for high-throughput scenarios (EudynOS)
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters', value: 'IRPStackSize', type: REG_DWORD, data: '30'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters', value: 'TCP1323Opts', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters', value: 'MaxFreeTcbs', type: REG_DWORD, data: '65536'}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters', value: 'MaxUserPort', type: REG_DWORD, data: '65534'}
+  # NOTE: GlobalMaxTcpWindowSize removed — TCP auto-tuning handles window
+  # scaling dynamically. A static 64KB cap would limit throughput on
+  # high-latency links.
+
+  # Disable LMHOSTS lookup
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\NetBT\Parameters', value: 'EnableLMHOSTS', type: REG_DWORD, data: '0'}
+
+  # Disable NetBIOS over TCP/IP
+  - !powerShell:
+    command: >-
+      Get-ChildItem 'HKLM:\SYSTEM\CurrentControlSet\Services\NetBT\Parameters\Interfaces' |
+      ForEach-Object {
+        Set-ItemProperty -Path $_.PSPath -Name 'NetbiosOptions' -Value 2 -Type DWord -ErrorAction SilentlyContinue
+      }
+    wait: true
+    weight: 10
+    errorAction: log
+
+  # =======================================================================
+  # WINSOCK & DNS — handled in FINALIZE.cmd for safety
+  # Winsock reset and DNS flush are deferred to finalization to avoid
+  # breaking network connectivity during playbook execution.
+  # =======================================================================
+
+  # =======================================================================
+  # FIREWALL — OUTBOUND HARDENING
+  # =======================================================================
+
+  # Enable Windows Firewall on all profiles
+  - !cmd: {command: 'netsh advfirewall set allprofiles state on', wait: true, weight: 5, errorAction: log}
+
+  # Block known Microsoft telemetry IPs (defense-in-depth)
+  - !cmd:
+    command: >-
+      netsh advfirewall firewall add rule name="Apex-Block-Telemetry-1" dir=out action=block remoteip=13.107.4.50,13.107.5.88,23.218.212.69,65.39.117.230,65.52.108.33,65.55.108.23,131.253.40.37,134.170.30.202,137.116.81.24,157.56.77.139,157.56.106.189,157.56.126.137,157.56.144.215,168.63.108.233,191.232.139.254,204.79.197.200,207.68.166.254 2>nul
+    wait: true
+    weight: 10
+    errorAction: log
+
+  # =======================================================================
+  # WIFI & WIRELESS OPTIMIZATION
+  # =======================================================================
+
+  # Disable Wi-Fi Sense auto-connect
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\PolicyManager\default\WiFi\AllowWiFiHotSpotReporting', value: 'Value', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\PolicyManager\default\WiFi\AllowAutoConnectToWiFiSenseHotspots', value: 'Value', type: REG_DWORD, data: '0'}
+
+  # Disable paid Wi-Fi services
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\WlanSvc\AnqpCache', value: 'OsuRegistrationStatus', type: REG_DWORD, data: '0', errorAction: log}
+
+  # =======================================================================
+  # QUALITY OF SERVICE (QoS)
+  # =======================================================================
+
+  # Reserve 0% bandwidth for QoS (default reserves 20%)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\Psched', value: 'NonBestEffortLimit', type: REG_DWORD, data: '0'}
+
+  # =======================================================================
+  # NETWORK DISCOVERY & SHARING
+  # =======================================================================
+
+  # Disable network location awareness prompts
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Network\NewNetworkWindowOff', value: '', type: REG_SZ, data: ''}
+
+  # =======================================================================
+  # ADVANCED TCP TUNING
+  # =======================================================================
+
+  # Disable non-SACK RTT resiliency (improves throughput under loss)
+  - !cmd: {command: 'netsh int tcp set global nonsackrttresiliency=disabled', wait: true, weight: 5, errorAction: log}
+
+  # Set initial RTO to 2 seconds (lower = faster retransmit)
+  - !cmd: {command: 'netsh int tcp set global initialRto=2000', wait: true, weight: 5, errorAction: log}
+
+  # Disable memory pressure protection (trade memory for throughput)
+  - !cmd: {command: 'netsh int tcp set global memoryPressureProtection=disabled', wait: true, weight: 5, errorAction: log}
+
+  # Limit SYN retransmissions for faster connection failure detection
+  - !cmd: {command: 'netsh int tcp set global maxsynretransmissions=2', wait: true, weight: 5, errorAction: log}
+
+  # Set minimum RTO for supplemental internet profile
+  - !cmd: {command: 'netsh int tcp set supplemental internet minRto=300', wait: true, weight: 5, errorAction: log}
+
+  # Disable auto-heuristics for TCP tuning
+  - !cmd: {command: 'netsh int tcp set heuristics disabled', wait: true, weight: 5, errorAction: log}
+
+  # Disable pacing profile
+  - !cmd: {command: 'netsh int tcp set global pacingprofile=off', wait: true, weight: 5, errorAction: log}
+
+  # =======================================================================
+  # NTP TIME SYNCHRONIZATION
+  # =======================================================================
+
+  # Configure reliable NTP servers
+  - !cmd: {command: 'w32tm /config /manualpeerlist:"pool.ntp.org time.windows.com time.nist.gov" /syncfromflags:manual /reliable:yes /update', wait: true, weight: 10, errorAction: log}
+  - !cmd: {command: 'w32tm /resync /force', wait: true, weight: 5, errorAction: log}
+
+  # =======================================================================
+  # DISABLE UNNECESSARY NETWORK ADAPTER BINDINGS
+  # =======================================================================
+
+  # Remove unused protocol bindings from all adapters:
+  # ms_lldp (Link-Layer Discovery), ms_lltdio/ms_rspndr (Link-Layer Topology)
+  # These are unnecessary for most desktop/gaming systems and reduce attack surface.
+  # NOTE: ms_msclient and ms_server are left enabled — disabling them breaks SMB file sharing.
+  - !powerShell:
+    command: >-
+      Disable-NetAdapterBinding -Name "*" -ComponentID ms_lldp, ms_lltdio, ms_rspndr -ErrorAction SilentlyContinue
+    wait: true
+    weight: 10
+    errorAction: log

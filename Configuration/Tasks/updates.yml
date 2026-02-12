@@ -1,0 +1,300 @@
+---
+title: Windows Update Policy
+description: >
+  Configures Windows Update behavior based on user-selected policy.
+  Three modes: security-only, fully disabled, or Windows default.
+
+actions:
+  # =======================================================================
+  # SECURITY-ONLY UPDATES
+  # Allows security/quality updates but blocks feature upgrades.
+  # =======================================================================
+
+  # Configure WSUS-like behavior — quality updates only
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate'
+      value: 'DeferFeatureUpdates'
+      type: REG_DWORD
+      data: '1'
+      option: updates-security
+
+  # Defer feature updates for maximum period (365 days)
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate'
+      value: 'DeferFeatureUpdatesPeriodInDays'
+      type: REG_DWORD
+      data: '365'
+      option: updates-security
+
+  # Target release version to prevent forced feature upgrades
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate'
+      value: 'TargetReleaseVersion'
+      type: REG_DWORD
+      data: '1'
+      option: updates-security
+
+  # Win11 22H2-24H2 — pin to 24H2
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate'
+      value: 'TargetReleaseVersionInfo'
+      type: REG_SZ
+      data: '24H2'
+      option: updates-security
+      builds: ['22621', '22631', '26100', '26120']
+
+  # Win11 25H2 — pin to 25H2
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate'
+      value: 'TargetReleaseVersionInfo'
+      type: REG_SZ
+      data: '25H2'
+      option: updates-security
+      builds: ['26200']
+
+  # Win10 — pin to 22H2 (applies to both 21H2/19044 and 22H2/19045 builds)
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate'
+      value: 'TargetReleaseVersionInfo'
+      type: REG_SZ
+      data: '22H2'
+      option: updates-security
+      builds: ['19044', '19045']
+
+  # Disable automatic restarts while users are logged in
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU'
+      value: 'NoAutoRebootWithLoggedOnUsers'
+      type: REG_DWORD
+      data: '1'
+      option: updates-security
+
+  # Set updates to notify before download (AU option 2)
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU'
+      value: 'AUOptions'
+      type: REG_DWORD
+      data: '2'
+      option: updates-security
+
+  # Disable auto-update
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU'
+      value: 'NoAutoUpdate'
+      type: REG_DWORD
+      data: '0'
+      option: updates-security
+
+  # Suppress auto-restart notification popup (EudynOS)
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU'
+      value: 'SetAutoRestartNotificationDisable'
+      type: REG_DWORD
+      data: '1'
+      option: updates-security
+
+  # Defer quality updates by 6 days — install after wider validation (EudynOS)
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate'
+      value: 'DeferQualityUpdates'
+      type: REG_DWORD
+      data: '1'
+      option: updates-security
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate'
+      value: 'DeferQualityUpdatesPeriodInDays'
+      type: REG_DWORD
+      data: '6'
+      option: updates-security
+
+  # Disable driver updates through Windows Update
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate'
+      value: 'ExcludeWUDriversInQualityUpdate'
+      type: REG_DWORD
+      data: '1'
+      option: updates-security
+
+  # Disable Windows Update for other Microsoft products
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU'
+      value: 'AllowMUUpdateService'
+      type: REG_DWORD
+      data: '0'
+      option: updates-security
+
+  # Disable delivery optimization P2P (LAN only)
+  # Common section applies DODownloadMode=0 globally; this option omitted to avoid dead write.
+
+  # =======================================================================
+  # FULLY DISABLE UPDATES
+  # WARNING: No security patches will be applied.
+  # =======================================================================
+
+  # Disable Windows Update service
+  - !service: {name: 'wuauserv', operation: change, startup: 4, option: updates-disable, errorAction: log}
+
+  # Disable Update Orchestrator
+  - !service: {name: 'UsoSvc', operation: change, startup: 4, option: updates-disable, errorAction: log}
+
+  # Disable WaaSMedicSvc (re-enables wuauserv if disabled)
+  - !service: {name: 'WaaSMedicSvc', operation: change, startup: 4, option: updates-disable, errorAction: log}
+
+  # Disable Delivery Optimization
+  - !service: {name: 'DoSvc', operation: change, startup: 4, option: updates-disable, errorAction: log}
+
+  # Disable Update Health Tools
+  - !service: {name: 'uhssvc', operation: change, startup: 4, option: updates-disable, errorAction: log}
+
+  # Disable Automatic Updates via policy
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU'
+      value: 'NoAutoUpdate'
+      type: REG_DWORD
+      data: '1'
+      option: updates-disable
+
+  # Block Windows Update server connections
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate'
+      value: 'DoNotConnectToWindowsUpdateInternetLocations'
+      type: REG_DWORD
+      data: '1'
+      option: updates-disable
+
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate'
+      value: 'DisableWindowsUpdateAccess'
+      type: REG_DWORD
+      data: '1'
+      option: updates-disable
+
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate'
+      value: 'WUServer'
+      type: REG_SZ
+      data: ' '
+      option: updates-disable
+
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate'
+      value: 'WUStatusServer'
+      type: REG_SZ
+      data: ' '
+      option: updates-disable
+
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU'
+      value: 'UseWUServer'
+      type: REG_DWORD
+      data: '1'
+      option: updates-disable
+
+  # Block Update UX from showing
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings'
+      value: 'HideMCUOptIn'
+      type: REG_DWORD
+      data: '1'
+      option: updates-disable
+
+  # Disable driver updates
+  - !registryValue:
+      path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate'
+      value: 'ExcludeWUDriversInQualityUpdate'
+      type: REG_DWORD
+      data: '1'
+      option: updates-disable
+
+  # Disable Update Medic scheduled tasks
+  - !scheduledTask: {path: '\Microsoft\Windows\WaaSMedic\PerformRemediation', operation: delete, errorAction: log, option: updates-disable}
+  - !scheduledTask: {path: '\Microsoft\Windows\WindowsUpdate\Scheduled Start', operation: delete, errorAction: log, option: updates-disable}
+
+  # =======================================================================
+  # COMMON — APPLIED REGARDLESS OF OPTION
+  # Anti-bloat via update re-provisioning
+  # =======================================================================
+
+  # Disable reserved storage (saves 7GB+)
+  - !cmd: {command: 'DISM /Online /Set-ReservedStorageState /State:Disabled', wait: true, weight: 20, errorAction: log}
+
+  # Prevent apps from being reinstalled after feature updates
+  # NOTE: Deprovisioning for OutlookForWindows and DevHome is handled in debloat.yml.
+  # Additional entries can be added here for apps only affected by updates.
+
+  # Disable reserved storage via registry (reinforces DISM command above)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\ReserveManager', value: 'ShippedWithReserves', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\ReserveManager', value: 'PassedPolicy', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\ReserveManager', value: 'MiscPolicyInfo', type: REG_DWORD, data: '2'}
+
+  # Suppress upgrade notification indicator
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate', value: 'UpgradeAvailable', type: REG_DWORD, data: '0'}
+
+  # Block Outlook OOBE auto-install during updates
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\WindowsUpdate\Orchestrator\UScheduler\BlockedOobeUpdaters', value: 'BlockedOobeUpdaters', type: REG_SZ, data: '["MS_Outlook"]'}
+
+  # Prevent driver search via Windows Update (security-only mode)
+  # Not applied in 'Keep Default' mode — users expect normal driver delivery.
+  # In 'Disable' mode, WU services are fully stopped so this is unnecessary.
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\DriverSearching', value: 'DontSearchWindowsUpdate', type: REG_DWORD, data: '1', option: updates-security}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\DriverSearching', value: 'DriverUpdateWizardWuSearchEnabled', type: REG_DWORD, data: '0', option: updates-security}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\DriverSearching', value: 'SearchOrderConfig', type: REG_DWORD, data: '0', option: updates-security}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching', value: 'DontPromptForWindowsUpdate', type: REG_DWORD, data: '1', option: updates-security}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching', value: 'DontPromptForWindowsUpdate', type: REG_DWORD, data: '1', option: updates-security}
+
+  # Disable OS upgrade via Microsoft Store
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\WindowsStore', value: 'DisableOSUpgrade', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Policies\Microsoft\WindowsStore', value: 'DisableOSUpgrade', type: REG_DWORD, data: '1'}
+
+  # Disable Store auto-download completely (4 = never auto-download)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\WindowsStore', value: 'AutoDownload', type: REG_DWORD, data: '4'}
+
+  # Disable consumer features and content delivery (anti-bloat on update)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\CloudContent', value: 'DisableConsumerAccountStateContent', type: REG_DWORD, data: '1'}
+
+  # Disable Delivery Optimization P2P globally (no update sharing with internet peers)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization', value: 'DODownloadMode', type: REG_DWORD, data: '0'}
+  # Direct Delivery Optimization config path (Privacy+ — complements policy path above)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config', value: 'DownloadMode', type: REG_DWORD, data: '0'}
+
+  # Disable preview/insider builds
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate', value: 'ManagePreviewBuilds', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate', value: 'ManagePreviewBuildsPolicyValue', type: REG_DWORD, data: '0'}
+
+  # Disable featured software notifications
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU', value: 'EnableFeaturedSoftware', type: REG_DWORD, data: '0'}
+
+  # Disable BITS transfers to prevent background update downloads
+  # Only applied when updates are fully disabled — security-only users need BITS for patches.
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\BITS', value: 'EnableBITSMaxBandwidth', type: REG_DWORD, data: '1', option: updates-disable}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\BITS', value: 'MaxTransferRateOnSchedule', type: REG_DWORD, data: '1', option: updates-disable}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\BITS', value: 'MaxTransferRateOffSchedule', type: REG_DWORD, data: '1', option: updates-disable}
+
+  # Disable update restart notifications and reminders
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings', value: 'RestartNotificationsAllowed2', type: REG_DWORD, data: '0'}
+
+  # NOTE: DisableWUfBSafeguards intentionally NOT set — safeguard holds
+  # protect against known-bad updates (driver conflicts, data loss bugs).
+  # Users on updates-security should receive only safe patches.
+
+  # =======================================================================
+  # INSIDER / PREVIEW BUILDS LOCKDOWN
+  # =======================================================================
+
+  # Block preview/insider builds completely
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds', value: 'AllowBuildPreview', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds', value: 'EnableConfigFlighting', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds', value: 'EnableExperimentation', type: REG_DWORD, data: '0'}
+  # Hide Insider Program page in Settings
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\WindowsSelfHost\UI\Visibility', value: 'HideInsiderPage', type: REG_DWORD, data: '1'}
+
+  # =======================================================================
+  # UPDATE UX NAGGING
+  # =======================================================================
+
+  # Disable "Update and Shut Down" as default shutdown option
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU', value: 'NoAUAsDefaultShutdownOption', type: REG_DWORD, data: '1'}
+  # Hide 'Get the latest Windows' link in Windows Update
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings', value: 'HideMCTLink', type: REG_DWORD, data: '1'}
+  # Prevent WU from waking the system for automatic updates
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate', value: 'AUPowerManagement', type: REG_DWORD, data: '0'}

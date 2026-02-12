@@ -1,0 +1,231 @@
+---
+title: Service Optimization
+description: >
+  Disables or deletes unnecessary Windows services to reduce background load,
+  memory usage, and attack surface. Only non-critical services are modified.
+
+actions:
+  # =======================================================================
+  # ERROR REPORTING (policy disabled in privacy.yml — delete service here)
+  # =======================================================================
+
+  - !service: {name: 'WerSvc', operation: delete, errorAction: log}
+
+  # =======================================================================
+  # XBOX & GAMING SERVICES — disabled (not deleted) so Game Pass can be
+  # re-enabled if needed. Most games work fine without these services.
+  # =======================================================================
+
+  - !service: {name: 'XblAuthManager', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'XblGameSave', operation: delete, errorAction: log}
+  - !service: {name: 'XboxNetApiSvc', operation: delete, errorAction: log}
+  - !service: {name: 'XboxGipSvc', operation: change, startup: 4, errorAction: log}
+
+  # =======================================================================
+  # WINDOWS UPDATE RELATED (controlled via updates.yml policy)
+  # =======================================================================
+
+  - !service: {name: 'UsoSvc', operation: change, startup: 3, errorAction: log}
+  # WaaSMedicSvc — self-heals Windows Update; set to manual (3) so users on
+  # 'updates-security' retain self-healing. updates-disable fully disables it.
+  # Registry approach used because the medic service resets its own Start value.
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Services\WaaSMedicSvc', value: 'Start', type: REG_DWORD, data: '3'}
+  - !service: {name: 'DoSvc', operation: change, startup: 3, errorAction: log}
+
+  # =======================================================================
+  # PRINT SPOOLER (manual — starts on demand when user prints)
+  # =======================================================================
+
+  - !service: {name: 'Spooler', operation: change, startup: 3, errorAction: log}
+
+  # =======================================================================
+  # OBSOLETE / NEVER-USED SERVICES — DELETE
+  # =======================================================================
+
+  - !service: {name: 'Fax', operation: delete, errorAction: log}
+  - !service: {name: 'AJRouter', operation: delete, errorAction: log}
+  - !service: {name: 'MapsBroker', operation: delete, errorAction: log}
+  - !service: {name: 'PhoneSvc', operation: delete, errorAction: log}
+  - !service: {name: 'RetailDemo', operation: delete, errorAction: log}
+  - !service: {name: 'SEMgrSvc', operation: delete, errorAction: log}
+  - !service: {name: 'shpamsvc', operation: delete, errorAction: log}
+  - !service: {name: 'wisvc', operation: delete, errorAction: log}
+  - !service: {name: 'lfsvc', operation: delete, errorAction: log}
+  - !service: {name: 'RemoteRegistry', operation: delete, errorAction: log}
+  - !service: {name: 'WMPNetworkSvc', operation: delete, errorAction: log}
+  - !service: {name: 'wercplsupport', operation: delete, errorAction: log}
+  - !service: {name: 'TroubleshootingSvc', operation: delete, errorAction: log}
+
+  # =======================================================================
+  # REMOTE DESKTOP & REMOTE SERVICES (reduce attack surface)
+  # =======================================================================
+
+  - !service: {name: 'TermService', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'SessionEnv', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'UmRdpService', operation: change, startup: 4, errorAction: log}
+
+  # =======================================================================
+  # HYPER-V — NOT TOUCHED
+  # Hyper-V guest integration services (vmicXXX) are left untouched.
+  # Windows does not enable Hyper-V/WSL by default — if the user has
+  # enabled them, they are a developer or power user who needs them.
+  # =======================================================================
+
+  # =======================================================================
+  # SMART CARD
+  # =======================================================================
+
+  - !service: {name: 'SCardSvr', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'ScDeviceEnum', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'SCPolicySvc', operation: change, startup: 4, errorAction: log}
+
+  # =======================================================================
+  # BLUETOOTH (manual — starts on demand when BT hardware is used)
+  # =======================================================================
+
+  - !service: {name: 'BTAGService', operation: change, startup: 3, errorAction: log}
+  - !service: {name: 'bthserv', operation: change, startup: 3, errorAction: log}
+
+  # =======================================================================
+  # ACCOUNT & SYNC SERVICES
+  # =======================================================================
+
+  # wlidsvc — Microsoft Account sign-in. Manual so Store sign-in and license
+  # sync work on demand without running persistently in the background.
+  - !service: {name: 'wlidsvc', operation: change, startup: 3, errorAction: log}
+  - !service: {name: 'CDPSvc', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'CDPUserSvc', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'cbdhsvc', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'PimIndexMaintenanceSvc', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'DusmSvc', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'MessagingService', operation: change, startup: 4, errorAction: log}
+  # seclogon left at manual — required for RunAs elevation and AME Wizard InterLink
+  - !service: {name: 'seclogon', operation: change, startup: 3, errorAction: log}
+
+  # =======================================================================
+  # NETWORKING SERVICES
+  # =======================================================================
+
+  - !service: {name: 'wcncsvc', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'WFDSConMgrSvc', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'SSDPSRV', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'upnphost', operation: change, startup: 4, errorAction: log}
+  # SharedAccess — ICS / Mobile Hotspot. Manual so hotspot works on demand.
+  - !service: {name: 'SharedAccess', operation: change, startup: 3, errorAction: log}
+  - !service: {name: 'PNRPsvc', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'p2pimsvc', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'p2psvc', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'PNRPAutoReg', operation: change, startup: 4, errorAction: log}
+  # NetBT (NetBIOS transport) left at default — per-interface disable in
+  # network.yml (NetbiosOptions=2) is sufficient; disabling the driver
+  # service breaks local name-resolution used during UAC elevation.
+
+  # =======================================================================
+  # INDEXING & SEARCH
+  # =======================================================================
+
+  - !service: {name: 'WSearch', operation: change, startup: 3, errorAction: log}
+
+  # =======================================================================
+  # DIAGNOSTIC INFRASTRUCTURE
+  # =======================================================================
+
+  - !service: {name: 'WdiServiceHost', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'WdiSystemHost', operation: change, startup: 4, errorAction: log}
+  # DPS — Diagnostic Policy Service. Manual so network troubleshooter works on demand.
+  - !service: {name: 'DPS', operation: change, startup: 3, errorAction: log}
+  - !service: {name: 'Wecsvc', operation: change, startup: 4, errorAction: log}
+
+  # =======================================================================
+  # MISCELLANEOUS LOW-VALUE SERVICES
+  # =======================================================================
+
+  # PcaSvc — Program Compatibility Assistant. Manual so legacy app compat shims trigger on demand.
+  - !service: {name: 'PcaSvc', operation: change, startup: 3, errorAction: log}
+  - !service: {name: 'TrkWks', operation: change, startup: 4, errorAction: log}
+  # iphlpsvc — IP Helper. Manual so Teredo/6to4 tunneling works for P2P games on demand.
+  - !service: {name: 'iphlpsvc', operation: change, startup: 3, errorAction: log}
+  - !service: {name: 'CscService', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'RasAuto', operation: change, startup: 4, errorAction: log}
+  # SysMain — Manual (not disabled). On SSDs this service is neutral; on HDDs it
+  # significantly improves app launch times via Prefetch/Superfetch caching.
+  - !service: {name: 'SysMain', operation: change, startup: 3, errorAction: log}
+  # WbioSrvc — Windows Biometric Service. Manual so fingerprint readers work on demand.
+  - !service: {name: 'WbioSrvc', operation: change, startup: 3, errorAction: log}
+  - !service: {name: 'stisvc', operation: change, startup: 3, errorAction: log}
+  - !service: {name: 'WpcMonSvc', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'WebClient', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'WpnService', operation: change, startup: 3, errorAction: log}
+  - !service: {name: 'WpnUserService', operation: change, startup: 3, errorAction: log}
+  - !service: {name: 'TabletInputService', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'NcbService', operation: change, startup: 4, errorAction: log}
+  # Disable Application Management — Group Policy software install (RapidOS)
+  - !service: {name: 'AppMgmt', operation: change, startup: 4, errorAction: log}
+  # Disable Distributed Transaction Coordinator (RapidOS)
+  - !service: {name: 'MSDTC', operation: change, startup: 4, errorAction: log}
+  # Shell Hardware Detection — manual so USB/device insert notifications work
+  - !service: {name: 'ShellHWDetection', operation: change, startup: 3, errorAction: log}
+
+  # =======================================================================
+  # MICROSOFT EDGE UPDATE SERVICES — DELETE
+  # =======================================================================
+
+  - !service: {name: 'edgeupdate', operation: delete, errorAction: log}
+  - !service: {name: 'edgeupdatem', operation: delete, errorAction: log}
+  - !service: {name: 'MicrosoftEdgeElevationService', operation: delete, errorAction: log}
+
+  # =======================================================================
+  # CLOUD & WEB THREAT SERVICES
+  # =======================================================================
+
+  - !service: {name: 'cloudidsvc', operation: change, startup: 4, errorAction: log}
+  # =======================================================================
+  # DEFENDER / SECURITY SERVICES — moved to security.yml (gated by disable-defender)
+  # SecurityHealthService, wscsvc, Sense, webthreatdefsvc, webthreatdefusersvc
+  # are now controlled by the Defender toggle in the setup wizard.
+  # =======================================================================
+
+  # =======================================================================
+  # UE-V & INSTALL SERVICE
+  # =======================================================================
+
+  - !service: {name: 'UevAgentService', operation: change, startup: 4, errorAction: log}
+  - !service: {name: 'InstallService', operation: change, startup: 3, errorAction: log}
+
+  # =======================================================================
+  # TELEMETRY & ENERGY DRIVERS
+  # =======================================================================
+
+  # Disable GPU energy telemetry driver (reports GPU power draw to Microsoft)
+  - !service: {name: 'GpuEnergyDrv', operation: change, startup: 4, errorAction: log}
+
+  # Disable Desktop Activity Moderator driver
+  - !service: {name: 'dam', operation: change, startup: 4, errorAction: log}
+
+  # Disable Intel telemetry service
+  - !service: {name: 'Telemetry', operation: change, startup: 4, errorAction: log}
+
+  # Disable Windows User Connected Platform Devices service (privacy)
+  - !service: {name: 'UCPD', operation: change, startup: 4, errorAction: log}
+
+  # Disable cloud sync for settings/apps (per-user sync host)
+  - !service: {name: 'OneSyncSvc', operation: change, startup: 4, errorAction: log}
+
+  # =======================================================================
+  # ADDITIONAL LOW-VALUE SERVICES (EudynOS)
+  # =======================================================================
+
+  # Auto Time Zone Updater
+  - !service: {name: 'autotimesvc', operation: change, startup: 4, errorAction: log}
+  # File History Service
+  - !service: {name: 'fhsvc', operation: change, startup: 4, errorAction: log}
+  # BranchCache — Peer Distribution
+  - !service: {name: 'PeerDistSvc', operation: change, startup: 4, errorAction: log}
+  # Block Level Backup Engine
+  - !service: {name: 'wbengine', operation: change, startup: 4, errorAction: log}
+  # Wallet Service
+  - !service: {name: 'WalletService', operation: delete, errorAction: log}
+  # Windows Backup (System Disk Recovery Service)
+  - !service: {name: 'SDRSVC', operation: change, startup: 4, errorAction: log}
+  # Consumer IR Devices driver
+  - !service: {name: 'circlass', operation: change, startup: 4, errorAction: log}

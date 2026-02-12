@@ -1,0 +1,586 @@
+---
+title: Interface & Shell
+description: >
+  Configures the Windows shell for a clean, efficient interface — Explorer,
+  taskbar, Start menu, context menu, notifications, and visual refinements.
+  Gated behind the 'clean-interface' feature option.
+
+actions:
+  # =======================================================================
+  # CLASSIC CONTEXT MENU (WIN11 → WIN10 STYLE)
+  # =======================================================================
+
+  - !registryKey:
+      path: 'HKCU\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32'
+      operation: add
+      option: clean-interface
+
+  # =======================================================================
+  # CONTEXT MENU CLEANUP
+  # =======================================================================
+
+  # Remove "Bitmap Image" from New context menu
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\.bmp\ShellNew', operation: delete, option: clean-interface}
+  # Remove "Rich Text Document" from New context menu
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\.rtf\ShellNew', operation: delete, option: clean-interface}
+
+  # =======================================================================
+  # CONTEXT MENU — ADD USEFUL NEW FILE TYPES (AtmosphereOS)
+  # =======================================================================
+
+  # Add "Batch File" to New context menu
+  - !registryValue: {path: 'HKLM\SOFTWARE\Classes\.bat\ShellNew', value: 'NullFile', type: REG_SZ, data: '', option: clean-interface}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Classes\.bat\ShellNew', value: 'ItemName', type: REG_SZ, data: 'Batch File', option: clean-interface}
+
+  # Add "PowerShell Script" to New context menu
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\.ps1\ShellNew', operation: add, option: clean-interface}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Classes\.ps1\ShellNew', value: 'NullFile', type: REG_SZ, data: '', option: clean-interface}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Classes\.ps1\ShellNew', value: 'ItemName', type: REG_SZ, data: 'PowerShell Script', option: clean-interface}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Classes\.ps1\ShellNew', value: 'Data', type: REG_SZ, data: '', option: clean-interface}
+
+  # Add "Registry File" to New context menu
+  - !registryValue: {path: 'HKLM\SOFTWARE\Classes\.reg\ShellNew', value: 'NullFile', type: REG_SZ, data: '', option: clean-interface}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Classes\.reg\ShellNew', value: 'ItemName', type: REG_SZ, data: 'Registration Entries', option: clean-interface}
+
+  # Block "Cast to Device" shell extension
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked', value: '{7AD84985-87B4-4a16-BE58-8B72A5B390F7}', type: REG_SZ, data: '', option: clean-interface}
+
+  # Block "Troubleshoot compatibility" shell extension
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked', value: '{1d27f844-3a1f-4410-85ac-14651078412d}', type: REG_SZ, data: '', option: clean-interface}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked', value: '{1d27f844-3a1f-4410-85ac-14651078412d}', type: REG_SZ, data: '', option: clean-interface}
+
+  # Remove "Give access to" context menu handler
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\*\shellex\ContextMenuHandlers\Sharing', operation: delete, option: clean-interface}
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\Directory\shellex\ContextMenuHandlers\Sharing', operation: delete, option: clean-interface}
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\Directory\Background\shellex\ContextMenuHandlers\Sharing', operation: delete, option: clean-interface}
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\Drive\shellex\ContextMenuHandlers\Sharing', operation: delete, option: clean-interface}
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\LibraryFolder\background\shellex\ContextMenuHandlers\Sharing', operation: delete, option: clean-interface}
+  # Remove "Give access to" from User Library folders (EudynOS)
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\UserLibraryFolder\shellex\ContextMenuHandlers\Sharing', operation: delete, option: clean-interface}
+
+  # Remove "Include in library" context menu handler
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\Folder\ShellEx\ContextMenuHandlers\Library Location', operation: delete, option: clean-interface}
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\Directory\shellex\ContextMenuHandlers\Library Location', operation: delete, option: clean-interface}
+
+  # Remove "Share" (Modern Sharing) context menu handler
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\*\shellex\ContextMenuHandlers\ModernSharing', operation: delete, option: clean-interface}
+  # Remove "Share" from AllFilesystemObjects (EudynOS)
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\AllFilesystemObjects\shellex\ContextMenuHandlers\ModernSharing', operation: delete, option: clean-interface}
+
+  # Remove "Edit with Paint 3D" from context menu
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\SystemFileAssociations\.3mf\Shell\3D Edit', operation: delete, option: clean-interface}
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\SystemFileAssociations\.bmp\Shell\3D Edit', operation: delete, option: clean-interface}
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\SystemFileAssociations\.fbx\Shell\3D Edit', operation: delete, option: clean-interface}
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\SystemFileAssociations\.gif\Shell\3D Edit', operation: delete, option: clean-interface}
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\SystemFileAssociations\.glb\Shell\3D Edit', operation: delete, option: clean-interface}
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\SystemFileAssociations\.jfif\Shell\3D Edit', operation: delete, option: clean-interface}
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\SystemFileAssociations\.jpe\Shell\3D Edit', operation: delete, option: clean-interface}
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\SystemFileAssociations\.jpeg\Shell\3D Edit', operation: delete, option: clean-interface}
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\SystemFileAssociations\.jpg\Shell\3D Edit', operation: delete, option: clean-interface}
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\SystemFileAssociations\.png\Shell\3D Edit', operation: delete, option: clean-interface}
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\SystemFileAssociations\.tif\Shell\3D Edit', operation: delete, option: clean-interface}
+  # Remove "Edit with Paint 3D" from .tiff context menu (EudynOS)
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\SystemFileAssociations\.tiff\Shell\3D Edit', operation: delete, option: clean-interface}
+
+  # =======================================================================
+  # FILE EXPLORER — GENERAL
+  # =======================================================================
+
+  # Open Explorer to This PC instead of Quick Access
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'LaunchTo', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Show file extensions
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'HideFileExt', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Show hidden files
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'Hidden', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Show system files
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'ShowSuperHidden', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Disable 'show sync provider notifications' in Explorer
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'ShowSyncProviderNotifications', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable Recent Files in Quick Access
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer', value: 'ShowRecent', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable Frequent Folders in Quick Access
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer', value: 'ShowFrequent', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable cloud files in Quick Access
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer', value: 'ShowCloudFilesInQuickAccess', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Keep Storage Sense enabled for automatic temporary file cleanup
+  # Prevents disk from filling with stale caches over time
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\StorageSense', value: 'AllowStorageSenseGlobal', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Disable automatic "Group by Date" in Downloads folder
+  - !registryValue:
+      path: 'HKCU\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\AllFolders\Shell\{885a186e-a440-4ada-812b-db871b942259}'
+      value: 'GroupView'
+      type: REG_DWORD
+      data: '0'
+      option: clean-interface
+
+  # Set Explorer process priority to high for GPU-accelerated rendering
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\explorer.exe\PerfOptions', value: 'CpuPriorityClass', type: REG_DWORD, data: '3', option: clean-interface}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\explorer.exe\PerfOptions', value: 'IoPriority', type: REG_DWORD, data: '3', option: clean-interface}
+
+  # Expand navigation pane to current folder
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'NavPaneExpandToCurrentFolder', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Disable sharing wizard
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'SharingWizardOn', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # =======================================================================
+  # FILE EXPLORER — REMOVE CLUTTER
+  # =======================================================================
+
+  # Remove Gallery from Explorer navigation pane
+  - !registryValue: {path: 'HKCU\Software\Classes\CLSID\{e88865ea-0e1c-4e20-9aa6-edcd0212c87c}', value: 'System.IsPinnedToNameSpaceTree', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Remove Home from Explorer navigation pane
+  - !registryValue: {path: 'HKCU\Software\Classes\CLSID\{f874310e-b6b7-47dc-bc84-b9e6b38f5903}', value: 'System.IsPinnedToNameSpaceTree', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Remove OneDrive from Explorer navigation pane
+  # Note: CLSID key is deleted in debloat.yml; this value-based approach is a safe fallback
+  # in case OneDrive is reinstalled or the key is recreated by Windows Update.
+  - !registryValue: {path: 'HKCU\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}', value: 'System.IsPinnedToNameSpaceTree', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Remove duplicate removable drives from Explorer sidebar (RapidOS)
+  - !registryKey: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\DelegateFolders\{F5FB2C77-0E2F-4A16-A381-3E560C68BC83}', operation: delete, option: clean-interface}
+
+  # Remove 3D Objects from 'My Computer' submenu (Windows10Debloater)
+  - !registryKey: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}', operation: delete, option: clean-interface}
+  - !registryKey: {path: 'HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}', operation: delete, option: clean-interface}
+
+  # Remove last used files from Home folder quick access (Windows10Debloater)
+  - !registryKey: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}', operation: delete, option: clean-interface}
+  # Remove last used folders from Home folder quick access (Windows10Debloater)
+  - !registryKey: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HomeFolderDesktop\NameSpace\DelegateFolders\{3936E9E4-D92C-4EEE-A85A-BC16D5EA0819}', operation: delete, option: clean-interface}
+
+  # Enable compact view in Explorer
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'UseCompactMode', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Show full path in Explorer title bar
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\CabinetState', value: 'FullPath', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Disable info tips on files and folders
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'ShowInfoTip', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable recent items in Graph sidebar
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'DisableGraphRecentItems', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Resolve shortcuts without hunting for target on network/removable drives
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'LinkResolveIgnoreLinkInfo', type: REG_DWORD, data: '1', option: clean-interface}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'NoResolveSearch', type: REG_DWORD, data: '1', option: clean-interface}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'NoResolveTrack', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Remove shortcut arrow overlay
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons', value: '29', type: REG_SZ, data: '%SystemRoot%\System32\imageres.dll,-1015', option: clean-interface}
+
+  # Remove " - Shortcut" text suffix from new shortcuts
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer', value: 'link', type: REG_BINARY, data: '00000000', option: clean-interface}
+
+  # Hide Windows Spotlight desktop icon
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel', value: '{2cc5ca98-6485-489a-920e-b3e88a6ccce3}', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Always show transfer details dialog (more info during file operations)
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\OperationStatusManager', value: 'EnthusiastMode', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Disable Explorer checkbox selection (cleaner look)
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'AutoCheckSelect', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Clear recent documents on exit and disable history
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'ClearRecentDocsOnExit', type: REG_DWORD, data: '1', option: clean-interface}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'NoRecentDocsHistory', type: REG_DWORD, data: '1', option: clean-interface}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Policies\Microsoft\Windows\Explorer', value: 'NoRemoteDestinations', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # =======================================================================
+  # TASKBAR
+  # =======================================================================
+
+  # Remove Search from taskbar (0=hidden, 1=icon, 2=box, 3=button)
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Search', value: 'SearchboxTaskbarMode', type: REG_DWORD, data: '0', option: clean-interface}
+  # Cache the search mode to prevent taskbar from resetting it (AtmosphereOS)
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Search', value: 'SearchboxTaskbarModeCache', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Remove Task View button
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'ShowTaskViewButton', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Remove Widgets button
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'TaskbarDa', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Remove Chat button (Teams)
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'TaskbarMn', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Remove Copilot from taskbar
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'ShowCopilotButton', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Remove Cortana button from taskbar (AME-10-0.8)
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'ShowCortanaButton', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Align taskbar to left (Win10 style)
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'TaskbarAl', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable taskbar animations
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'TaskbarAnimations', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Hide Meet Now button on taskbar
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'HideSCAMeetNow', type: REG_DWORD, data: '1', option: clean-interface}
+  # Hide Meet Now via HKCU policy
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'HideSCAMeetNow', type: REG_DWORD, data: '1', option: clean-interface}
+  # Suppress Windows Backup notifications (Privacy+)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'NoWinBackupNotifications', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Disable Windows Chat (Teams) at policy level
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Chat', value: 'ChatIcon', type: REG_DWORD, data: '3', option: clean-interface}
+  # ConfigureChatAutoInstall handled in debloat.yml
+
+  # Hide People Bar
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People', value: 'HidePeopleBar', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Disable Desktop Peek (hover preview of desktop)
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'DisablePreviewDesktop', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Enable "End Task" in taskbar right-click context (power-user feature)
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\TaskbarDeveloperSettings', value: 'TaskbarEndTask', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Alt+Tab shows only open windows (not Edge tabs)
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'MultiTaskingAltTabFilter', type: REG_DWORD, data: '3', option: clean-interface}
+
+  # Show more pins in Start menu layout
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'Start_Layout', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Use Command Prompt (not PowerShell) in Win+X menu
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'DontUsePowerShellOnWinX', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Disable News and Interests (Dsh)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Dsh', value: 'AllowNewsAndInterests', type: REG_DWORD, data: '0', option: clean-interface}
+  # Disable News and Interests via MDM PolicyManager path (Privacy+)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\PolicyManager\default\NewsAndInterests', value: 'AllowNewsAndInterests', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Hide recently added apps in Start
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\Explorer', value: 'HideRecentlyAddedApps', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # =======================================================================
+  # START MENU
+  # =======================================================================
+
+  # Start suggestions/tips handled in privacy.yml
+
+  # Disable 'Show suggestions in Start' (account notifications)
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'Start_AccountNotifications', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable 'Show recently opened items in Start, JumpLists'
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'Start_TrackDocs', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable 'Show most used apps' in Start
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'Start_TrackProgs', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable 'Show recommendations' in Start
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'Start_IrisRecommendations', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable frequent apps list in Start (AME-10-0.8)
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer', value: 'ShowFrequentList', type: REG_DWORD, data: '0', option: clean-interface}
+  # Disable recent files list in Start (AME-10-0.8)
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer', value: 'ShowRecentList', type: REG_DWORD, data: '0', option: clean-interface}
+  # Win11-specific Start path mirrors (Privacy+ — complements Explorer path above)
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Start', value: 'ShowFrequentList', type: REG_DWORD, data: '0', option: clean-interface}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Start', value: 'ShowRecentList', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Suppress 'What's New' splash after Windows upgrades (AME-10-0.8)
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'StartShownOnUpgrade', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Start Menu pinned folders — hide Documents and Pictures, keep Settings and File Explorer (RapidOS)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\PolicyManager\current\device\Start', value: 'AllowPinnedFolderDocuments', type: REG_DWORD, data: '0', option: clean-interface}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\PolicyManager\current\device\Start', value: 'AllowPinnedFolderDocuments_ProviderSet', type: REG_DWORD, data: '0', option: clean-interface}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\PolicyManager\current\device\Start', value: 'AllowPinnedFolderPictures', type: REG_DWORD, data: '0', option: clean-interface}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\PolicyManager\current\device\Start', value: 'AllowPinnedFolderPictures_ProviderSet', type: REG_DWORD, data: '0', option: clean-interface}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\PolicyManager\current\device\Start', value: 'AllowPinnedFolderSettings', type: REG_DWORD, data: '1', option: clean-interface}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\PolicyManager\current\device\Start', value: 'AllowPinnedFolderSettings_ProviderSet', type: REG_DWORD, data: '1', option: clean-interface}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\PolicyManager\current\device\Start', value: 'AllowPinnedFolderFileExplorer', type: REG_DWORD, data: '1', option: clean-interface}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\PolicyManager\current\device\Start', value: 'AllowPinnedFolderFileExplorer_ProviderSet', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # =======================================================================
+  # NOTIFICATION AREA
+  # =======================================================================
+
+  # NOTE: Notification center is kept enabled — important app/system alerts
+  # still reach the user. Only spam-type notifications are suppressed below.
+
+  # Disable toast notifications on lock screen
+  - !registryValue: {path: 'HKCU\Software\Policies\Microsoft\Windows\CurrentVersion\PushNotifications', value: 'NoToastApplicationNotificationOnLockScreen', type: REG_DWORD, data: '1', option: clean-interface}
+  # Disable live tile push notifications (Windows10Debloater)
+  - !registryValue: {path: 'HKCU\SOFTWARE\Policies\Microsoft\Windows\CurrentVersion\PushNotifications', value: 'NoTileApplicationNotification', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Disable balloon notifications
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'EnableBalloonTips', type: REG_DWORD, data: '0', option: clean-interface}
+  # Disable balloon feature advertisements
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'NoBalloonFeatureAdvertisements', type: REG_DWORD, data: '1', option: clean-interface}
+  # Disable cloud application notifications
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\CurrentVersion\PushNotifications', value: 'NoCloudApplicationNotification', type: REG_DWORD, data: '1', option: clean-interface}
+  # Disable all Windows Update notifications including restart warnings
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate', value: 'UpdateNotificationLevel', type: REG_DWORD, data: '2', option: clean-interface}
+
+  # Disable Security and Maintenance toast notifications (RapidOS)
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Notifications\Settings\Windows.SystemToast.SecurityAndMaintenance', value: 'Enabled', type: REG_DWORD, data: '0', option: clean-interface}
+  # Disable Windows Backup reminder notifications (AME-10-0.8)
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Notifications\Settings\Windows.SystemToast.BackupReminder', value: 'Enabled', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Hide Security Center health icon from system tray — per-user (AME-10-0.8)
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'HideSCAHealth', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # =======================================================================
+  # LOCK SCREEN
+  # =======================================================================
+
+  # RotatingLockScreen settings handled in privacy.yml.
+
+  # Disable Windows Spotlight on lock screen
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager', value: 'SubscribedContent-338387Enabled', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable lock screen tips and tricks
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager', value: 'SubscribedContent-338381Enabled', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable fun facts on lock screen
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager', value: 'SubscribedContent-338382Enabled', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable lock screen camera
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\Personalization', value: 'NoLockScreenCamera', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # =======================================================================
+  # DARK MODE
+  # =======================================================================
+
+  # Enable dark mode for apps
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize', value: 'AppsUseLightTheme', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Enable dark mode for system
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize', value: 'SystemUsesLightTheme', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Enable dark mode for Explorer
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Accent', value: 'AccentColorMenu', type: REG_DWORD, data: '4292311040', option: clean-interface}
+
+  # =======================================================================
+  # SNAP LAYOUTS & WINDOW MANAGEMENT
+  # =======================================================================
+
+  # Disable snap assist flyout (keep snapping functional)
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'EnableSnapAssistFlyout', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable snap bar at top of screen
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'EnableSnapBar', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # =======================================================================
+  # WINDOWS INK & INPUT
+  # =======================================================================
+
+  # Disable Windows Ink Workspace
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\WindowsInkWorkspace', value: 'AllowWindowsInkWorkspace', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable Touch Keyboard auto-invoke
+  - !registryValue: {path: 'HKCU\Software\Microsoft\TabletTip\1.7', value: 'TipbandDesiredVisibility', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # =======================================================================
+  # MISCELLANEOUS UI CLEANUP
+  # =======================================================================
+
+  # Disable 'Get even more out of Windows' nag screen
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\UserProfileEngagement', value: 'ScoobeSystemSettingEnabled', type: REG_DWORD, data: '0', option: clean-interface}
+  # Mark SCOOBE as completed
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\UserProfileEngagement', value: 'ScoobeCheckCompleted', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Disable 'Let's finish setting up your PC' nag
+  # Handled in privacy.yml (ADVERTISING & CONSUMER FEATURES section).
+
+  # Disable Settings app suggestions/tips
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'AllowOnlineTips', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable 'Suggested Actions' in clipboard
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\SmartActionPlatform\SmartClipboard', value: 'Disabled', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Disable Bing search in Start Menu
+  # BingSearchEnabled/ConnectedSearchUseWeb handled in privacy.yml.
+  - !registryValue: {path: 'HKCU\Software\Policies\Microsoft\Windows\Explorer', value: 'DisableSearchBoxSuggestions', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Set connected search to anonymous mode
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\SearchSettings', value: 'ConnectedSearchPrivacy', type: REG_DWORD, data: '3', option: clean-interface}
+  # Disable SafeSearch filtering (AtmosphereOS)
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\SearchSettings', value: 'SafeSearchMode', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Hide stripped Settings pages (cortana, privacy-feedback, insider, home, + EudynOS additions)
+  # NOTE: recovery intentionally NOT hidden — users need Settings → Recovery
+  # for Reset this PC and Advanced Startup if something goes wrong.
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'SettingsPageVisibility', type: REG_SZ, data: 'hide:cortana;privacy-feedback;windowsinsider;home;autoplay;maps;findmydevice;sync;mobile-devices;backup;deviceusage', option: clean-interface}
+
+  # Suppress unsupported hardware notification watermark on Win11 (AME-10-0.8)
+  - !registryValue: {path: 'HKLM\SYSTEM\Setup\MoSetup\UnsupportedHardwareNotificationCache', value: 'SV1', type: REG_DWORD, data: '0', option: clean-interface}
+  - !registryValue: {path: 'HKLM\SYSTEM\Setup\MoSetup\UnsupportedHardwareNotificationCache', value: 'SV2', type: REG_DWORD, data: '0', option: clean-interface}
+  # Per-user unsupported hardware watermark suppression (ArkanoidOS)
+  - !registryValue: {path: 'HKCU\Control Panel\UnsupportedHardwareNotificationCache', value: 'SV1', type: REG_DWORD, data: '0', option: clean-interface}
+  - !registryValue: {path: 'HKCU\Control Panel\UnsupportedHardwareNotificationCache', value: 'SV2', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # OOBE interface customization (ArkanoidOS)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OOBE', value: 'HideEULAPage', type: REG_DWORD, data: '1', option: clean-interface}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\OOBE', value: 'HideEULAPage', type: REG_DWORD, data: '1', option: clean-interface}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OOBE', value: 'HideWirelessSetupInOOBE', type: REG_DWORD, data: '1', option: clean-interface}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\OOBE', value: 'HideWirelessSetupInOOBE', type: REG_DWORD, data: '1', option: clean-interface}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OOBE', value: 'NetworkLocation', type: REG_SZ, data: 'Home', option: clean-interface}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\OOBE', value: 'NetworkLocation', type: REG_SZ, data: 'Home', option: clean-interface}
+
+  # Hide Windows Update tray icon
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings', value: 'TrayIconVisibility', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # =======================================================================
+  # ACCESSIBILITY DEFAULTS (MINIMAL ANNOYANCES)
+  # =======================================================================
+
+  # Disable sticky keys popup
+  - !registryValue: {path: 'HKCU\Control Panel\Accessibility\StickyKeys', value: 'Flags', type: REG_SZ, data: '506', option: clean-interface}
+
+  # Disable toggle keys popup
+  - !registryValue: {path: 'HKCU\Control Panel\Accessibility\ToggleKeys', value: 'Flags', type: REG_SZ, data: '58', option: clean-interface}
+
+  # Disable filter keys popup
+  - !registryValue: {path: 'HKCU\Control Panel\Accessibility\Keyboard Response', value: 'Flags', type: REG_SZ, data: '122', option: clean-interface}
+
+  # Disable high contrast shortcut (EudynOS)
+  - !registryValue: {path: 'HKCU\Control Panel\Accessibility\HighContrast', value: 'Flags', type: REG_SZ, data: '122', option: clean-interface}
+
+  # Disable mouse keys shortcut (EudynOS)
+  - !registryValue: {path: 'HKCU\Control Panel\Accessibility\MouseKeys', value: 'Flags', type: REG_SZ, data: '58', option: clean-interface}
+
+  # Disable Narrator auto-start features (EudynOS)
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Narrator\NoRoam', value: 'selfscan', type: REG_DWORD, data: '0', option: clean-interface}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Narrator\NoRoam', value: 'selfvoice', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable touch accessibility auto-launch on tablet (EudynOS)
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Accessibility\ATConfig\SlateLaunch', value: 'LaunchAT', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable accessibility warning sounds and SoundSentry (EudynOS)
+  - !registryValue: {path: 'HKCU\Control Panel\Accessibility', value: 'Warning Sounds', type: REG_DWORD, data: '0', option: clean-interface}
+  - !registryValue: {path: 'HKCU\Control Panel\Accessibility', value: 'Sound on Activation', type: REG_DWORD, data: '0', option: clean-interface}
+  - !registryValue: {path: 'HKCU\Control Panel\Accessibility\SoundSentry', value: 'WindowsEffect', type: REG_SZ, data: '0', option: clean-interface}
+
+  # =======================================================================
+  # ADDITIONAL VISUAL REFINEMENTS
+  # =======================================================================
+
+  # Disable people icon on taskbar
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People', value: 'PeopleBand', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable 'News and Interests' on taskbar
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Feeds', value: 'EnableFeeds', type: REG_DWORD, data: '0', option: clean-interface}
+  # Hide news feed taskbar view (winutil)
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Feeds', value: 'ShellFeedsTaskbarViewMode', type: REG_DWORD, data: '2', option: clean-interface}
+
+  # Disable transparency effects for snappier UI
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize', value: 'EnableTransparency', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable automatic accent color from wallpaper
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize', value: 'ColorPrevalence', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable wallpaper JPEG compression (display full quality wallpapers)
+  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'JPEGImportQuality', type: REG_DWORD, data: '100', option: clean-interface}
+
+  # Disable mouse pointer trails
+  - !registryValue: {path: 'HKCU\Control Panel\Mouse', value: 'MouseTrails', type: REG_SZ, data: '0', option: clean-interface}
+
+  # Disable mouse acceleration (Enhance Pointer Precision) for gaming accuracy
+  - !registryValue: {path: 'HKCU\Control Panel\Mouse', value: 'MouseSpeed', type: REG_SZ, data: '0', option: clean-interface}
+  - !registryValue: {path: 'HKCU\Control Panel\Mouse', value: 'MouseThreshold1', type: REG_SZ, data: '0', option: clean-interface}
+  - !registryValue: {path: 'HKCU\Control Panel\Mouse', value: 'MouseThreshold2', type: REG_SZ, data: '0', option: clean-interface}
+
+  # Mouse double-click tuning (EudynOS)
+  - !registryValue: {path: 'HKCU\Control Panel\Mouse', value: 'DoubleClickSpeed', type: REG_SZ, data: '500', option: clean-interface}
+  - !registryValue: {path: 'HKCU\Control Panel\Mouse', value: 'DoubleClickHeight', type: REG_SZ, data: '4', option: clean-interface}
+  - !registryValue: {path: 'HKCU\Control Panel\Mouse', value: 'DoubleClickWidth', type: REG_SZ, data: '4', option: clean-interface}
+
+  # Disable typing insights
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Input\Settings', value: 'InsightsEnabled', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable show app suggestions when sharing
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'SeparateProcess', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # =======================================================================
+  # TOUCH, SPELL-CHECK & INPUT TWEAKS
+  # =======================================================================
+
+  # Disable touch visual feedback (gesture/contact visualization)
+  - !registryValue: {path: 'HKCU\Control Panel\Cursors', value: 'GestureVisualization', type: REG_DWORD, data: '0', option: clean-interface}
+  - !registryValue: {path: 'HKCU\Control Panel\Cursors', value: 'ContactVisualization', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable autocorrect and spell-checking / text prediction
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\TabletTip\1.7', value: 'EnableAutocorrection', type: REG_DWORD, data: '0', option: clean-interface}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\TabletTip\1.7', value: 'EnableDoubleTapSpace', type: REG_DWORD, data: '0', option: clean-interface}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\TabletTip\1.7', value: 'EnablePredictionSpaceInsertion', type: REG_DWORD, data: '0', option: clean-interface}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\TabletTip\1.7', value: 'EnableSpellchecking', type: REG_DWORD, data: '0', option: clean-interface}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\TabletTip\1.7', value: 'EnableTextPrediction', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable touch keyboard auto-shift and key audio
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\TabletTip\1.7', value: 'EnableAutoShiftEngage', type: REG_DWORD, data: '0', option: clean-interface}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\TabletTip\1.7', value: 'EnableKeyAudioFeedback', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable PrintScreen key launching Snipping Tool
+  - !registryValue: {path: 'HKCU\Control Panel\Keyboard', value: 'PrintScreenKeyForSnippingEnabled', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Instant keyboard repeat delay (EudynOS)
+  - !registryValue: {path: 'HKCU\Control Panel\Keyboard', value: 'KeyboardDelay', type: REG_SZ, data: '0', option: clean-interface}
+
+  # =======================================================================
+  # ADDITIONAL QOL TWEAKS
+  # =======================================================================
+
+  # Disable dynamic lighting (RGB control in Settings)
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Lighting', value: 'AmbientLightingEnabled', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Prevent themes from changing mouse pointers and desktop icons
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes', value: 'ThemeChangesMousePointers', type: REG_DWORD, data: '0', option: clean-interface}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes', value: 'ThemeChangesDesktopIcons', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable Aero Shake (minimize all by shaking title bar)
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'DisallowShaking', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Disable low disk space warning
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'NoLowDiskSpaceChecks', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Disable USB connection issue notifications
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Shell\USB', value: 'NotifyOnUsbErrors', type: REG_DWORD, data: '0', option: clean-interface}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Shell\USB', value: 'NotifyOnWeakCharger', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable Nearby Sharing
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\CDP\SettingsPage', value: 'BluetoothLastDisabledNearShare', type: REG_DWORD, data: '0', option: clean-interface}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\CDP', value: 'NearShareChannelUserAuthzPolicy', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Disable tablet mode auto-switch
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell', value: 'SignInMode', type: REG_DWORD, data: '1', option: clean-interface}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell', value: 'TabletMode', type: REG_DWORD, data: '0', option: clean-interface}
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell', value: 'ConvertibleSlateModePromptPreference', type: REG_DWORD, data: '2', option: clean-interface}
+
+  # Hide Settings banner / promotional card (Win11)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\WindowsRuntime\ActivatableClassId\ValueBanner.IdealStateFeatureControlProvider', value: 'ActivationType', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Hide unused Windows Security pages (Family, Device Health, Account Protection)
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\Family options', value: 'UILockdown', type: REG_DWORD, data: '1', option: clean-interface}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\Device performance and health', value: 'UILockdown', type: REG_DWORD, data: '1', option: clean-interface}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\Account protection', value: 'UILockdown', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # =======================================================================
+  # ADDITIONAL INTERFACE CLEANUP (EudynOS)
+  # =======================================================================
+
+  # Keep taskbar notification badges enabled — shows unread counts on app icons
+  # TaskbarBadges intentionally NOT disabled — users need notification visibility
+
+  # Disable lock screen overlays (EudynOS)
+  - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'LockScreenOverlaysDisabled', type: REG_DWORD, data: '1', option: clean-interface}
+
+  # Disable Windows Ink pen app suggestions (EudynOS)
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\PenWorkspace', value: 'PenWorkspaceAppSuggestionsEnabled', type: REG_DWORD, data: '0', option: clean-interface}
+
+  # Remove "Previous Versions" tab from file properties (EudynOS)
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\AllFilesystemObjects\shellex\PropertySheetHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}', operation: delete, option: clean-interface}
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\CLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\PropertySheetHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}', operation: delete, option: clean-interface}
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\Directory\shellex\PropertySheetHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}', operation: delete, option: clean-interface}
+  - !registryKey: {path: 'HKLM\SOFTWARE\Classes\Drive\shellex\PropertySheetHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}', operation: delete, option: clean-interface}

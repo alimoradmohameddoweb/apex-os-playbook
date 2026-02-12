@@ -1,0 +1,352 @@
+---
+title: Bloatware Removal
+description: >
+  Surgically removes all unnecessary AppX packages, system components,
+  OneDrive, Microsoft Edge, Teams, Cortana, and other built-in bloat.
+
+actions:
+  # =======================================================================
+  # CAPTURE APPX STATE BEFORE REMOVALS (for dynamic deprovisioning)
+  # =======================================================================
+
+  - !powerShell:
+      command: |
+        $outFile = Join-Path $env:windir 'ApexPackagesOld.txt'
+        (Get-AppxPackage -AllUsers -ErrorAction SilentlyContinue).PackageFamilyName |
+          Out-File $outFile -Force
+      wait: true
+      weight: 5
+      errorAction: log
+
+  # =======================================================================
+  # APPX PACKAGE REMOVAL — MICROSOFT BLOATWARE
+  # =======================================================================
+
+  # Microsoft 3D apps
+  - !appx: {name: 'Microsoft.Microsoft3DViewer', errorAction: log}
+  - !appx: {name: 'Microsoft.3DBuilder', errorAction: log}
+  - !appx: {name: 'Microsoft.Print3D', errorAction: log}
+
+  # Microsoft Maps
+  - !appx: {name: 'Microsoft.WindowsMaps', errorAction: log}
+
+  # Microsoft Weather
+  - !appx: {name: 'Microsoft.BingWeather', errorAction: log}
+
+  # Microsoft News
+  - !appx: {name: 'Microsoft.BingNews', errorAction: log}
+
+  # Microsoft Finance
+  - !appx: {name: 'Microsoft.BingFinance', errorAction: log}
+
+  # Microsoft Sports
+  - !appx: {name: 'Microsoft.BingSports', errorAction: log}
+
+  # Microsoft Translate
+  - !appx: {name: 'Microsoft.BingTranslator', errorAction: log}
+
+  # People app
+  - !appx: {name: 'Microsoft.People', errorAction: log}
+
+  # Mail and Calendar
+  - !appx: {name: 'microsoft.windowscommunicationsapps', errorAction: log}
+
+  # Microsoft To Do
+  - !appx: {name: 'Microsoft.Todos', errorAction: log}
+
+  # Alarms & Clock
+  - !appx: {name: 'Microsoft.WindowsAlarms', errorAction: log}
+
+  # Camera
+  - !appx: {name: 'Microsoft.WindowsCamera', errorAction: log}
+
+  # Feedback Hub
+  - !appx: {name: 'Microsoft.WindowsFeedbackHub', errorAction: log}
+
+  # Get Help
+  - !appx: {name: 'Microsoft.GetHelp', errorAction: log}
+
+  # Tips
+  - !appx: {name: 'Microsoft.Getstarted', errorAction: log}
+
+  # Mixed Reality Portal
+  - !appx: {name: 'Microsoft.MixedReality.Portal', errorAction: log}
+
+  # Microsoft Solitaire Collection
+  - !appx: {name: 'Microsoft.MicrosoftSolitaireCollection', errorAction: log}
+
+  # Sticky Notes
+  - !appx: {name: 'Microsoft.MicrosoftStickyNotes', errorAction: log}
+
+  # Office Hub
+  - !appx: {name: 'Microsoft.MicrosoftOfficeHub', errorAction: log}
+
+  # OneNote
+  - !appx: {name: 'Microsoft.Office.OneNote', errorAction: log}
+
+  # Skype
+  - !appx: {name: 'Microsoft.SkypeApp', errorAction: log}
+
+  # Groove Music
+  - !appx: {name: 'Microsoft.ZuneMusic', errorAction: log}
+
+  # Movies & TV
+  - !appx: {name: 'Microsoft.ZuneVideo', errorAction: log}
+
+  # Phone Link (Your Phone)
+  - !appx: {name: 'Microsoft.YourPhone', errorAction: log}
+
+  # Power Automate Desktop
+  - !appx: {name: 'Microsoft.PowerAutomateDesktop', errorAction: log}
+
+  # Clipchamp
+  - !appx: {name: 'Clipchamp.Clipchamp', errorAction: log}
+
+  # Family Safety
+  - !appx: {name: 'MicrosoftCorporationII.MicrosoftFamily', errorAction: log}
+
+  # Quick Assist
+  - !appx: {name: 'MicrosoftCorporationII.QuickAssist', errorAction: log}
+
+  # Teams
+  - !appx: {name: 'MicrosoftTeams', errorAction: log}
+  - !appx: {name: 'MSTeams', errorAction: log}
+  - !appx: {name: '*MicrosoftTeams*', errorAction: log}
+
+  # Cortana
+  - !appx: {name: 'Microsoft.549981C3F5F10', errorAction: log}
+
+  # Xbox apps
+  - !appx: {name: 'Microsoft.XboxApp', errorAction: log}
+  - !appx: {name: 'Microsoft.XboxGameOverlay', errorAction: log}
+  - !appx: {name: 'Microsoft.XboxGamingOverlay', errorAction: log}
+  - !appx: {name: 'Microsoft.XboxIdentityProvider', errorAction: log}
+  - !appx: {name: 'Microsoft.XboxSpeechToTextOverlay', errorAction: log}
+  - !appx: {name: 'Microsoft.Xbox.TCUI', errorAction: log}
+  - !appx: {name: 'Microsoft.GamingApp', errorAction: log}
+
+  # Widgets (Windows Web Experience Pack)
+  - !appx: {name: 'MicrosoftWindows.Client.WebExperience', errorAction: log}
+
+  # Dev Home
+  - !appx: {name: 'Microsoft.Windows.DevHome', errorAction: log}
+  - !appx: {name: '*DevHome*', errorAction: log}
+
+  # Outlook (new)
+  - !appx: {name: 'Microsoft.OutlookForWindows', errorAction: log}
+
+  # Voice Recorder
+  - !appx: {name: 'Microsoft.WindowsSoundRecorder', errorAction: log}
+
+  # Screen Sketch / Snipping Tool (UWP) — users can reinstall from Store
+  - !appx: {name: 'Microsoft.ScreenSketch', errorAction: log}
+
+  # Copilot
+  - !appx: {name: '*Copilot*', errorAction: log}
+  - !appx: {name: 'Microsoft.Windows.Ai.Copilot.Provider', errorAction: log}
+
+  # Windows AI / Recall
+  - !appx: {name: 'MicrosoftWindows.Client.AIX', errorAction: log}
+  - !appx: {name: 'MicrosoftWindows.Client.Photon', errorAction: log}
+  - !appx: {name: '*WindowsAI*', errorAction: log}
+  - !appx: {name: '*NarratorQuickStart*', errorAction: log}
+
+  # Start Experiences / Game Assist / Cross Device
+  - !appx: {name: '*StartExperiencesApp*', errorAction: log}
+  - !appx: {name: '*Edge.GameAssist*', errorAction: log}
+  - !appx: {name: '*CrossDeviceResume*', errorAction: log}
+  - !appx: {name: '*WindowsBackup*', errorAction: log}
+  - !appx: {name: '*Global.IrisService*', errorAction: log}
+  - !appx: {name: '*Global.Accounts*', errorAction: log}
+  - !appx: {name: '*Global.ValueBanner*', errorAction: log}
+  - !appx: {name: '*Global.DesktopSpotlight*', errorAction: log}
+  # Client.CBS — clear cache only (removing breaks Start menu/taskbar on some builds)
+  - !appx: {name: 'MicrosoftWindows.Client.CBS', operation: clearCache, errorAction: log}
+  # LockApp — clear cache only (removing causes black screen on lock)
+  - !appx: {name: '*LockApp*', operation: clearCache, errorAction: log}
+  - !appx: {name: '*ContentDeliveryManager*', errorAction: log}
+
+  # Third-party pre-installed bloat
+  - !appx: {name: '*SpotifyAB*', errorAction: log}
+  - !appx: {name: '*Disney*', errorAction: log}
+  - !appx: {name: '*Dolby*', errorAction: log}
+  - !appx: {name: 'SamsungElectronics*', errorAction: log}
+  - !appx: {name: '*AmazonVideo*', errorAction: log}
+  - !appx: {name: '*Netflix*', errorAction: log}
+  - !appx: {name: '*Facebook*', errorAction: log}
+  - !appx: {name: '*Instagram*', errorAction: log}
+  - !appx: {name: '*Twitter*', errorAction: log}
+  - !appx: {name: '*TikTok*', errorAction: log}
+  - !appx: {name: '*Hulu*', errorAction: log}
+  - !appx: {name: '*king.com*', errorAction: log}
+  - !appx: {name: '*CandyCrush*', errorAction: log}
+  - !appx: {name: '*BubbleWitch*', errorAction: log}
+  - !appx: {name: '*MarchofEmpires*', errorAction: log}
+  - !appx: {name: '*Duolingo*', errorAction: log}
+  - !appx: {name: '*EclipseManager*', errorAction: log}
+  - !appx: {name: '*ActiproSoftware*', errorAction: log}
+  - !appx: {name: '*Fitbit*', errorAction: log}
+  - !appx: {name: '*LinkedIn*', errorAction: log}
+  - !appx: {name: '*PicsArt*', errorAction: log}
+  - !appx: {name: '*Wunderlist*', errorAction: log}
+  - !appx: {name: '*Flipboard*', errorAction: log}
+  - !appx: {name: '*Drawboard*', errorAction: log}
+  - !appx: {name: '*iHeartRadio*', errorAction: log}
+  - !appx: {name: '*Shazam*', errorAction: log}
+  - !appx: {name: '*Adobe.CC*', errorAction: log}
+
+  # =======================================================================
+  # ONEDRIVE REMOVAL
+  # =======================================================================
+
+  - !taskKill: {name: 'OneDrive'}
+  - !taskKill: {name: 'OneDriveSetup'}
+
+  - !cmd:
+    command: >-
+      if exist "%SystemRoot%\System32\OneDriveSetup.exe" "%SystemRoot%\System32\OneDriveSetup.exe" /uninstall
+    wait: true
+    weight: 30
+    errorAction: log
+  - !cmd:
+    command: >-
+      if exist "%SystemRoot%\SysWOW64\OneDriveSetup.exe" "%SystemRoot%\SysWOW64\OneDriveSetup.exe" /uninstall
+    wait: true
+    weight: 30
+    errorAction: log
+
+  # Prevent OneDrive from reinstalling
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\OneDrive', value: 'DisableFileSyncNGSC', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\OneDrive', value: 'DisableFileSync', type: REG_DWORD, data: '1'}
+
+  # Remove OneDrive from Explorer sidebar
+  - !registryKey: {path: 'HKCR\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}', operation: delete, errorAction: log}
+  - !registryKey: {path: 'HKCR\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}', operation: delete, errorAction: log}
+
+  # Cleanup OneDrive folders
+  - !file: {path: '%USERPROFILE%\OneDrive', errorAction: log}
+  - !file: {path: '%LOCALAPPDATA%\Microsoft\OneDrive', errorAction: log}
+  - !file: {path: '%PROGRAMDATA%\Microsoft OneDrive', errorAction: log}
+  - !file: {path: 'C:\OneDriveTemp', errorAction: log}
+
+  # Remove OneDrive scheduled tasks
+  - !scheduledTask: {path: '\OneDrive Reporting Task-*', operation: delete, errorAction: log}
+  - !scheduledTask: {path: '\OneDrive Standalone Update Task-*', operation: delete, errorAction: log}
+
+  # =======================================================================
+  # EDGE REMOVAL SUPPORT
+  # =======================================================================
+
+  # Prevent Edge from being the default and from reinstalling
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\EdgeUpdate', value: 'DoNotUpdateToEdgeWithChromium', type: REG_DWORD, data: '1'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\EdgeUpdate', value: 'DoNotUpdateToEdgeWithChromium', type: REG_DWORD, data: '1'}
+
+  # Remove Edge Quick Launch shortcut
+  - !cmd: {command: 'del /f /q "%APPDATA%\Microsoft\Internet Explorer\Quick Launch\Microsoft Edge.lnk" 2>nul', wait: true, weight: 3, errorAction: log}
+
+  # Disable Edge auto-start
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main', value: 'AllowPrelaunch', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Edge', value: 'StartupBoostEnabled', type: REG_DWORD, data: '0'}
+  # Allow Edge/EdgeUpdate/EdgeWebView uninstall (ArkanoidOS)
+  - !registryValue: {path: 'HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Microsoft Edge', value: 'NoRemove', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Microsoft Edge Update', value: 'NoRemove', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Microsoft EdgeWebView', value: 'NoRemove', type: REG_DWORD, data: '0'}
+
+  # =======================================================================
+  # TEAMS CHAT ICON REMOVAL
+  # =======================================================================
+
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Communications', value: 'ConfigureChatAutoInstall', type: REG_DWORD, data: '0'}
+
+  # =======================================================================
+  # WINDOWS OPTIONAL FEATURES REMOVAL
+  # =======================================================================
+
+  # Remove Internet Explorer mode
+  - !cmd: {command: 'DISM /Online /Remove-Capability /CapabilityName:"Browser.InternetExplorer~~~~0.0.11.0" /NoRestart', wait: true, weight: 30, errorAction: log}
+
+  # Remove Microsoft Quick Assist
+  - !cmd: {command: 'DISM /Online /Remove-Capability /CapabilityName:"App.Support.QuickAssist~~~~0.0.1.0" /NoRestart', wait: true, weight: 30, errorAction: log}
+
+  # Remove Windows Hello Face (Win11 version)
+  - !cmd: {command: 'DISM /Online /Remove-Capability /CapabilityName:"Hello.Face.20134~~~~0.0.1.0" /NoRestart', wait: true, weight: 30, errorAction: log}
+  # Remove Windows Hello Face (Win10 version)
+  - !cmd: {command: 'DISM /Online /Remove-Capability /CapabilityName:"Hello.Face.18967~~~~0.0.1.0" /NoRestart', wait: true, weight: 30, errorAction: log}
+
+  # Remove Steps Recorder
+  - !cmd: {command: 'DISM /Online /Remove-Capability /CapabilityName:"App.StepsRecorder~~~~0.0.1.0" /NoRestart', wait: true, weight: 30, errorAction: log}
+
+  # Remove Math Recognizer
+  - !cmd: {command: 'DISM /Online /Remove-Capability /CapabilityName:"MathRecognizer~~~~0.0.1.0" /NoRestart', wait: true, weight: 30, errorAction: log}
+
+  # Remove WordPad
+  - !cmd: {command: 'DISM /Online /Remove-Capability /CapabilityName:"Microsoft.Windows.WordPad~~~~0.0.1.0" /NoRestart', wait: true, weight: 30, errorAction: log}
+
+  # Remove PowerShell ISE
+  - !cmd: {command: 'DISM /Online /Remove-Capability /CapabilityName:"Microsoft.Windows.PowerShell.ISE~~~~0.0.1.0" /NoRestart', wait: true, weight: 30, errorAction: log}
+
+  # Disable Windows Media Player
+  - !cmd: {command: 'DISM /Online /Disable-Feature /FeatureName:"WindowsMediaPlayer" /NoRestart', wait: true, weight: 30, errorAction: log}
+
+  # Disable Work Folders
+  - !cmd: {command: 'DISM /Online /Disable-Feature /FeatureName:"WorkFolders-Client" /NoRestart', wait: true, weight: 30, errorAction: log}
+
+  # =======================================================================
+  # PREVENT DEPROVISIONED APPS FROM RETURNING
+  # =======================================================================
+
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsStore\WindowsUpdate', value: 'AutoDownload', type: REG_DWORD, data: '2'}
+
+  # NOTE: AllowAllTrustedApps left at default (1) to allow sideloading.
+  # Dynamic deprovisioning above prevents removed packages from returning.
+
+  # =======================================================================
+  # APPX CACHE CLEARING (after removals)
+  # Prevents stale UI glitches and ghost entries in Start menu
+  # =======================================================================
+
+  - !appx: {name: '*Client.CBS*', operation: clearCache, errorAction: log}
+  - !appx: {name: '*StartMenuExperienceHost*', operation: clearCache, errorAction: log}
+  - !appx: {name: '*Windows.Search*', operation: clearCache, errorAction: log}
+  - !appx: {name: '*ShellExperienceHost*', operation: clearCache, errorAction: log}
+
+  # =======================================================================
+  # CBS & LOG CLEARING (after removals)
+  # =======================================================================
+
+  # Clear CBS logs to prevent bloat from AppX removal noise
+  - !cmd: {command: 'del /f /q "%SystemRoot%\Logs\CBS\CBS.log" 2>nul', wait: true, weight: 3, errorAction: log}
+
+  # Rebuild StartMenu cache after AppX changes
+  - !cmd:
+    command: >-
+      del /f /q "%LocalAppData%\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\TempState\StartUnifiedTileModelCache.dat" 2>nul
+    wait: true
+    weight: 3
+    errorAction: log
+
+  # =======================================================================
+  # DYNAMIC DEPROVISIONING — PREVENT RETURN AFTER UPDATES
+  # Captures AppX state before/after removals and registers all removed
+  # packages for deprovisioning automatically. This replaces a static list
+  # and adapts to any Windows build or edition.
+  # =======================================================================
+
+  - !powerShell:
+      command: |
+        $regBase = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Appx\AppxAllUserStore\Deprovisioned'
+        $oldFile = Join-Path $env:windir 'ApexPackagesOld.txt'
+        if (Test-Path $oldFile) {
+          $old = Get-Content $oldFile
+          $current = (Get-AppxPackage -AllUsers -ErrorAction SilentlyContinue).PackageFamilyName
+          $removed = $old | Where-Object { $current -notcontains $_ }
+          foreach ($pkg in $removed) {
+            if ($pkg) {
+              New-Item -Path "$regBase\$pkg" -Force -ErrorAction SilentlyContinue | Out-Null
+            }
+          }
+          Remove-Item $oldFile -Force -ErrorAction SilentlyContinue
+        }
+      wait: true
+      weight: 15
+      errorAction: log
