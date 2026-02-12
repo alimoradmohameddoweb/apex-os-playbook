@@ -2,17 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.2.3] - 2026-02-12
+## [3.2.4] - 2026-02-12
 
 ### Added
-- **Mandatory UI Gates**: All feature pages now require user selection before proceeding (`IsRequired="true"`). This prevents users from accidentally skipping optimization choices.
+- **Advanced Process Mitigations**: Implemented global mitigation disabling (CFG, etc.) via binary mask, matching Atlas OS optimization depth.
+- **Anti-Cheat Fix**: Added specific compatibility fix for Valorant (vgc.exe) to prevent crashes when mitigations are disabled.
 
 ### Changed
-- Centralized all `bcdedit` boot configurations and MSI Mode interrupt handling into `FINALIZE.cmd`.
-- Hardened `FINALIZE.cmd` with advanced hardware tuning (MSI Mode, Deep Network Tuning, Audio optimizations).
-- Optimized project structure and audited codebase for redundancies.
+- **UI Refinement**: Cleaned up Feature Page gate names in AME Wizard. Removed tall percentage text for a more professional look.
+- **Mandatory Gates**: Hardened the requirement for users to select options before proceeding.
 
-## [3.2.2] - 2026-02-12
+## [3.2.3] - 2026-02-12
+
 
 
 

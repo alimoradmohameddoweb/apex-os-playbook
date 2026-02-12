@@ -557,14 +557,23 @@ actions:
   # Disable Spectre/Meltdown mitigations (5-30% CPU performance gain)
   # FeatureSettingsOverride=3 disables Spectre V2 + Meltdown kernel patches
   # FeatureSettingsOverrideMask=3 tells Windows to honor the override value
-  # Defender functions normally without these — they are separate subsystems
-  # Gated behind 'disable-mitigations' option — users can keep mitigations by unchecking
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management', value: 'FeatureSettingsOverride', type: REG_DWORD, data: '3', option: disable-mitigations}
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management', value: 'FeatureSettingsOverrideMask', type: REG_DWORD, data: '3', option: disable-mitigations}
+
+  # --- Advanced Process-Level Mitigations (Atlas Pattern) ---
+  # Disables Control Flow Guard (CFG) and other mitigations globally for maximum throughput.
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\kernel', value: 'MitigationOptions', type: REG_BINARY, data: '222222222222222222222222222222222222222222222222', option: disable-mitigations}
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\kernel', value: 'MitigationAuditOptions', type: REG_BINARY, data: '222222222222222222222222222222222222222222222222', option: disable-mitigations}
+
+  # --- Anti-Cheat Compatibility Fix (Valorant / VGC) ---
+  # Re-enables CFG for Valorant's anti-cheat to prevent crashes when global mitigations are off.
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\vgc.exe', value: 'MitigationOptions', type: REG_BINARY, data: '000000000001000000000000000000000000000000000000', option: disable-mitigations}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\vgc.exe', value: 'MitigationAuditOptions', type: REG_BINARY, data: '000000000000000000000000000000000000000000000000', option: disable-mitigations}
 
   # =======================================================================
   # DLL SEARCH ORDER HARDENING
   # =======================================================================
+
 
   # Enable safe DLL search order
   - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager', value: 'SafeDllSearchMode', type: REG_DWORD, data: '1'}
