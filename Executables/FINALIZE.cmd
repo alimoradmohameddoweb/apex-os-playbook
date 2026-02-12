@@ -1,12 +1,13 @@
 @echo off
 :: FINALIZE.cmd - Final system optimization commands
 :: Runs after all other tasks to ensure a pristine, optimized state
-title Apex OS 3.2.2 - Final Optimization
+title Apex OS 3.2.3 - Final Optimization
 
 echo =============================================
-echo  Apex OS 3.2.2 - Final System Optimization
+echo  Apex OS 3.2.3 - Final System Optimization
 echo =============================================
 echo.
+
 
 :: =====================================================================
 :: REBUILD PERFORMANCE COUNTERS

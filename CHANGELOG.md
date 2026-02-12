@@ -2,20 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.2.2] - 2026-02-12
+## [3.2.3] - 2026-02-12
 
 ### Added
-- Advanced Audio Latency optimization (disables enhancements/exclusive mode globally).
-- Advanced Network driver tuning (disables power-saving/interrupt moderation).
+- **Mandatory UI Gates**: All feature pages now require user selection before proceeding (`IsRequired="true"`). This prevents users from accidentally skipping optimization choices.
 
 ### Changed
-- **Comprehensive Codebase Audit & Consolidation.**
-- Centralized all `bcdedit` boot configurations in `FINALIZE.cmd`.
-- Centralized MSI Mode interrupt handling in `FINALIZE.cmd`.
-- Eliminated redundant manual file/log deletions across multiple YAML files.
-- Optimized task execution order for faster application.
+- Centralized all `bcdedit` boot configurations and MSI Mode interrupt handling into `FINALIZE.cmd`.
+- Hardened `FINALIZE.cmd` with advanced hardware tuning (MSI Mode, Deep Network Tuning, Audio optimizations).
+- Optimized project structure and audited codebase for redundancies.
 
-## [3.2.1] - 2026-02-12
+## [3.2.2] - 2026-02-12
+
 
 
 ### Added

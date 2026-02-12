@@ -326,7 +326,8 @@ This project is licensed under the [GNU General Public License v3.0](LICENSE).
 ---
 
 <p align="center">
-  <strong>Apex OS 3.2.2</strong> — Zero telemetry. Maximum FPS. Total control.
+  <strong>Apex OS 3.2.3</strong> — Zero telemetry. Maximum FPS. Total control.
 </p>
+
 
 
