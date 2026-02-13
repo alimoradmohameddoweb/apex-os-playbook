@@ -43,25 +43,19 @@ actions:
   - !run: {exe: 'powershell.exe', args: '-NoProfile -ExecutionPolicy Bypass -File SOFTWARE.ps1 -InstallBrave', weight: 80, wait: true, exeDir: true, option: 'browser-brave', errorAction: log}
 
   # =======================================================================
-  # BROWSER — UNGOOGLED CHROMIUM (gated by browser-ugc)
+  # BROWSER — CHROME (gated by browser-chrome)
   # =======================================================================
 
-  - !status: {status: 'Installing Ungoogled Chromium...'}
-  - !run: {exe: 'powershell.exe', args: '-NoProfile -ExecutionPolicy Bypass -File SOFTWARE.ps1 -InstallUGC', weight: 80, wait: true, exeDir: true, option: 'browser-ugc', errorAction: log}
-
-  # Ungoogled Chromium privacy/performance policies (applied only if Chromium installed)
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Chromium', value: 'MetricsReportingEnabled', type: REG_DWORD, data: '0', option: browser-ugc}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Chromium', value: 'SpellCheckServiceEnabled', type: REG_DWORD, data: '0', option: browser-ugc}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Chromium', value: 'AlternateErrorPagesEnabled', type: REG_DWORD, data: '0', option: browser-ugc}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Chromium', value: 'SearchSuggestEnabled', type: REG_DWORD, data: '0', option: browser-ugc}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Chromium', value: 'SafeBrowsingProtectionLevel', type: REG_DWORD, data: '0', option: browser-ugc}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Chromium', value: 'UrlKeyedAnonymizedDataCollectionEnabled', type: REG_DWORD, data: '0', option: browser-ugc}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Chromium', value: 'NetworkPredictionOptions', type: REG_DWORD, data: '2', option: browser-ugc}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Chromium', value: 'BackgroundModeEnabled', type: REG_DWORD, data: '0', option: browser-ugc}
+  - !status: {status: 'Installing Google Chrome...'}
+  - !run: {exe: 'powershell.exe', args: '-NoProfile -ExecutionPolicy Bypass -File SOFTWARE.ps1 -InstallChrome', weight: 80, wait: true, exeDir: true, option: 'browser-chrome', errorAction: log}
 
   # =======================================================================
   # ESSENTIAL SOFTWARE — ALWAYS INSTALLED
   # =======================================================================
+
+  # NanaZip - Modern 7-Zip fork
+  - !status: {status: 'Installing NanaZip...'}
+  - !run: {exe: 'powershell.exe', args: '-NoProfile -ExecutionPolicy Bypass -File SOFTWARE.ps1 -InstallNanaZip', weight: 40, wait: true, exeDir: true, option: 'install-nanazip', errorAction: log}
 
   # 7-Zip - fast, open-source archiver
   - !status: {status: 'Installing 7-Zip...'}

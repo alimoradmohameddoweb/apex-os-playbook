@@ -129,9 +129,10 @@ Three user-selectable policies:
 3. **Keep Default** — leave Windows Update as-is
 
 ### 📦 Software Installation
-- **Browser choice**: Firefox, Brave, or Ungoogled Chromium (with privacy policies pre-configured)
+- **Browser choice**: Firefox, Brave, or Chrome (with privacy policies pre-configured)
+- **NanaZip**: Modern file archiver based on 7-Zip (optional toggle)
 - **7-Zip**: Universal file archiver (optional toggle)
-- **VCREDISTs**: Full Visual C++ Runtime stack 2005-2022 (optional toggle)
+- **VCREDISTs**: Full Visual C++ Runtime stack 2005-2022 with high-reliability MSI extraction (optional toggle)
 - **DirectX**: Legacy DirectX June 2010 runtimes (optional toggle)
 - **DirectPlay**: Legacy game support for older titles (optional toggle)
 - File associations auto-configured for installed software
@@ -185,7 +186,7 @@ Three user-selectable policies:
 |--------|-------------|
 | **Firefox** (default) | Privacy-focused, with telemetry/Pocket/studies disabled via policy |
 | **Brave** | Chromium-based with built-in ad blocking; rewards/VPN/wallet/AI disabled |
-| **Ungoogled Chromium** | De-Googled Chromium fork for maximum privacy |
+| **Chrome** | Google Chrome Enterprise with telemetry disabled via policy |
 | **None** | Skip browser installation |
 
 ### Core System Features (CheckboxPage 1)
@@ -202,7 +203,8 @@ Three user-selectable policies:
 | Streamlined User Interface | ✅ | Taskbar, Explorer, context menu, dark mode, notifications |
 | Apply Apex OS UI | ✅ | Set Apex OS branded desktop wallpaper & lock screen |
 | Enable Legacy Game Support | ✅ | Enable DirectPlay for older games compatibility |
-| Install 7-Zip Archiver | ✅ | High-compression file archiver supporting all major formats |
+| Install NanaZip | ✅ | Modern file archiver based on 7-Zip |
+| Install 7-Zip Archiver | ❌ | High-compression file archiver supporting all major formats |
 | Install Visual C++ Runtimes | ✅ | Full VC++ stack 2005-2022 for app/game compatibility |
 | Install Legacy DirectX | ✅ | DirectX June 2010 runtimes for older game support |
 
@@ -314,7 +316,7 @@ Every entry was validated against the [official AME Wizard documentation](https:
 git clone https://github.com/alimoradmohameddoweb/apex-os-playbook.git
 cd apex-os-playbook
 powershell -NoProfile -ExecutionPolicy Bypass -File build.ps1
-# Output: Apex-OS-v3.2.1.apbx (password: malte)
+# Output: Apex-OS-v3.2.5.apbx (password: malte)
 ```
 
 ---
@@ -326,7 +328,7 @@ This project is licensed under the [GNU General Public License v3.0](LICENSE).
 ---
 
 <p align="center">
-  <strong>Apex OS 3.2.4</strong> — Zero telemetry. Maximum FPS. Total control.
+  <strong>Apex OS 3.2.5</strong> — Zero telemetry. Maximum FPS. Total control.
 </p>
 
 

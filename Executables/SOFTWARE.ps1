@@ -6,8 +6,9 @@
 param (
     [switch]$InstallFirefox,
     [switch]$InstallBrave,
-    [switch]$InstallUGC,
+    [switch]$InstallChrome,
     [switch]$Install7Zip,
+    [switch]$InstallNanaZip,
     [switch]$InstallVCRedist,
     [switch]$InstallDirectX,
     [switch]$EnableDirectPlay
@@ -16,6 +17,7 @@ param (
 $ErrorActionPreference = 'SilentlyContinue'
 $timeouts = @("--connect-timeout", "15", "--retry", "5", "--retry-delay", "2", "--retry-all-errors")
 $arm = ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64')
+$msiArgs = "/qn /quiet /norestart ALLUSERS=1 REBOOT=ReallySuppress"
 
 # =========================================================================
 # LEGACY GAME SUPPORT (DirectPlay) - No download needed
@@ -64,30 +66,22 @@ if ($InstallBrave) {
         do {
             Start-Sleep -Seconds 2
             $timeout++
-            $proc = Get-Process -Name "BraveSetup" -ErrorAction SilentlyContinue
+            $proc = Get-Process -Name "BraveSetup", "BraveUpdate" -ErrorAction SilentlyContinue
         } while ($proc -and $timeout -lt 180)
+        Stop-Process -Name "BraveUpdate" -Force -ErrorAction SilentlyContinue
     }
 }
 
-if ($InstallUGC) {
-    Write-Host "Apex OS: Installing Ungoogled Chromium..." -ForegroundColor Cyan
-    try {
-        $latest = (Invoke-RestMethod -Uri "https://api.github.com/repos/Hibbiki/chromium-win64/releases/latest").assets | Where-Object { $_.name -like "chrome-win-*.zip" } | Select-Object -First 1
-        if ($latest) {
-            $file = "$tempDir\chromium.zip"
-            & curl.exe -LSs "$($latest.browser_download_url)" -o "$file" $timeouts
-            if (Test-Path $file) {
-                Expand-Archive -Path $file -DestinationPath "$env:ProgramFiles" -Force
-                $WshShell = New-Object -comObject WScript.Shell
-                $Shortcut = $WshShell.CreateShortcut("$env:Public\Desktop\Ungoogled Chromium.lnk")
-                $Shortcut.TargetPath = "$env:ProgramFiles\chrome-win\chrome.exe"
-                $Shortcut.Save()
-                $Shortcut = $WshShell.CreateShortcut("$env:ProgramData\Microsoft\Windows\Start Menu\Programs\Ungoogled Chromium.lnk")
-                $Shortcut.TargetPath = "$env:ProgramFiles\chrome-win\chrome.exe"
-                $Shortcut.Save()
-            }
-        }
-    } catch { }
+if ($InstallChrome) {
+    Write-Host "Apex OS: Installing Google Chrome..." -ForegroundColor Cyan
+    $arch = if ($arm) { "_Arm64" } else { "64" }
+    $url = "https://dl.google.com/dl/chrome/install/googlechromestandaloneenterprise$arch.msi"
+    $file = "$tempDir\chrome.msi"
+
+    & curl.exe -LSs "$url" -o "$file" $timeouts
+    if (Test-Path $file) {
+        Start-Process -FilePath "msiexec.exe" -ArgumentList "/i `"$file`" $msiArgs" -Wait -WindowStyle Hidden
+    }
 }
 
 # =========================================================================
@@ -106,31 +100,60 @@ if ($Install7Zip) {
     }
 }
 
+if ($InstallNanaZip) {
+    Write-Host "Apex OS: Installing NanaZip..." -ForegroundColor Cyan
+    try {
+        $githubApi = Invoke-RestMethod "https://api.github.com/repos/M2Team/NanaZip/releases/latest"
+        $assets = $githubApi.Assets.browser_download_url | Select-String ".xml", ".msixbundle" | Select-Object -Unique -First 2
+        
+        if ($assets.Count -eq 2) {
+            $path = New-Item "$tempDir\nanazip" -ItemType Directory -Force
+            foreach ($assetUrl in $assets) {
+                $filename = $assetUrl -split '/' | Select-Object -Last 1
+                & curl.exe -LSs $assetUrl -o "$path\$filename" $timeouts
+            }
+            
+            $packagePath = (Get-ChildItem $path -Filter "*.msixbundle" | Select-Object -First 1).FullName
+            $licensePath = (Get-ChildItem $path -Filter "*.xml" | Select-Object -First 1).FullName
+            
+            Add-AppxProvisionedPackage -Online -PackagePath $packagePath -LicensePath $licensePath -ErrorAction Stop | Out-Null
+            Write-Host "  NanaZip installed successfully." -ForegroundColor Gray
+        }
+    } catch {
+        Write-Host "  NanaZip installation failed. Falling back to 7-Zip..." -ForegroundColor Yellow
+        $Install7Zip = $true
+    }
+}
+
 # =========================================================================
 # VISUAL C++ RUNTIMES (2005 - 2022)
 # =========================================================================
 
 if ($InstallVCRedist) {
-    Write-Host "Apex OS: Installing Visual C++ Runtimes..." -ForegroundColor Cyan
+    Write-Host "Apex OS: Installing Visual C++ Runtimes (High Reliability)..." -ForegroundColor Cyan
     
+    $legacyArgs = "/q /norestart"
+    $modernArgs = "/install /quiet /norestart"
+
     $vcredists = [ordered] @{
-        "2005-x64"   = "https://download.microsoft.com/download/8/B/4/8B42259F-5D70-43F4-AC2E-4B208FD8D66A/vcredist_x64.exe"
-        "2005-x86"   = "https://download.microsoft.com/download/8/B/4/8B42259F-5D70-43F4-AC2E-4B208FD8D66A/vcredist_x86.exe"
-        "2008-x64"   = "https://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x64.exe"
-        "2008-x86"   = "https://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x86.exe"
-        "2010-x64"   = "https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe"
-        "2010-x86"   = "https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe"
-        "2012-x64"   = "https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe"
-        "2012-x86"   = "https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x86.exe"
-        "2013-x64"   = "https://aka.ms/highdpimfc2013x64enu"
-        "2013-x86"   = "https://aka.ms/highdpimfc2013x86enu"
-        "2015+-x64"  = "https://aka.ms/vs/17/release/vc_redist.x64.exe"
-        "2015+-x86"  = "https://aka.ms/vs/17/release/vc_redist.x86.exe"
+        "2005-x64"   = @("https://download.microsoft.com/download/8/B/4/8B42259F-5D70-43F4-AC2E-4B208FD8D66A/vcredist_x64.exe", "/c /q /t:")
+        "2005-x86"   = @("https://download.microsoft.com/download/8/B/4/8B42259F-5D70-43F4-AC2E-4B208FD8D66A/vcredist_x86.exe", "/c /q /t:")
+        "2008-x64"   = @("https://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x64.exe", "/q /extract:")
+        "2008-x86"   = @("https://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x86.exe", "/q /extract:")
+        "2010-x64"   = @("https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe", $legacyArgs)
+        "2010-x86"   = @("https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe", $legacyArgs)
+        "2012-x64"   = @("https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe", $modernArgs)
+        "2012-x86"   = @("https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x86.exe", $modernArgs)
+        "2013-x64"   = @("https://aka.ms/highdpimfc2013x64enu", $modernArgs)
+        "2013-x86"   = @("https://aka.ms/highdpimfc2013x86enu", $modernArgs)
+        "2015+-x64"  = @("https://aka.ms/vs/17/release/vc_redist.x64.exe", $modernArgs)
+        "2015+-x86"  = @("https://aka.ms/vs/17/release/vc_redist.x86.exe", $modernArgs)
     }
 
     foreach ($vc in $vcredists.GetEnumerator()) {
         $name = $vc.Key
-        $url = $vc.Value
+        $url  = $vc.Value[0]
+        $args = $vc.Value[1]
         $file = "$tempDir\vc_$name.exe"
         
         Write-Host "  Downloading $name..." -ForegroundColor Gray
@@ -138,8 +161,18 @@ if ($InstallVCRedist) {
 
         if (Test-Path $file) {
             Write-Host "  Installing $name..." -ForegroundColor Gray
-            $args = if ($name -match "2005|2008") { "/q" } elseif ($name -match "2010") { "/q /norestart" } else { "/install /quiet /norestart" }
-            Start-Process -FilePath $file -ArgumentList $args -Wait -WindowStyle Hidden
+            if ($args -match ":") {
+                $extractDir = "$tempDir\vc_extract_$name"
+                New-Item -ItemType Directory -Path $extractDir -Force | Out-Null
+                Start-Process -FilePath $file -ArgumentList "$args`"$extractDir`"" -Wait -WindowStyle Hidden
+                
+                $msis = Get-ChildItem -Path $extractDir -Filter "*.msi" -Recurse
+                foreach ($msi in $msis) {
+                    Start-Process -FilePath "msiexec.exe" -ArgumentList "/i `"$($msi.FullName)`" $msiArgs" -Wait -WindowStyle Hidden
+                }
+            } else {
+                Start-Process -FilePath $file -ArgumentList $args -Wait -WindowStyle Hidden
+            }
         }
     }
 }

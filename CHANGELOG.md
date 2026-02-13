@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.2.5] - 2026-02-13
+
+### Added
+- **Software Expansion**: Added official Google Chrome (Enterprise MSI) and NanaZip (Modern 7-Zip fork) as installation options.
+- **Improved VCRedist Installation**: Implemented high-reliability MSI extraction for VCRedist 2005 and 2008, ensuring better compatibility for legacy components.
+- **New Icons**: Added professional icons for Chrome and NanaZip in the AME Wizard UI.
+
+### Changed
+- **Enhanced SOFTWARE.ps1**: Refactored the main software script with better error handling, download retries, and modular installation logic.
+- **Refined software.yml**: Updated task flow to accommodate new software selections and conditional logic.
+
 ## [3.2.4] - 2026-02-12
 
 ### Added
