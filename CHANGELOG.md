@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.2.8] - 2026-02-13
+
+### Fixed
+- **MSIExec Popups**: Corrected unquoted GUID strings in uninstallation commands that triggered Windows Installer help dialogs.
+- **Stuck Cleanup**: Implemented a 7-minute watchdog timer for `cleanmgr.exe` to prevent hangs during long "Update Cleanup" operations.
+- **Project Structure**: Eliminated `DEFAULT_HIVE.ps1` and integrated its logic directly into the cleanup engine for a cleaner, more modular project structure.
+
+### Changed
+- **Ultimate Cleanup Engine (v5)**: Synthesized best practices from Atmosphere, EudynOS, and Privacy+. Added multi-drive protection and deeper log surgical removal.
+- **Improved Software Logic**: Standardized all downloads on `curl.exe` with retries and implemented clean browser installation by terminating conflicting background processes.
+
 ## [3.2.7] - 2026-02-13
 
 ### Added
