@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.2.7] - 2026-02-13
+
+### Added
+- **Best-in-Class Synthesization**: Integrated core optimizations from **ReviOS**, **Atlas OS**, and **RapidOS**.
+- **Ultimate Cleanup Engine (v3)**:
+  - **Multi-Drive Protection**: Automatically detects secondary Windows installations and skips Disk Cleanup to protect data (Atlas OS style).
+  - **Hung-Process Protection**: Monitors `cleanmgr.exe` for inactivity and moves to manual cleanup if stuck (RapidOS style).
+  - **Health Tool Removal**: Added surgical uninstallation of "Update Health Tools" and "PC Health Check" (ReviOS style).
+- **Improved Software Installation**:
+  - **VCRedist AIO**: Switched to the highly reliable All-in-One installer for all VC++ runtimes (RapidOS style).
+
+### Fixed
+- **Software Logic Redundancy**: Removed duplicate OneDrive uninstall logic already present in the debloat task.
+
 ## [3.2.6] - 2026-02-13
 
 ### Fixed
