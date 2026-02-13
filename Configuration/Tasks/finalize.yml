@@ -15,8 +15,8 @@ actions:
   # ROBUST DEFAULT USER HIVE CONFIGURATION
   # =======================================================================
 
-  - !status: {status: 'Configuring default user profile...'}
-  - !run: {exe: 'powershell.exe', args: '-NoProfile -ExecutionPolicy Bypass -File DEFAULT_HIVE.ps1', weight: 10, wait: true, exeDir: true, errorAction: log}
+  # Now handled automatically within CLEANUP.ps1 to ensure registry keys exist
+  # before assignment, preventing IOExceptions.
 
   # =======================================================================
   # APEX OS BRANDING
