@@ -131,7 +131,6 @@ Three user-selectable policies:
 ### 📦 Software Installation
 - **Browser choice**: Firefox, Brave, or Chrome (with privacy policies pre-configured)
 - **NanaZip**: Modern file archiver based on 7-Zip (optional toggle)
-- **7-Zip**: Universal file archiver (optional toggle)
 - **VCREDISTs**: Full Visual C++ Runtime stack 2005-2022 with high-reliability MSI extraction (optional toggle)
 - **DirectX**: Legacy DirectX June 2010 runtimes (optional toggle)
 - **DirectPlay**: Legacy game support for older titles (optional toggle)
@@ -204,7 +203,6 @@ Three user-selectable policies:
 | Apply Apex OS UI | ✅ | Set Apex OS branded desktop wallpaper & lock screen |
 | Enable Legacy Game Support | ✅ | Enable DirectPlay for older games compatibility |
 | Install NanaZip | ✅ | Modern file archiver based on 7-Zip |
-| Install 7-Zip Archiver | ❌ | High-compression file archiver supporting all major formats |
 | Install Visual C++ Runtimes | ✅ | Full VC++ stack 2005-2022 for app/game compatibility |
 | Install Legacy DirectX | ✅ | DirectX June 2010 runtimes for older game support |
 
@@ -263,7 +261,7 @@ apex-os/
 7. **Windows Update** → Apply user-selected update policy
 8. **Interface** → Shell, taskbar, explorer, dark mode cleanup
 9. **Cleanup** → Delete 70+ scheduled tasks and caches
-10. **Software** → Install browser, 7-Zip, VCREDIST, DirectX
+10. **Software** → Install browser, NanaZip, VCREDIST, DirectX
 11. **Finalize** → Wallpaper, branding, GPU cache clear, advanced cleanup
 
 ---

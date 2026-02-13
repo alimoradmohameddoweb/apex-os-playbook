@@ -57,10 +57,6 @@ actions:
   - !status: {status: 'Installing NanaZip...'}
   - !run: {exe: 'powershell.exe', args: '-NoProfile -ExecutionPolicy Bypass -File SOFTWARE.ps1 -InstallNanaZip', weight: 40, wait: true, exeDir: true, option: 'install-nanazip', errorAction: log}
 
-  # 7-Zip - fast, open-source archiver
-  - !status: {status: 'Installing 7-Zip...'}
-  - !run: {exe: 'powershell.exe', args: '-NoProfile -ExecutionPolicy Bypass -File SOFTWARE.ps1 -Install7Zip', weight: 40, wait: true, exeDir: true, option: 'install-7zip', errorAction: log}
-
 
   # =======================================================================
   # UNPIN EDGE AND SET DEFAULTS

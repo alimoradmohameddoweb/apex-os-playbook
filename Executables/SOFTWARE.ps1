@@ -7,7 +7,6 @@ param (
     [switch]$InstallFirefox,
     [switch]$InstallBrave,
     [switch]$InstallChrome,
-    [switch]$Install7Zip,
     [switch]$InstallNanaZip,
     [switch]$InstallVCRedist,
     [switch]$InstallDirectX,
@@ -88,18 +87,6 @@ if ($InstallChrome) {
 # TOOLS
 # =========================================================================
 
-if ($Install7Zip) {
-    Write-Host "Apex OS: Installing 7-Zip..." -ForegroundColor Cyan
-    $arch = if ($arm) { "arm64" } else { "x64" }
-    $url = "https://www.7-zip.org/a/7z2408-$arch.exe" 
-    $file = "$tempDir\7zip.exe"
-    
-    & curl.exe -LSs "$url" -o "$file" $timeouts
-    if (Test-Path $file) {
-        Start-Process -FilePath $file -ArgumentList "/S" -Wait -WindowStyle Hidden
-    }
-}
-
 if ($InstallNanaZip) {
     Write-Host "Apex OS: Installing NanaZip..." -ForegroundColor Cyan
     try {
@@ -120,8 +107,7 @@ if ($InstallNanaZip) {
             Write-Host "  NanaZip installed successfully." -ForegroundColor Gray
         }
     } catch {
-        Write-Host "  NanaZip installation failed. Falling back to 7-Zip..." -ForegroundColor Yellow
-        $Install7Zip = $true
+        Write-Host "  NanaZip installation failed." -ForegroundColor Red
     }
 }
 
@@ -153,7 +139,7 @@ if ($InstallVCRedist) {
     foreach ($vc in $vcredists.GetEnumerator()) {
         $name = $vc.Key
         $url  = $vc.Value[0]
-        $args = $vc.Value[1]
+        $vcArgs = $vc.Value[1]
         $file = "$tempDir\vc_$name.exe"
         
         Write-Host "  Downloading $name..." -ForegroundColor Gray
@@ -161,17 +147,17 @@ if ($InstallVCRedist) {
 
         if (Test-Path $file) {
             Write-Host "  Installing $name..." -ForegroundColor Gray
-            if ($args -match ":") {
+            if ($vcArgs -match ":") {
                 $extractDir = "$tempDir\vc_extract_$name"
                 New-Item -ItemType Directory -Path $extractDir -Force | Out-Null
-                Start-Process -FilePath $file -ArgumentList "$args`"$extractDir`"" -Wait -WindowStyle Hidden
+                Start-Process -FilePath $file -ArgumentList "$vcArgs`"$extractDir`"" -Wait -WindowStyle Hidden
                 
                 $msis = Get-ChildItem -Path $extractDir -Filter "*.msi" -Recurse
                 foreach ($msi in $msis) {
                     Start-Process -FilePath "msiexec.exe" -ArgumentList "/i `"$($msi.FullName)`" $msiArgs" -Wait -WindowStyle Hidden
                 }
             } else {
-                Start-Process -FilePath $file -ArgumentList $args -Wait -WindowStyle Hidden
+                Start-Process -FilePath $file -ArgumentList $vcArgs -Wait -WindowStyle Hidden
             }
         }
     }
