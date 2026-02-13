@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.2.6] - 2026-02-13
+
+### Fixed
+- **Stuck at "Reticulating Splines"**: Replaced slow `cleanmgr /sagerun:64` with fast manual cleanup in `CLEANUP.ps1`.
+- **Default Hive Errors**: Fixed `IOException: The parameter is incorrect` errors when writing to `HKU\AME_UserHive_Default` by implementing `DEFAULT_HIVE.ps1` with robust subkey creation.
+- **UI Progress**: Added detailed status messages to `FINALIZE.cmd` and `CLEANUP.ps1` to prevent AME Wizard from timing out or appearing inactive.
+
+### Changed
+- **Cleanup Engine v2**: Modularized the cleanup process into 6 fast phases.
+
 ## [3.2.5] - 2026-02-13
 
 ### Added

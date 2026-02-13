@@ -147,17 +147,9 @@ actions:
   # =======================================================================
   # NEW USER PROFILE CLEANUP (AME_UserHive_Default)
   # Ensures a clean experience for any new user created after application.
+  # Handled robustly via DEFAULT_HIVE.ps1 in finalize phase.
   # =======================================================================
 
-  # Clear W11 Start Menu pinned items for new users
+  # Clear W11 Start Menu pinned items for new users (keeping this as it usually works)
   - !registryValue: {path: 'HKU\AME_UserHive_Default\Software\Microsoft\Windows\CurrentVersion\Start', value: 'Config', operation: delete, errorAction: log}
-
-  # Disable Notifications for new users
-  - !registryValue: {path: 'HKU\AME_UserHive_Default\Software\Microsoft\Windows\CurrentVersion\Notifications\Settings', value: 'NOC_GLOBAL_SETTING_ALLOW_NOTIFICATION_SOUND', type: REG_DWORD, data: 0, errorAction: log}
-  - !registryValue: {path: 'HKU\AME_UserHive_Default\Software\Microsoft\Windows\CurrentVersion\Notifications\Settings', value: 'NOC_GLOBAL_SETTING_ALLOW_TOASTS_ABOVE_LOCK', type: REG_DWORD, data: 0, errorAction: log}
-  - !registryValue: {path: 'HKU\AME_UserHive_Default\Software\Microsoft\Windows\CurrentVersion\PushNotifications', value: 'ToastEnabled', type: REG_DWORD, data: 0, errorAction: log}
-
-  # Hide frequently used items in Quick Access for new users
-  - !registryValue: {path: 'HKU\AME_UserHive_Default\Software\Microsoft\Windows\CurrentVersion\Explorer', value: 'ShowFrequent', type: REG_DWORD, data: 0, errorAction: log}
-  - !registryValue: {path: 'HKU\AME_UserHive_Default\Software\Microsoft\Windows\CurrentVersion\Explorer', value: 'ShowRecent', type: REG_DWORD, data: 0, errorAction: log}
 

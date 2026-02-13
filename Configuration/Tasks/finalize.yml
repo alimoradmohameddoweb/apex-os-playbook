@@ -12,6 +12,13 @@ actions:
   - !run: {exe: 'powershell.exe', args: '-NoProfile -ExecutionPolicy Bypass -File CLEANUP.ps1', weight: 60, wait: true, exeDir: true, errorAction: log}
 
   # =======================================================================
+  # ROBUST DEFAULT USER HIVE CONFIGURATION
+  # =======================================================================
+
+  - !status: {status: 'Configuring default user profile...'}
+  - !run: {exe: 'powershell.exe', args: '-NoProfile -ExecutionPolicy Bypass -File DEFAULT_HIVE.ps1', weight: 10, wait: true, exeDir: true, errorAction: log}
+
+  # =======================================================================
   # APEX OS BRANDING
   # =======================================================================
 
@@ -39,11 +46,6 @@ actions:
   - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Wallpapers', value: 'BackgroundHistoryPath0', type: REG_SZ, data: '%SystemRoot%\Web\Wallpaper\ApexOS\Apex-background.jpg', option: 'configure-wallpaper'}
   - !registryValue: {path: 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Wallpapers', value: 'BackgroundType', type: REG_DWORD, data: '0', option: 'configure-wallpaper'}
 
-  # Set wallpaper as default for ALL new users
-  - !registryValue: {path: 'HKU\AME_UserHive_Default\Control Panel\Desktop', value: 'WallPaper', type: REG_SZ, data: '%SystemRoot%\Web\Wallpaper\ApexOS\Apex-background.jpg', option: 'configure-wallpaper', errorAction: log}
-  - !registryValue: {path: 'HKU\AME_UserHive_Default\Control Panel\Desktop', value: 'WallpaperStyle', type: REG_SZ, data: '10', option: 'configure-wallpaper', errorAction: log}
-  - !registryValue: {path: 'HKU\AME_UserHive_Default\Control Panel\Desktop', value: 'TileWallpaper', type: REG_SZ, data: '0', option: 'configure-wallpaper', errorAction: log}
-
   # Disable lockscreen overlays (RotatingLockScreenEnabled already set in privacy.yml)
   - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\Personalization', value: 'LockScreenOverlaysDisabled', type: REG_DWORD, data: '1', option: 'configure-wallpaper'}
 
@@ -54,9 +56,6 @@ actions:
 
   # Set lock screen via Group Policy (defense-in-depth)
   - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\Personalization', value: 'LockScreenImage', type: REG_SZ, data: '%SystemRoot%\Web\Wallpaper\ApexOS\Apex-OS-lockscreen.jpg', option: 'configure-wallpaper'}
-
-  # Set lock screen for new user profiles
-  - !registryValue: {path: 'HKU\AME_UserHive_Default\SOFTWARE\Microsoft\Windows\CurrentVersion\Lock Screen', value: 'LockScreenImagePath', type: REG_SZ, data: '%SystemRoot%\Web\Wallpaper\ApexOS\Apex-OS-lockscreen.jpg', option: 'configure-wallpaper', errorAction: log}
 
   # Deploy wallpaper file and apply immediately via P/Invoke
   - !run: {exe: 'powershell.exe', args: '-NoProfile -ExecutionPolicy Bypass -File WALLPAPER.ps1', weight: 15, wait: true, exeDir: true, runas: currentUserElevated, option: 'configure-wallpaper', errorAction: log}

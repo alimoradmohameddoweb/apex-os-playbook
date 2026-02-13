@@ -1,10 +1,10 @@
 @echo off
 :: FINALIZE.cmd - Final system optimization commands
 :: Runs after all other tasks to ensure a pristine, optimized state
-title Apex OS 3.2.3 - Final Optimization
+title Apex OS 3.2.5 - Final Optimization
 
 echo =============================================
-echo  Apex OS 3.2.3 - Final System Optimization
+echo  Apex OS 3.2.5 - Final System Optimization
 echo =============================================
 echo.
 
@@ -13,7 +13,7 @@ echo.
 :: REBUILD PERFORMANCE COUNTERS
 :: =====================================================================
 
-echo [1/10] Rebuilding performance counters...
+echo [1/10] Rebuilding performance counters (this may take a minute)...
 lodctr /R >nul 2>&1
 winmgmt /resyncperf >nul 2>&1
 
@@ -116,7 +116,7 @@ rd /s /q "%LOCALAPPDATA%\Intel\ShaderCache" 2>nul
 echo.
 
 echo =============================================
-echo  Apex OS 3.2.2: All optimizations applied.
-echo  A reboot is required for full effect.
+echo  Apex OS 3.2.5: All optimizations applied.
+ echo  A reboot is required for full effect.
 echo =============================================
 
