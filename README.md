@@ -292,14 +292,14 @@ A: Yes. Apex OS supports Windows 10 21H2 (build 19044) and 22H2 (build 19045). W
 
 Apex OS was built by analyzing and cross-referencing the best practices from:
 
-- [Atlas OS](https://github.com/Atlas-OS/Atlas) — Service optimization, component removal, cleanmgr engine
+- [Atlas OS](https://atlasos.net) — Service optimization, component removal, cleanmgr engine
 - [ReviOS](https://revi.cc) — Performance tuning, timer optimization
 - [RapidOS](https://github.com/rapid-community/RapidOS) — NTLM hardening, LSA protection, .NET crypto
-- [EudynOS](https://github.com/tifrfrfr/EudynOS) — Accessibility cleanup, boot optimization
-- [AtmosphereOS](https://github.com/Jebarson/AtmosphereOS) — Office macro hardening, Adobe security, software resilient downloads
-- [ArkanoidOS Lite](https://github.com/Flavor-Flavius/ArkanoidOS-Lite) — OOBE cleanup, internet restrictions
-- [Privacy+ AME-11](https://github.com/aspect0x7a6/privacy-plus-ame-11) — Copilot elimination, voice activation
-- [AME-10-0.8](https://git.ameliorated.info/Starter/AME-10) — Win10 legacy tweaks, NVIDIA tuning
+- [EudynOS](https://github.com/KarmaDevelopment/EudynOS) — Accessibility cleanup, boot optimization
+- [AtmosphereOS](https://github.com/AtmosphereTeam/AtmosphereOS) — Office macro hardening, Adobe security, software resilient downloads
+- [ArkanoidOS Lite](https://github.com/jointhearkanoid/playbook) — OOBE cleanup, internet restrictions
+- [Privacy+ AME-11](https://github.com/Ameliorated-LLC/privacy_plus) — Copilot elimination, voice activation
+- [AME-10-0.8](https://github.com/Ameliorated-LLC/AME-10) — Win10 legacy tweaks, NVIDIA tuning
 - [Windows10Debloater](https://github.com/Sycnex/Windows10Debloater) — AppX removal, context menu cleanup
 - [winutil](https://github.com/ChrisTitusTech/winutil) — Edge policies, crash display, notification control
 
